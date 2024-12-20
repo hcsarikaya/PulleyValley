@@ -5,23 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5fccdedc-4e53-4fb0-a1d7-d330d890acc2" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/PulleyValley.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/styles.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/background.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/camera.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/level-manager.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/main.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/menu.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/object-manager.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/score-manager.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/webgl-utils.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/fragment/background-fragment.glsl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/vertex/background-vertex.glsl" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/interactionManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Player.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Player.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,15 +59,21 @@
     "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "cagri",
-    "last_opened_file_path": "C:/Users/ahbeh/Desktop/PulleyValley",
+    "last_opened_file_path": "C:/Users/ahbeh/Desktop/412 Project",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\WebStorm 2024.2.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ahbeh\Desktop\PulleyValley\pulley-puzzle\src\game" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -90,7 +91,11 @@
       <updated>1732887230343</updated>
       <workItem from="1732887231424" duration="6177000" />
       <workItem from="1732913928399" duration="2188000" />
-      <workItem from="1733400575591" duration="346000" />
+      <workItem from="1733400575591" duration="2982000" />
+      <workItem from="1733407004067" duration="594000" />
+      <workItem from="1733483552188" duration="2086000" />
+      <workItem from="1733573204947" duration="879000" />
+      <workItem from="1734688666205" duration="1131000" />
     </task>
     <servers />
   </component>

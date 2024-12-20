@@ -50,10 +50,7 @@ export class Player {
             case 'D':
                 this.moveRight = true;
                 break;
-            case 'e':
-            case 'E':
-                this.checkInteraction();
-                break;
+
         }
     }
 
@@ -89,8 +86,5 @@ export class Player {
         this.mesh.position.add(velocity);
 
     }
-    checkInteraction() {
-        console.log("open door");
 
-    }
 }
