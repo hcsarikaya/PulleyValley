@@ -1,14 +1,16 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { createPulleySystem } from './PulleySystem.js';
-import { createRoom } from './Room.js';
+import { Room} from './Room.js';
 import { Player } from './Player.js';
 import { LevelManager } from './LevelManager.js';
+import {InteractionSystem} from "../controls/InteractionSystem.js"
 
-let scene, camera, renderer, controls, player, levelManager;
+let scene, camera, renderer, controls, player, levelManager, interectionSystem;
 
 export function initGame(level) {
     scene = new THREE.Scene();
+    level = Number(level)
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     //camera.position.set(0, 5, 10);
 
@@ -31,18 +33,36 @@ export function initGame(level) {
     pointLight.position.set(5, 10, 5);
     scene.add(pointLight);
 
-    // Create dungeon room
-    createRoom(scene);
+
 
 
     // Initialize and load the level
     levelManager = new LevelManager(scene);
     levelManager.loadLevel(level);
 
+
     // Create player
     player = new Player(scene);
     camera.position.set(player.mesh.position.x, player.mesh.position.y+10, player.mesh.position.z+20);
     camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
+
+    interectionSystem = new InteractionSystem(scene, camera);
+    interectionSystem.setPlayer(player.mesh);
+    interectionSystem.addInteractiveObject(levelManager.levels[level-1].doorOut, {
+        proximityThreshold: 15,
+        promptText: 'Press "E" to open door',
+        onInteract: (doorMesh) => {
+            console.log('Opening door...');
+            // Add your door opening animation/logic here
+            doorMesh.rotation.y += Math.PI / 2;
+            levelManager.loadLevel(level +1);
+        }
+    });
+
+
+
+
+
 
     animate();
 }
@@ -51,6 +71,7 @@ function animate() {
     requestAnimationFrame(animate);
     player.update(); // Update player position
     controls.update();
+    interectionSystem.update();
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
     //camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
     // Clamp the camera's position within the room boundaries

@@ -1,14 +1,15 @@
 import * as THREE from 'three';
 
 export class Door {
-    constructor(scene, position = { x: 0, y: 3, z: -10 }) {
+    constructor(scene, position =  [0,  3, -10] ) {
         this.scene = scene;
-
+        this.position = position;
         // Create the door geometry and material
-        const geometry = new THREE.BoxGeometry(2, 6, 0.5);
+        const geometry = new THREE.BoxGeometry(10, 15, 0.5);
+        geometry.translate(0, -7.5, 0);
         const material = new THREE.MeshBasicMaterial({ color: 0x8B4513 });
         this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.set(position.x, position.y, position.z);
+        this.mesh.position.set(position[0], position[1], position[2]);
 
         scene.add(this.mesh);
 
