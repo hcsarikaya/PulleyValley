@@ -8,7 +8,7 @@ export class Pulley {
         this.model;
         const loader = new GLTFLoader();
         loader.load( '../public/models/pulley.glb', function ( glb ) {
-            console.log( "fdsadf" );
+
             this.model = glb.scene;
             this.model.position.set(10,10,0);
             scene.add(this.model);

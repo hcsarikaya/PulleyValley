@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import { SUBTRACTION, Brush, Evaluator } from 'three-bvh-csg';
 
 export class Room{
-    constructor(scene){
+    constructor(scene, size){
+        this.size = size;
         this.scene = scene;
         this.wallIn;
         this.wallOut;
@@ -33,37 +34,37 @@ export class Room{
     createRoom(position) {
         this.position = position ? position :0;
 
-        this.wallIn = this.wallWithDoor([50, 30, 1])
-        this.wallIn.position.set(0, 15, 25+this.position);
+        this.wallIn = this.wallWithDoor([this.size[0], this.size[2], 1])
+        this.wallIn.position.set(0, this.size[2]/2, this.size[1]/2+this.position);
         this.wallIn.material = this.wallMaterial;
         this.scene.add(this.wallIn);
 
-        this.wallOut = this.wallWithDoor([50, 30, 1])
-        this.wallOut.position.set(0, 15, -25+this.position);
+        this.wallOut = this.wallWithDoor([this.size[0], this.size[2], 1])
+        this.wallOut.position.set(0, this.size[2]/2, -this.size[1]/2+this.position);
         this.wallOut.material = this.wallMaterial;
         this.scene.add(this.wallOut);
 
-        this.wallL = this.wall([50, 30, 1])
-        this.wallL.position.set(-25, 15, 0+this.position);
+        this.wallL = this.wall([this.size[1], this.size[2], 1])
+        this.wallL.position.set(-this.size[0]/2, this.size[2]/2, 0+this.position);
         this.wallL.rotation.y = Math.PI / 2;
         this.wallL.material = this.wallMaterial;
         this.scene.add(this.wallL);
 
-        this.wallR = this.wall([50, 30, 1])
-        this.wallR.position.set(25, 15, 0+this.position);
+        this.wallR = this.wall([this.size[1], this.size[2], 1])
+        this.wallR.position.set(this.size[0]/2, this.size[2]/2, 0+this.position);
         this.wallR.rotation.y = Math.PI / 2;
         this.wallR.material = this.wallMaterial;
         this.scene.add(this.wallR);
 
-        this.floor = this.wall([50, 1, 50]);
+        this.floor = this.wall([this.size[0], 1, this.size[1]]);
         this.floor.material = this.floorMaterial;
         this.floor.position.y = -0.5;
         this.floor.position.z = this.position;
         this.scene.add(this.floor);
 
-        this.ceiling = this.wall([50, 1, 50]);
+        this.ceiling = this.wall([this.size[0], 1, this.size[1]]);
         this.ceiling.material = this.floorMaterial;
-        this.ceiling.position.y = 30;
+        this.ceiling.position.y = this.size[2];
         this.ceiling.position.z = this.position;
         this.scene.add(this.ceiling);
 
