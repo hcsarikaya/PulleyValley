@@ -12,8 +12,10 @@ export class Level{
         this.scene = this.room.scene;
         this.objects=[];
         this.pos = this.room.position;
-        this.doorIn = new Door(this.scene, [0, 15, -25 ]);
-        this.doorOut = new Door(this.scene, [0, 15, 25 ]);
+        if(this.pos == 0){
+            this.doorIn = new Door(this.scene, [0, 15, -25+this.pos ]);
+        }
+        this.doorOut = new Door(this.scene, [0, 15, 25+this.pos ]);
     }
 
     addObject(level){
@@ -31,13 +33,18 @@ export class Level{
 
 
         let object;
+        let position;
         switch (obj.type) {
             case "pulley":
-                object = new Pulley(this.scene ,obj.position);
+                position = obj.position
+                position[2] += this.pos
+                object = new Pulley(this.scene ,position);
                 this.objects.push(object)
                 break;
             case "weight":
-                object = new Weight(this.scene ,obj.position);
+                position = obj.position
+                position[2] += this.pos
+                object = new Weight(this.scene ,position);
                 this.objects.push(object);
 
                 break;
