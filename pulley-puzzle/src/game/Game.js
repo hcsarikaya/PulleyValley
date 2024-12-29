@@ -4,9 +4,10 @@ import { createPulleySystem } from './PulleySystem.js';
 import { Room} from './Room.js';
 import { Player } from './Player.js';
 import { LevelManager } from './LevelManager.js';
-import {InteractionSystem} from "../controls/InteractionSystem.js"
+import { InteractionSystem } from "../controls/InteractionSystem.js"
+import { CameraControls } from '../controls/CameraControls.js';
 
-let scene, camera, renderer, controls, player, levelManager, interectionSystem;
+let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls;
 
 export function initGame(level) {
     scene = new THREE.Scene();
@@ -17,6 +18,12 @@ export function initGame(level) {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('game-container').appendChild(renderer.domElement);
+
+    cameraControls = new CameraControls(camera, renderer, {
+        freeMoveSpeed: 0.3,
+        mouseSensitivity: 0.0025
+        //TODO room size eklenecek
+    });
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -72,6 +79,7 @@ function animate() {
     player.update(); // Update player position
     controls.update();
     interectionSystem.update();
+    cameraControls.update();
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
     //camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
     // Clamp the camera's position within the room boundaries
