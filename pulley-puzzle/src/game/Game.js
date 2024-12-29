@@ -83,7 +83,7 @@ function animate() {
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
     //camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
     // Clamp the camera's position within the room boundaries
-    const roomSize = 25; // Half the size of the room since the room is 30x30
+    //const roomSize = 25; // Half the size of the room since the room is 30x30
     //camera.position.x = THREE.MathUtils.clamp(camera.position.x, -roomSize + 1, roomSize - 1);
     //camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1, 9); // Stay within the floor and ceiling
     //camera.position.z = THREE.MathUtils.clamp(camera.position.z, -roomSize + 1, roomSize - 1);
