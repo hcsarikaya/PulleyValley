@@ -25,7 +25,7 @@ export class Level{
             this.createObject(obj);
         })
 
-        console.log(levels.levels[level-1].objects);
+
     }
 
 
