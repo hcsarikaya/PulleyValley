@@ -5,18 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5fccdedc-4e53-4fb0-a1d7-d330d890acc2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/interactionManager.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pulley-puzzle/builds/ammo.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pulley-puzzle/builds/ammo.wasm.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pulley-puzzle/builds/ammo.wasm.wasm" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/ammoLoader.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/PhysicsWorld.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game1.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Player.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Player.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level1.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level2.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/levels/level.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Rope.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Rope.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +30,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -50,6 +53,9 @@
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="2pWgQjAPSSjgc6JCSRJCzNHyvLc" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -58,8 +64,8 @@
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "cagri",
-    "last_opened_file_path": "C:/Users/ahbeh/Desktop/412 Project",
+    "git-widget-placeholder": "aum",
+    "last_opened_file_path": "/Users/ahmetuman/WebstormProjects/PulleyValley/pulley-puzzle/src/ammo",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -70,7 +76,12 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/pulley-puzzle/src/ammo" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/pulley-puzzle/src/game" />
+      <recent name="$PROJECT_DIR$/pulley-puzzle" />
       <recent name="C:\Users\ahbeh\Desktop\PulleyValley\pulley-puzzle\src\game" />
     </key>
   </component>
@@ -96,6 +107,8 @@
       <workItem from="1733483552188" duration="2086000" />
       <workItem from="1733573204947" duration="879000" />
       <workItem from="1734688666205" duration="1131000" />
+      <workItem from="1735513268271" duration="109000" />
+      <workItem from="1735688382377" duration="4830000" />
     </task>
     <servers />
   </component>

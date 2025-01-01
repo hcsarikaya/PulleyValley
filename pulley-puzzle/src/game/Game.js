@@ -6,10 +6,21 @@ import { InteractionSystem } from "../controls/InteractionSystem.js"
 import { CameraControls } from '../controls/CameraControls.js';
 
 let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls;
+let clock = new THREE.Clock();  // For deltaTime
+let physicsWorld;
 
-export function initGame(level) {
+import { PhysicsWorld } from '../objects/PhysicsWorld.js';
+
+
+
+export async function initGame(level) {
+
     scene = new THREE.Scene();
     level = Number(level);
+
+    physicsWorld = new PhysicsWorld();
+    await physicsWorld.init(); // Important: Wait for Ammo to load
+
     let roomSize = [50,50,30];
     let roomCenter =  [0,0,0];
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -41,13 +52,11 @@ export function initGame(level) {
     scene.add(pointLight);
 
 
-
-
     // Initialize and load the level
     levelManager = new LevelManager(scene);
-    levelManager.loadLevel(level);
+    levelManager = new LevelManager(scene, physicsWorld);
     levelManager.roomSize = roomSize;
-    
+
 
     // Create player
     player = new Player(scene);
@@ -72,13 +81,21 @@ export function initGame(level) {
 
 
 
-
-
     animate();
 }
 
 function animate() {
     requestAnimationFrame(animate);
+
+    const deltaTime = clock.getDelta();
+    physicsWorld.update(deltaTime);
+
+    levelManager.levels.forEach(lvl => {
+        lvl.objects.forEach(obj => {
+            if (obj.update) obj.update(); // e.g., rope has an update() method
+        });
+    });
+
     player.update(); // Update player position
     controls.update();
     interectionSystem.update();
