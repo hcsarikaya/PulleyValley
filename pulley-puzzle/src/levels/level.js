@@ -15,9 +15,9 @@ export class Level {
         this.physicsWorld = physicsWorld; // store it here
 
         if(this.pos === 0) {
-            this.doorIn = new Door(this.scene, [0, 15, -25 + this.pos]);
+            this.doorIn = new Door(this.scene, physicsWorld, [0, 15, -24 + this.pos]);
         }
-        this.doorOut = new Door(this.scene, [0, 15, 25 + this.pos]);
+        this.doorOut = new Door(this.scene, physicsWorld, [0, 15, 24 + this.pos]);
     }
 
     addObject(level) {
@@ -31,26 +31,30 @@ export class Level {
         let object;
         let position = obj.position;
 
-        // Adjust for room's position offset
         if (position) {
-            position[2] += this.pos;
+            position[2] += this.pos; // Adjust for room position
         }
 
         switch (obj.type) {
-            case "pulley":
-                object = new Pulley(this.scene, position);
-                this.objects.push(object);
+            case 'pulley':
+                object = new Pulley(this.scene, this.physicsWorld, position);
                 break;
-            case "weight":
-                object = new Weight(this.scene, position);
-                this.objects.push(object);
+
+            case 'weight':
+                object = new Weight(this.scene, this.physicsWorld, position);
                 break;
-            case "rope":
-                // Now we can pass this.physicsWorld into Rope
-                // Possibly you need startPos, endPos, etc.
+
+            case 'rope':
                 object = new Rope(this.scene, this.physicsWorld, position);
-                this.objects.push(object);
                 break;
+
+            default:
+                console.warn(`Unknown object type: ${obj.type}`);
+        }
+
+        if (object) {
+            this.objects.push(object);
         }
     }
+
 }

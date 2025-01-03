@@ -3,17 +3,17 @@
     {
 
       "objects": [
-        { "type":  "pulley", "position" : [ 10,  5,  0 ]},
-        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
-        { "type":  "rope", "position" : [0, 0, -5]}
+        { "type":  "pulley", "position" : [ 5,  5,  5 ]},
+        { "type":  "weight", "position" : [ 5,  20,  5 ]},
+        { "type":  "rope", "position" : [10, 30, 10]}
       ]
     },
     {
 
       "objects": [
-        { "type":  "pulley", "position" : [ 10,  5,  0 ]},
-        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
-        { "type":  "rope", "position" : [0, 0, -5]}
+        { "type":  "pulley", "position" : [ 5,  5,  5 ]},
+        { "type":  "weight", "position" : [ 5,  20,  5 ]},
+        { "type":  "rope", "position" : [10, 30, 10]}
        ]
 
     }

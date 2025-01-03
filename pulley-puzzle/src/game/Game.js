@@ -14,12 +14,11 @@ import { PhysicsWorld } from '../objects/PhysicsWorld.js';
 
 
 export async function initGame(level) {
-
     scene = new THREE.Scene();
     level = Number(level);
 
     physicsWorld = new PhysicsWorld();
-    await physicsWorld.init(); // Important: Wait for Ammo to load
+    await physicsWorld.init(); //Wait for Ammo to load
 
     let roomSize = [50,50,30];
     let roomCenter =  [0,0,0];
@@ -54,8 +53,8 @@ export async function initGame(level) {
 
     // Initialize and load the level
     levelManager = new LevelManager(scene, physicsWorld);
-    levelManager.loadLevel(level);
     levelManager.roomSize = roomSize;
+    levelManager.loadLevel(level);
 
 
     // Create player

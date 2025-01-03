@@ -21,7 +21,7 @@ export class LevelManager {
         */
 
         // Create a room for the new level
-        const room = new Room(this.scene, this.roomSize);
+        const room = new Room(this.scene, this.roomSize, this.physicsWorld);
         room.createRoom(this.pos);
 
         // Increment position for the next room

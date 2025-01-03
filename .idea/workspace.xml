@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5fccdedc-4e53-4fb0-a1d7-d330d890acc2" name="Changes" comment="">
+    <list default="true" id="5fccdedc-4e53-4fb0-a1d7-d330d890acc2" name="Changes" comment="Bir onceki sorun halloldu, ip objesi olustu, yercekimi ve zemin iliskisine bakicam">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/levels/level.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/levelConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/levels/levelConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +42,9 @@
     &quot;assignee&quot;: &quot;hcsarikaya&quot;
   }
 }</component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="6586f574-a84a-4ab8-abb5-6480730c999e" />
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/hcsarikaya/PulleyValley.git&quot;,
@@ -102,10 +111,24 @@
       <workItem from="1734688666205" duration="1131000" />
       <workItem from="1735513268271" duration="109000" />
       <workItem from="1735688382377" duration="4830000" />
+      <workItem from="1735912917410" duration="5356000" />
     </task>
+    <task id="LOCAL-00001" summary="Bir onceki sorun halloldu, ip objesi olustu, yercekimi ve zemin iliskisine bakicam">
+      <option name="closed" value="true" />
+      <created>1735863143309</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1735863143309</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Bir onceki sorun halloldu, ip objesi olustu, yercekimi ve zemin iliskisine bakicam" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bir onceki sorun halloldu, ip objesi olustu, yercekimi ve zemin iliskisine bakicam" />
   </component>
 </project>
