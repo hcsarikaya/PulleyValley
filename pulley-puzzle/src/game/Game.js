@@ -53,8 +53,8 @@ export async function initGame(level) {
 
 
     // Initialize and load the level
-    levelManager = new LevelManager(scene);
     levelManager = new LevelManager(scene, physicsWorld);
+    levelManager.loadLevel(level);
     levelManager.roomSize = roomSize;
 
 

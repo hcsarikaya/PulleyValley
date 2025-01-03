@@ -11,6 +11,8 @@ export class LevelManager {
     }
 
     loadLevel(level) {
+        console.log('loadLevel called with level:', level);
+
         // Optionally clear the scene or keep your existing objects
         /*
         while (this.scene.children.length > 0) {
@@ -31,5 +33,6 @@ export class LevelManager {
 
         // Keep track of newly added level
         this.levels.push(newLevel);
+        console.log('After loadLevel, levels array:', this.levels);
     }
 }
