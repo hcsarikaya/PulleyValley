@@ -1,9 +1,17 @@
 import * as THREE from 'three';
+import SoundManager from "../game/SoundManager.js";
 
 export class CameraControls {
     constructor(camera, renderer, options = {}) {
         this.camera = camera;
         this.renderer = renderer;
+        this.soundManager = new SoundManager();
+
+        // Load sounds
+        this.soundManager.loadSounds();
+
+        // Start background music
+        this.soundManager.playMusic();
 
         // Movement settings
         this.moveSpeed       = options.moveSpeed       || 10;
@@ -47,15 +55,27 @@ export class CameraControls {
     onKeyDown(event) {
         switch (event.key.toLowerCase()) {
             case 'w':
+                if (!this.keys.w) {
+                    this.soundManager.playLoop('walk');
+                }
                 this.keys.w = true;
                 break;
             case 'a':
+                if (!this.keys.a) {
+                    this.soundManager.playLoop('walk');
+                }
                 this.keys.a = true;
                 break;
             case 's':
+                if (!this.keys.s) {
+                    this.soundManager.playLoop('walk');
+                }
                 this.keys.s = true;
                 break;
             case 'd':
+                if (!this.keys.d) {
+                    this.soundManager.playLoop('walk');
+                }
                 this.keys.d = true;
                 break;
             case ' ':
@@ -63,6 +83,7 @@ export class CameraControls {
                 if (!this.isJumping) {
                     this.isJumping = true;
                     this.verticalVelocity = this.jumpSpeed;
+                    this.soundManager.playSound('jump');
                 }
                 break;
             default:
@@ -77,21 +98,35 @@ export class CameraControls {
         switch (event.key.toLowerCase()) {
             case 'w':
                 this.keys.w = false;
+                this.checkStopWalking();
                 break;
             case 'a':
                 this.keys.a = false;
+                this.checkStopWalking();
                 break;
             case 's':
                 this.keys.s = false;
+                this.checkStopWalking();
                 break;
             case 'd':
                 this.keys.d = false;
+                this.checkStopWalking();
                 break;
             case ' ':
                 this.keys.space = false;
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Check if any movement keys are still pressed; if not, stop walking sound
+     */
+    checkStopWalking() {
+        const isMoving = this.keys.w || this.keys.a || this.keys.s || this.keys.d;
+        if (!isMoving) {
+            this.soundManager.stopLoop('walk');
         }
     }
 
@@ -132,11 +167,29 @@ export class CameraControls {
         // Movement speed factor
         const speed = this.moveSpeed * deltaTime;
 
+        let isMoving = false;
+
         // Move the camera based on keys pressed
-        if (this.keys.w) this.camera.position.addScaledVector(forward, speed);
-        if (this.keys.s) this.camera.position.addScaledVector(forward, -speed);
-        if (this.keys.a) this.camera.position.addScaledVector(right, -speed);
-        if (this.keys.d) this.camera.position.addScaledVector(right, speed);
+        if (this.keys.w) {
+            this.camera.position.addScaledVector(forward, speed);
+            isMoving = true;
+        }
+        if (this.keys.s) {
+            this.camera.position.addScaledVector(forward, -speed);
+            isMoving = true;
+        }
+        if (this.keys.a) {
+            this.camera.position.addScaledVector(right, -speed);
+            isMoving = true;
+        }
+        if (this.keys.d) {
+            this.camera.position.addScaledVector(right, speed);
+            isMoving = true;
+        }
+
+        // Optionally, handle continuous sound playing based on movement state
+        // For example, if using footsteps with footsteps sound frequency based on speed
+        // This example uses a simple looping walk sound
 
         // Jumping and gravity
         if (this.isJumping) {
@@ -154,5 +207,8 @@ export class CameraControls {
             // Keep camera at a fixed eye height if not jumping
             this.camera.position.y = this.eyeHeight;
         }
+
+        // Optionally, add other sound effects based on actions here
+        // e.g., footsteps intensity based on movement speed, landing sounds, etc.
     }
 }

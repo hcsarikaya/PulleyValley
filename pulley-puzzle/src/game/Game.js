@@ -7,8 +7,9 @@ import { LevelManager } from './LevelManager.js';
 import { InteractionSystem } from "../controls/InteractionSystem.js"
 import { CameraControls } from '../controls/CameraControls.js';
 import InventoryUI from '../ui/InventoryUI.js';
+import SoundManager from './SoundManager.js';
 
-let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI;
+let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI, soundManager;
 
 export function initGame(level) {
     scene = new THREE.Scene();
@@ -17,6 +18,10 @@ export function initGame(level) {
     //camera.position.set(0, 5, 10);
 
     inventoryUI = new InventoryUI('inventory-hotbar');
+    soundManager = new SoundManager();
+
+    soundManager.loadSounds();
+    soundManager.playMusic();
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
