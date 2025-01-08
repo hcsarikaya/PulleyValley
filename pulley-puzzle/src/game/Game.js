@@ -20,17 +20,12 @@ export function initGame(level) {
     document.getElementById('game-container').appendChild(renderer.domElement);
 
     cameraControls = new CameraControls(camera, renderer, {
-        freeMoveSpeed: 0.3,
-        mouseSensitivity: 0.0025
-        //TODO room size eklenecek
+        moveSpeed: 10,
+        jumpSpeed: 20,
+        gravity: 20,
+        mouseSensitivity: 0.002,
+        eyeHeight: 7
     });
-
-    controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 5;  // Minimum zoom distance
-    controls.maxDistance = 20; // Maximum zoom distance
-    controls.maxPolarAngle = Math.PI / 2; // Prevent camera from going below the floor
 
     // Add basic lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -41,8 +36,6 @@ export function initGame(level) {
     scene.add(pointLight);
 
 
-
-
     // Initialize and load the level
     levelManager = new LevelManager(scene);
     levelManager.loadLevel(level);
@@ -51,7 +44,7 @@ export function initGame(level) {
 
     // Create player
     player = new Player(scene);
-    camera.position.set(player.mesh.position.x, player.mesh.position.y+10, player.mesh.position.z+20);
+    camera.position.set(player.mesh.position.x, player.mesh.position.y+50, player.mesh.position.z+20);
     camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
 
     interectionSystem = new InteractionSystem(scene, camera);
@@ -77,12 +70,16 @@ export function initGame(level) {
     animate();
 }
 
+const clock = new THREE.Clock();
+
 function animate() {
     requestAnimationFrame(animate);
     player.update(); // Update player position
-    controls.update();
     interectionSystem.update();
-    cameraControls.update();
+
+    const delta = clock.getDelta();
+    cameraControls.update(delta); // Update controls
+
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
     //camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
     // Clamp the camera's position within the room boundaries
