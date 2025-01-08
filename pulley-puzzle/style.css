@@ -17,3 +17,32 @@ button {
   margin: 10px;
   font-size: 18px;
 }
+
+/* style.css */
+#inventory-hotbar {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* style.css */
+.inventory-slot {
+  width: 40px;
+  height: 40px;
+  background: #ccc;
+  border: 2px solid #888;
+  text-align: center;
+  line-height: 40px;
+  cursor: pointer;
+}
+
+.inventory-slot.selected {
+  border-color: green; /* Highlight the selected slot with a green border */
+  background: rgba(0, 255, 0, 0.2); /* Optional: Add a light green background */
+}

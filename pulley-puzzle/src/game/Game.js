@@ -6,14 +6,17 @@ import { Player } from './Player.js';
 import { LevelManager } from './LevelManager.js';
 import { InteractionSystem } from "../controls/InteractionSystem.js"
 import { CameraControls } from '../controls/CameraControls.js';
+import InventoryUI from '../ui/InventoryUI.js';
 
-let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls;
+let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI;
 
 export function initGame(level) {
     scene = new THREE.Scene();
     level = Number(level)
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     //camera.position.set(0, 5, 10);
+
+    inventoryUI = new InventoryUI('inventory-hotbar');
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -76,6 +79,7 @@ function animate() {
 
     const delta = clock.getDelta();
     cameraControls.update(delta); // Update controls
+
 
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
     //camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
