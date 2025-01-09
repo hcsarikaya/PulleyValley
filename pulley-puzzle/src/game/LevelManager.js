@@ -8,6 +8,7 @@ export class LevelManager {
         this.scene = scene;
         this.pos = 0;
         this.levels = []
+        this.roomSize = [50,50,30]
     }
 
     loadLevel(level) {
@@ -20,9 +21,9 @@ export class LevelManager {
          */
 
 
-        const room = new Room(this.scene);
+        const room = new Room(this.scene, this.roomSize);
         room.createRoom(this.pos);
-        this.pos = this.pos+ 50;
+        this.pos = this.pos+ this.roomSize[0];
 
         this.levels.push(new Level(room));
         this.levels[level-1].addObject(level);

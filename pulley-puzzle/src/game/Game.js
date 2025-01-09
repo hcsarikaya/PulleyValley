@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { createPulleySystem } from './PulleySystem.js';
-import { Room} from './Room.js';
 import { Player } from './Player.js';
 import { LevelManager } from './LevelManager.js';
 import { InteractionSystem } from "../controls/InteractionSystem.js"
@@ -13,7 +11,9 @@ let scene, camera, renderer, controls, player, levelManager, interectionSystem, 
 
 export function initGame(level) {
     scene = new THREE.Scene();
-    level = Number(level)
+    level = Number(level);
+    let roomSize = [50,50,30];
+    let roomCenter =  [0,0,0];
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     //camera.position.set(0, 5, 10);
 
@@ -47,7 +47,8 @@ export function initGame(level) {
     // Initialize and load the level
     levelManager = new LevelManager(scene);
     levelManager.loadLevel(level);
-
+    levelManager.roomSize = roomSize;
+    
 
     // Create player
     player = new Player(scene);
@@ -63,7 +64,9 @@ export function initGame(level) {
             console.log('Opening door...');
             // Add your door opening animation/logic here
             doorMesh.rotation.y += Math.PI / 2;
-            levelManager.loadLevel(level +1);
+            level += 1
+            roomCenter[2] += roomSize[0];
+            levelManager.loadLevel(level);
         }
     });
 
@@ -89,7 +92,7 @@ function animate() {
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
     //camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
     // Clamp the camera's position within the room boundaries
-    const roomSize = 25; // Half the size of the room since the room is 30x30
+    //const roomSize = 25; // Half the size of the room since the room is 30x30
     //camera.position.x = THREE.MathUtils.clamp(camera.position.x, -roomSize + 1, roomSize - 1);
     //camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1, 9); // Stay within the floor and ceiling
     //camera.position.z = THREE.MathUtils.clamp(camera.position.z, -roomSize + 1, roomSize - 1);
