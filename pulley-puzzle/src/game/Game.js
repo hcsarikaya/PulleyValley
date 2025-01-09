@@ -7,9 +7,11 @@ import { CameraControls } from '../controls/CameraControls.js';
 
 let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls;
 
+
 export function initGame(level) {
     scene = new THREE.Scene();
     level = Number(level);
+    console.log("level", level);
     let roomSize = [50,50,30];
     let roomCenter =  [0,0,0];
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -47,7 +49,7 @@ export function initGame(level) {
     levelManager = new LevelManager(scene);
     levelManager.loadLevel(level);
     levelManager.roomSize = roomSize;
-    
+
 
     // Create player
     player = new Player(scene);
@@ -56,6 +58,77 @@ export function initGame(level) {
 
     interectionSystem = new InteractionSystem(scene, camera);
     interectionSystem.setPlayer(player.mesh);
+    console.log(levelManager.rooms[level-1])
+    levelManager.levels[level - 1].objects.forEach((obj) => {
+        if (obj.category === 'Pulley') {
+            interectionSystem.addInteractiveObject(obj, {
+                proximityThreshold: 15,
+                promptText: 'Press "E" to colect',
+                onInteract: (objMesh) => {
+                    console.log('colecting...');
+                    scene.remove(objMesh);
+                }
+            })
+        }else if(obj.category === 'weight') {
+            interectionSystem.addInteractiveObject(obj, {
+                proximityThreshold: 15,
+                promptText: 'Press "E" to colect',
+                onInteract: (objMesh) => {
+                    console.log('colecting...');
+                    scene.remove(objMesh)
+                }
+            });
+        }
+        else if(obj.category === 'button') {
+            switch (obj.opt){
+                case "setting":
+                    interectionSystem.addInteractiveObject(obj, {
+                        proximityThreshold: 15,
+                        promptText: 'Settings',
+                        onInteract: (objMesh) => {
+                            console.log('Settings...');
+                            scene.remove(objMesh)
+                        }
+                    });
+                case 1:
+                    interectionSystem.addInteractiveObject(obj, {
+                        proximityThreshold: 15,
+                        promptText: 'Level 1',
+                        onInteract: (objmesh) => {
+                            console.log("wrtgsdfs")
+                            roomCenter[2] -= roomSize[0];
+                            levelManager.loadLevel(level+1);
+
+                            levelManager.rooms[level].wallIn.position.y -=30
+
+                            levelManager.checkLevel = true
+
+
+                        }
+                    });
+                case 2:
+                    interectionSystem.addInteractiveObject(obj, {
+                        proximityThreshold: 15,
+                        promptText: 'Level 2',
+                        onInteract: (objMesh) => {
+                            console.log('loading level ..');
+
+                        }
+                    });
+                case 3:
+                    interectionSystem.addInteractiveObject(obj, {
+                        proximityThreshold: 15,
+                        promptText: 'Level 3',
+                        onInteract: (objMesh) => {
+                            console.log('loading level ..');
+
+                        }
+                    });
+            }
+
+        }
+    });
+
     interectionSystem.addInteractiveObject(levelManager.levels[level-1].doorOut, {
         proximityThreshold: 15,
         promptText: 'Press "E" to open door',
@@ -64,14 +137,14 @@ export function initGame(level) {
             // Add your door opening animation/logic here
             doorMesh.rotation.y += Math.PI / 2;
             level += 1
-            roomCenter[2] += roomSize[0];
+            roomCenter[2] -= roomSize[0];
             levelManager.loadLevel(level);
         }
     });
 
 
 
-
+    console.log(levelManager.rooms[level -1].wallOut)
 
 
     animate();
@@ -83,6 +156,7 @@ function animate() {
     controls.update();
     interectionSystem.update();
     cameraControls.update();
+    levelManager.update();
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
     //camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
     // Clamp the camera's position within the room boundaries
@@ -93,3 +167,5 @@ function animate() {
 
     renderer.render(scene, camera);
 }
+
+

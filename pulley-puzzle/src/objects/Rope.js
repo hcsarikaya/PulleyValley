@@ -3,6 +3,7 @@ import * as THREE from 'three';
 export class Rope {
     constructor(scene) {
         this.scene = scene;
+        this.category = 'rope'
         this.ropePos = [];
         this.segments = []
         // Create the rope geometry

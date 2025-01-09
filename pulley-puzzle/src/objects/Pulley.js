@@ -3,11 +3,11 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export class Pulley {
     constructor(scene, position = [ 5,  5,  0 ], material) {
-
+        this.category = 'Pulley';
         this.scene = scene;
         this.model;
         const loader = new GLTFLoader();
-        loader.load( '../public/models/pulley.glb', function ( glb ) {
+        loader.load( '../models/pulley.glb', function ( glb ) {
 
             this.model = glb.scene;
             this.model.position.set(10,10,0);

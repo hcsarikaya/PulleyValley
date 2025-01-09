@@ -51,7 +51,7 @@ export class Room{
         this.scene.add(this.wallL);
 
         this.wallR = this.wall([this.size[1], this.size[2], 1])
-        this.wallR.position.set(this.size[0]/2, this.size[2]/2, 0+this.position);
+        this.wallR.position.set(this.size[0]/2, this.size[2]/2 , 0+this.position);
         this.wallR.rotation.y = Math.PI / 2;
         this.wallR.material = this.wallMaterial;
         this.scene.add(this.wallR);
@@ -105,7 +105,7 @@ export class Room{
         const doorBrush = new Brush(doorGeometry);
 
         const evaluator = new Evaluator();
-        const wallWithDoorMesh = evaluator.evaluate( wallBrush, doorBrush, SUBTRACTION );
+        let wallWithDoorMesh = evaluator.evaluate( wallBrush, doorBrush, SUBTRACTION );
 
         return wallWithDoorMesh;
 

@@ -3,9 +3,19 @@
     {
 
       "objects": [
+        { "type":  "button", "position" : [-15, 0, 0], "opt":  "setting"},
+        { "type":  "button", "position" : [15, 0, 7], "opt":  1},
+        { "type":  "button", "position" : [15, 0, 0], "opt":  2},
+        { "type":  "button", "position" : [15, 0, -7], "opt": 3},
+        { "type":  "weight", "position" : [ 5,  0.5,  5 ]}
+      ]
+    },
+    {
+      "objects": [
         { "type":  "pulley", "position" : [ 10,  5,  0 ]},
         { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
         { "type":  "rope", "position" : [0, 0, -5]}
+
       ]
     },
     {
