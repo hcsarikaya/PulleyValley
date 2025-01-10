@@ -68,6 +68,8 @@ export async function initGame(level) {
     interectionSystem = new InteractionSystem(scene, camera);
     interectionSystem.setPlayer(player.mesh);
 
+    
+    //tüm levellardaki objeleri eklemek için loop gerekli
     levelManager.levels[level - 1].objects.forEach((obj) => {
         if (obj.category === 'Pulley') {
             interectionSystem.addInteractiveObject(obj, {
@@ -105,10 +107,10 @@ export async function initGame(level) {
                         promptText: 'Level 1',
                         onInteract: (objmesh) => {
 
-                            roomCenter[2] -= roomSize[0];
-                            levelManager.loadLevel(level+1);
 
-                            levelManager.rooms[level].wallIn.position.y -=45
+
+
+                            levelManager.rooms[1].wallIn.position.y -=45
 
                             levelManager.checkLevel = true
 
