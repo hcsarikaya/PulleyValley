@@ -10,9 +10,5 @@
   },
   "devDependencies": {
     "vite": "^6.0.1"
-  },
-  "dependencies": {
-    "three": "^0.172.0",
-    "three-bvh-csg": "^0.0.16"
   }
 }
