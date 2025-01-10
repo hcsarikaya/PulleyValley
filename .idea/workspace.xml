@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="5fccdedc-4e53-4fb0-a1d7-d330d890acc2" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/node_modules/.package-lock.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/node_modules/three-bvh-csg/LICENSE" afterDir="false" />
@@ -1217,12 +1218,30 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/controls/CameraControls.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/controls/CameraControls.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" afterDir="false" />
+=======
+    <list default="true" id="44c2f113-b458-4da8-b5cf-231242063c96" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/controls/CameraControls.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/controls/CameraControls.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Player.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Player.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/interactionManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/interactionManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/levels/level.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/levelConfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/levels/levelConfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Rope.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Rope.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/style.css" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+<<<<<<< Updated upstream
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -1307,4 +1326,21 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+=======
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "git-widget-placeholder": "cagri",
+    "node.js.selected.package.tslint": "(autodetect)"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+>>>>>>> Stashed changes
 </project>

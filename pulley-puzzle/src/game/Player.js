@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
 export class Player {
-    constructor(scene) {
+    constructor(scene, camera) {
         this.scene = scene;
-
+        this.camera = camera;
         this.speed = 0.1;
 
 
@@ -11,10 +11,13 @@ export class Player {
         const geometry = new THREE.BoxGeometry(1, 2, 1);
         const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.set(0, 1, 0); // Start at the center of the room
+
+        this.mesh.position.set(this.camera.position.x,this.camera.position.y-3, this.camera.position.z); // Start at the center of the room
+
         scene.add(this.mesh);
 
         // Movement state
+        /*
         this.moveForward = false;
         this.moveBackward = false;
         this.moveLeft = false;
@@ -24,7 +27,7 @@ export class Player {
 
         // Add keyboard listeners
         this.addKeyboardControls();
-
+        */
     }
 
     addKeyboardControls() {
@@ -76,14 +79,15 @@ export class Player {
     }
 
     update() {
+        /*
         const velocity = new THREE.Vector3();
 
         if (this.moveForward) velocity.z -= this.speed;
         if (this.moveBackward) velocity.z += this.speed;
         if (this.moveLeft) velocity.x -= this.speed;
         if (this.moveRight) velocity.x += this.speed;
-
-        this.mesh.position.add(velocity);
+        */
+        this.mesh.position.set(this.camera.position.x,this.camera.position.y-3,this.camera.position.z);
 
     }
 

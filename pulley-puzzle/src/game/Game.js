@@ -8,10 +8,26 @@ import InventoryUI from '../ui/InventoryUI.js';
 import SoundManager from './SoundManager.js';
 
 let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI, soundManager;
+<<<<<<< Updated upstream
+=======
+let clock = new THREE.Clock();  // For deltaTime
+let physicsWorld;
+//let editMode = false;
 
-export function initGame(level) {
+import { PhysicsWorld } from '../objects/PhysicsWorld.js';
+
+>>>>>>> Stashed changes
+
+export async function initGame(level) {
     scene = new THREE.Scene();
     level = Number(level);
+<<<<<<< Updated upstream
+=======
+
+    physicsWorld = new PhysicsWorld();
+    await physicsWorld.init(); //Wait for Ammo to load
+
+>>>>>>> Stashed changes
     let roomSize = [50,50,30];
     let roomCenter =  [0,0,0];
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -45,18 +61,97 @@ export function initGame(level) {
 
 
     // Initialize and load the level
-    levelManager = new LevelManager(scene);
+    levelManager = new LevelManager(scene, physicsWorld);
     levelManager.loadLevel(level);
     levelManager.roomSize = roomSize;
     
 
     // Create player
+<<<<<<< Updated upstream
     player = new Player(scene);
     camera.position.set(player.mesh.position.x, player.mesh.position.y+50, player.mesh.position.z+20);
     camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
 
     interectionSystem = new InteractionSystem(scene, camera);
     interectionSystem.setPlayer(player.mesh);
+=======
+    player = new Player(scene,cameraControls.camera);
+
+
+    interectionSystem = new InteractionSystem(scene, camera);
+    interectionSystem.setPlayer(player.mesh);
+
+    levelManager.levels[level - 1].objects.forEach((obj) => {
+        if (obj.category === 'Pulley') {
+            interectionSystem.addInteractiveObject(obj, {
+                proximityThreshold: 15,
+                promptText: 'Press "E" to colect',
+                onInteract: (objMesh) => {
+                    console.log('colecting...');
+                    scene.remove(objMesh);
+                }
+            })
+        }else if(obj.category === 'weight') {
+            interectionSystem.addInteractiveObject(obj, {
+                proximityThreshold: 15,
+                promptText: 'Press "E" to colect',
+                onInteract: (objMesh) => {
+                    console.log('colecting...');
+                    scene.remove(objMesh)
+                }
+            });
+        }
+        else if(obj.category === 'button') {
+            switch (obj.opt){
+                case "setting":
+                    interectionSystem.addInteractiveObject(obj, {
+                        proximityThreshold: 15,
+                        promptText: 'Settings',
+                        onInteract: (objMesh) => {
+                            console.log('Settings...');
+                            scene.remove(objMesh)
+                        }
+                    });
+                case 1:
+                    interectionSystem.addInteractiveObject(obj, {
+                        proximityThreshold: 15,
+                        promptText: 'Level 1',
+                        onInteract: (objmesh) => {
+
+                            roomCenter[2] -= roomSize[0];
+                            levelManager.loadLevel(level+1);
+
+                            levelManager.rooms[level].wallIn.position.y -=30
+
+                            levelManager.checkLevel = true
+
+
+                        }
+                    });
+                case 2:
+                    interectionSystem.addInteractiveObject(obj, {
+                        proximityThreshold: 15,
+                        promptText: 'Level 2',
+                        onInteract: (objMesh) => {
+                            console.log('loading level ..');
+
+                        }
+                    });
+                case 3:
+                    interectionSystem.addInteractiveObject(obj, {
+                        proximityThreshold: 15,
+                        promptText: 'Level 3',
+                        onInteract: (objMesh) => {
+                            console.log('loading level ..');
+
+                        }
+                    });
+            }
+
+        }
+    });
+
+>>>>>>> Stashed changes
     interectionSystem.addInteractiveObject(levelManager.levels[level-1].doorOut, {
         proximityThreshold: 15,
         promptText: 'Press "E" to open door',
@@ -78,7 +173,11 @@ export function initGame(level) {
     animate();
 }
 
+<<<<<<< Updated upstream
 const clock = new THREE.Clock();
+=======
+
+>>>>>>> Stashed changes
 
 function animate() {
     requestAnimationFrame(animate);
@@ -87,6 +186,7 @@ function animate() {
 
     const delta = clock.getDelta();
     cameraControls.update(delta); // Update controls
+<<<<<<< Updated upstream
 
 
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
@@ -96,6 +196,18 @@ function animate() {
     //camera.position.x = THREE.MathUtils.clamp(camera.position.x, -roomSize + 1, roomSize - 1);
     //camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1, 9); // Stay within the floor and ceiling
     //camera.position.z = THREE.MathUtils.clamp(camera.position.z, -roomSize + 1, roomSize - 1);
+=======
+    levelManager.update();
+    physicsWorld.update(delta);
+
+    levelManager.levels.forEach(lvl => {
+        lvl.objects.forEach(obj => {
+            if (obj.update) obj.update(); // e.g., rope has an update() method
+        });
+    });
+
+
+>>>>>>> Stashed changes
 
     renderer.render(scene, camera);
 }
