@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export class Pulley {
-    constructor(scene,physicsWorld, position = [ 5,  5,  0 ], material) {
+    constructor(scene, physicsWorld, position = [0, 0, 0], scale = 1) {
         this.category = 'Pulley';
         this.scene = scene;
         this.physicsWorld = physicsWorld;
@@ -11,30 +11,34 @@ export class Pulley {
         this.body = null; // Ammo.js rigid body
         this.model = null; // Loaded GLTF model
 
-        // Create material
-        this.material = material || new THREE.MeshBasicMaterial({ color: 0xffd700 });
+        // Create material for fallback geometry
+        this.material = new THREE.MeshBasicMaterial({ color: 0xffd700 });
 
-        // Create basic pulley geometry (fallback for physics)
+        // Create basic pulley geometry as a fallback
         const geometry = new THREE.CylinderGeometry(2, 2, 0.5, 32);
         this.mesh = new THREE.Mesh(geometry, this.material);
         this.mesh.position.set(position[0], position[1], position[2]);
         this.mesh.rotation.x = Math.PI / 2;
-        scene.add(this.mesh);
+        this.mesh.scale.set(scale, scale, scale);
+        //scene.add(this.mesh);
 
         // Add the Ammo.js physics body
         this.createPhysicsBody(position);
 
-        // Load the GLTF model (optional visual enhancement)
+        // Load the GLTF model
         const loader = new GLTFLoader();
         loader.load(
             '../public/models/pulley.glb',
-            (glb) => {
-                this.model = glb.scene;
+            (gltf) => {
+                this.model = gltf.scene;
                 this.model.position.copy(this.mesh.position);
                 this.model.rotation.copy(this.mesh.rotation);
+                this.model.scale.set(scale, scale, scale);
                 scene.add(this.model);
             },
-            undefined,
+            (xhr) => {
+                console.log(`Pulley is ${Math.round((xhr.loaded / xhr.total) * 100)}% loaded`);
+            },
             (error) => {
                 console.error('Failed to load pulley model:', error);
             }
@@ -76,6 +80,17 @@ export class Pulley {
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
     }
 
+    setScale(scale) {
+        // Update the scale of both the Three.js mesh and the GLTF model
+        if (this.mesh) {
+            this.mesh.scale.set(scale, scale, scale);
+        }
+
+        if (this.model) {
+            this.model.scale.set(scale, scale, scale);
+        }
+    }
+
     update() {
         if (!this.body) return;
 
@@ -98,8 +113,8 @@ export class Pulley {
     }
 
     rotate(amount) {
+        // Rotate both the mesh and the model
         if (this.mesh) this.mesh.rotation.z += amount;
         if (this.model) this.model.rotation.z += amount;
     }
-
 }

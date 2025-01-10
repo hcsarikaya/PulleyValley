@@ -42,10 +42,10 @@ export class Level{
         let position;
         switch (obj.type) {
             case "pulley":
-                position = obj.position
-                position[2] += this.pos
-                object = new Pulley(this.scene ,this.physicsWorld,position);
-                this.objects.push(object)
+                position = obj.position;
+                position[2] += this.pos;
+                object = new Pulley(this.scene, this.physicsWorld, position, 10);
+                this.objects.push(object);
                 break;
             case "weight":
                 position = obj.position
