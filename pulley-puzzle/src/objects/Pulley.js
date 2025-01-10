@@ -2,26 +2,10 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export class Pulley {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    constructor(scene, position = [ 5,  5,  0 ], material) {
-
-        this.scene = scene;
-        this.model;
-        const loader = new GLTFLoader();
-        loader.load( '../public/models/pulley.glb', function ( glb ) {
-=======
     constructor(scene,physicsWorld, position = [ 5,  5,  0 ], material) {
         this.category = 'Pulley';
         this.scene = scene;
         this.physicsWorld = physicsWorld;
->>>>>>> Stashed changes
-=======
-    constructor(scene,physicsWorld, position = [ 5,  5,  0 ], material) {
-        this.category = 'Pulley';
-        this.scene = scene;
-        this.physicsWorld = physicsWorld;
->>>>>>> Stashed changes
 
         this.mesh = null; // Three.js mesh
         this.body = null; // Ammo.js rigid body

@@ -4,21 +4,8 @@ import Ammo from 'ammo.js/ammo.js'
 export class Rope {
     constructor(scene,physicsWorld, startObj = [0, 10, 0], endObj = [0, 5, 0], segments = 10) {
         this.scene = scene;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        this.ropePos = [];
-        this.segments = []
-        // Create the rope geometry
-        //const geometry = new THREE.CylinderGeometry(0.1, 0.1, start.distanceTo(end));
-        this.material = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
-=======
         this.physicsWorld = physicsWorld;
         this.category = 'rope';
->>>>>>> Stashed changes
-=======
-        this.physicsWorld = physicsWorld;
-        this.category = 'rope';
->>>>>>> Stashed changes
 
         this.startPos = [startObj.mesh.position.x, startObj.mesh.position.y, startObj.mesh.position.z];
         this.endPos = [endObj.mesh.position.x, endObj.mesh.position.y, endObj.mesh.position.z];

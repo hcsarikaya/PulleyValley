@@ -10,6 +10,9 @@ export class LevelManager {
         this.pos = 0;
         this.levels = []
         this.roomSize = [50,50,30]
+        this.rooms = []
+        this.checkLevel = false
+        this.currentLevel = 1;
     }
 
     loadLevel(level) {
@@ -22,29 +25,7 @@ export class LevelManager {
          */
 
 
-        const room = new Room(this.scene, this.roomSize);
-        room.createRoom(this.pos);
-        this.pos = this.pos+ this.roomSize[0];
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        this.levels.push(new Level(room));
-        this.levels[level-1].addObject(level);
-        // Load the appropriate level based on level number
-        /*
-
-        switch (level) {
-            case "1":
-                loadLevel1(this.scene);
-                break;
-            case "2":
-                loadLevel2(this.scene);
-                break;
-            default:
-                console.error('Level not implemented!');
-        }
-        */
-=======
 
         this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
         this.rooms[level-1].createRoom(this.pos);
@@ -54,17 +35,6 @@ export class LevelManager {
         this.levels[level-1].addObject(level);
 
 
-=======
-
-        this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
-        this.rooms[level-1].createRoom(this.pos);
-        this.pos = this.pos- this.roomSize[0];
-
-        this.levels.push(new Level(this.rooms[level-1], this.physicsWorld));
-        this.levels[level-1].addObject(level);
-
-
->>>>>>> Stashed changes
     };
     levelAnimation(level, check){
         //console.log(this.rooms[level -1].wallOut.position.y)
@@ -85,6 +55,5 @@ export class LevelManager {
             this.levelAnimation(this.currentLevel, this.checkLevel)
         }
 
->>>>>>> Stashed changes
     }
 }

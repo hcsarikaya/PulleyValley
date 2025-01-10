@@ -3,20 +3,9 @@ import * as THREE from 'three';
 export class Weight {
     constructor(scene,physicsWorld, position = [ 5,  0.5,  5 ]) {
         this.scene = scene;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-        // Create the weight geometry
-=======
         this.physicsWorld = physicsWorld;
         this.category = 'weight';
         /// Three.js geometry for the weight
->>>>>>> Stashed changes
-=======
-        this.physicsWorld = physicsWorld;
-        this.category = 'weight';
-        /// Three.js geometry for the weight
->>>>>>> Stashed changes
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         const material = new THREE.MeshBasicMaterial({ color: 0x333333 });
         this.mesh = new THREE.Mesh(geometry, material);

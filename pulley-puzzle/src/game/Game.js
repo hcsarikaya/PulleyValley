@@ -8,43 +8,20 @@ import InventoryUI from '../ui/InventoryUI.js';
 import SoundManager from './SoundManager.js';
 
 let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI, soundManager;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-let clock = new THREE.Clock();  // For deltaTime
-let physicsWorld;
-//let editMode = false;
-=======
 let clock = new THREE.Clock();  // For deltaTime
 let physicsWorld;
 //let editMode = false;
 
 import { PhysicsWorld } from '../objects/PhysicsWorld.js';
->>>>>>> Stashed changes
 
-import { PhysicsWorld } from '../objects/PhysicsWorld.js';
-
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
 
 export async function initGame(level) {
     scene = new THREE.Scene();
     level = Number(level);
-<<<<<<< Updated upstream
-=======
-=======
-export async function initGame(level) {
-    scene = new THREE.Scene();
-    level = Number(level);
->>>>>>> Stashed changes
 
     physicsWorld = new PhysicsWorld();
     await physicsWorld.init(); //Wait for Ammo to load
 
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     let roomSize = [50,50,30];
     let roomCenter =  [0,0,0];
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -84,27 +61,11 @@ export async function initGame(level) {
     
 
     // Create player
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    player = new Player(scene);
-    camera.position.set(player.mesh.position.x, player.mesh.position.y+50, player.mesh.position.z+20);
-    camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
-
-    interectionSystem = new InteractionSystem(scene, camera);
-    interectionSystem.setPlayer(player.mesh);
-=======
     player = new Player(scene,cameraControls.camera);
 
 
     interectionSystem = new InteractionSystem(scene, camera);
     interectionSystem.setPlayer(player.mesh);
-=======
-    player = new Player(scene,cameraControls.camera);
-
-
-    interectionSystem = new InteractionSystem(scene, camera);
-    interectionSystem.setPlayer(player.mesh);
->>>>>>> Stashed changes
 
     levelManager.levels[level - 1].objects.forEach((obj) => {
         if (obj.category === 'Pulley') {
@@ -176,7 +137,6 @@ export async function initGame(level) {
         }
     });
 
->>>>>>> Stashed changes
     interectionSystem.addInteractiveObject(levelManager.levels[level-1].doorOut, {
         proximityThreshold: 15,
         promptText: 'Press "E" to open door',
@@ -185,7 +145,7 @@ export async function initGame(level) {
             // Add your door opening animation/logic here
             doorMesh.rotation.y += Math.PI / 2;
             level += 1
-            roomCenter[2] += roomSize[0];
+            roomCenter[2] -= roomSize[0];
             levelManager.loadLevel(level);
         }
     });
@@ -198,15 +158,7 @@ export async function initGame(level) {
     animate();
 }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-const clock = new THREE.Clock();
-=======
 
->>>>>>> Stashed changes
-=======
-
->>>>>>> Stashed changes
 
 function animate() {
     requestAnimationFrame(animate);
@@ -215,20 +167,6 @@ function animate() {
 
     const delta = clock.getDelta();
     cameraControls.update(delta); // Update controls
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-
-    //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
-    //camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
-    // Clamp the camera's position within the room boundaries
-    //const roomSize = 25; // Half the size of the room since the room is 30x30
-    //camera.position.x = THREE.MathUtils.clamp(camera.position.x, -roomSize + 1, roomSize - 1);
-    //camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1, 9); // Stay within the floor and ceiling
-    //camera.position.z = THREE.MathUtils.clamp(camera.position.z, -roomSize + 1, roomSize - 1);
-=======
-=======
->>>>>>> Stashed changes
     levelManager.update();
     physicsWorld.update(delta);
 
@@ -239,10 +177,6 @@ function animate() {
     });
 
 
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     renderer.render(scene, camera);
 }
