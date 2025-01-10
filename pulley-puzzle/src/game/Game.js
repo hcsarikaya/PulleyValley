@@ -9,13 +9,22 @@ import SoundManager from './SoundManager.js';
 
 let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI, soundManager;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+let clock = new THREE.Clock();  // For deltaTime
+let physicsWorld;
+//let editMode = false;
 =======
 let clock = new THREE.Clock();  // For deltaTime
 let physicsWorld;
 //let editMode = false;
 
 import { PhysicsWorld } from '../objects/PhysicsWorld.js';
+>>>>>>> Stashed changes
 
+import { PhysicsWorld } from '../objects/PhysicsWorld.js';
+
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 
 export async function initGame(level) {
@@ -23,10 +32,18 @@ export async function initGame(level) {
     level = Number(level);
 <<<<<<< Updated upstream
 =======
+=======
+export async function initGame(level) {
+    scene = new THREE.Scene();
+    level = Number(level);
+>>>>>>> Stashed changes
 
     physicsWorld = new PhysicsWorld();
     await physicsWorld.init(); //Wait for Ammo to load
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     let roomSize = [50,50,30];
     let roomCenter =  [0,0,0];
@@ -68,6 +85,7 @@ export async function initGame(level) {
 
     // Create player
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     player = new Player(scene);
     camera.position.set(player.mesh.position.x, player.mesh.position.y+50, player.mesh.position.z+20);
     camera.lookAt(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z);
@@ -80,6 +98,13 @@ export async function initGame(level) {
 
     interectionSystem = new InteractionSystem(scene, camera);
     interectionSystem.setPlayer(player.mesh);
+=======
+    player = new Player(scene,cameraControls.camera);
+
+
+    interectionSystem = new InteractionSystem(scene, camera);
+    interectionSystem.setPlayer(player.mesh);
+>>>>>>> Stashed changes
 
     levelManager.levels[level - 1].objects.forEach((obj) => {
         if (obj.category === 'Pulley') {
@@ -174,7 +199,11 @@ export async function initGame(level) {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 const clock = new THREE.Clock();
+=======
+
+>>>>>>> Stashed changes
 =======
 
 >>>>>>> Stashed changes
@@ -187,6 +216,7 @@ function animate() {
     const delta = clock.getDelta();
     cameraControls.update(delta); // Update controls
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
     //camera.position.set(player.mesh.position.x, player.mesh.position.y, player.mesh.position.z-10);
@@ -197,6 +227,8 @@ function animate() {
     //camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1, 9); // Stay within the floor and ceiling
     //camera.position.z = THREE.MathUtils.clamp(camera.position.z, -roomSize + 1, roomSize - 1);
 =======
+=======
+>>>>>>> Stashed changes
     levelManager.update();
     physicsWorld.update(delta);
 
@@ -207,6 +239,9 @@ function animate() {
     });
 
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     renderer.render(scene, camera);

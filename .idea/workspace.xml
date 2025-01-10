@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <list default="true" id="5fccdedc-4e53-4fb0-a1d7-d330d890acc2" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/node_modules/.package-lock.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/node_modules/three-bvh-csg/LICENSE" afterDir="false" />
@@ -1219,6 +1220,8 @@
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/controls/CameraControls.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/controls/CameraControls.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" afterDir="false" />
 =======
+=======
+>>>>>>> Stashed changes
     <list default="true" id="44c2f113-b458-4da8-b5cf-231242063c96" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/controls/CameraControls.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/controls/CameraControls.js" afterDir="false" />
@@ -1234,6 +1237,9 @@
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Rope.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Rope.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/style.css" afterDir="false" />
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -1241,6 +1247,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -1327,6 +1334,8 @@
     <option name="version" value="3" />
   </component>
 =======
+=======
+>>>>>>> Stashed changes
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -1342,5 +1351,8 @@
   <component name="TaskManager">
     <servers />
   </component>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 </project>

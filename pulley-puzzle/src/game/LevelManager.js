@@ -27,6 +27,7 @@ export class LevelManager {
         this.pos = this.pos+ this.roomSize[0];
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         this.levels.push(new Level(room));
         this.levels[level-1].addObject(level);
         // Load the appropriate level based on level number
@@ -53,6 +54,17 @@ export class LevelManager {
         this.levels[level-1].addObject(level);
 
 
+=======
+
+        this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
+        this.rooms[level-1].createRoom(this.pos);
+        this.pos = this.pos- this.roomSize[0];
+
+        this.levels.push(new Level(this.rooms[level-1], this.physicsWorld));
+        this.levels[level-1].addObject(level);
+
+
+>>>>>>> Stashed changes
     };
     levelAnimation(level, check){
         //console.log(this.rooms[level -1].wallOut.position.y)

@@ -23,6 +23,17 @@
         { "type":  "rope", "position" : [0, 0, -5]}
 
       ]
+<<<<<<< Updated upstream
+=======
+    },
+    {
+      "objects": [
+        { "type":  "pulley", "position" : [ 10,  5,  0 ]},
+        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "type":  "rope", "position" : [0, 0, -5]}
+
+      ]
+>>>>>>> Stashed changes
     }
   ]
 }

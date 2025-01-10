@@ -13,6 +13,7 @@ export class Level{
         this.objects=[];
         this.pos = this.room.position;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         if(this.pos == 0){
             this.doorIn = new Door(this.scene, [0, 15, -25+this.pos ]);
         }
@@ -22,6 +23,12 @@ export class Level{
 
 
         if(this.pos == 0){
+=======
+        this.physicsWorld = physicsWorld;
+
+
+        if(this.pos == 0){
+>>>>>>> Stashed changes
             this.doorIn = new Door(this.scene,this.physicsWorld, [0, 15, +25+this.pos ]);
 
         }
@@ -61,6 +68,12 @@ export class Level{
 
                 break;
             case "rope":
+<<<<<<< Updated upstream
+=======
+
+                object = new Rope(this.scene,this.physicsWorld ,this.objects[0],this.objects[1], 10);
+                this.objects.push(object);
+>>>>>>> Stashed changes
 
                 object = new Rope(this.scene,this.physicsWorld ,this.objects[0],this.objects[1], 10);
                 this.objects.push(object);

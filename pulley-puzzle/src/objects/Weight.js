@@ -4,8 +4,14 @@ export class Weight {
     constructor(scene,physicsWorld, position = [ 5,  0.5,  5 ]) {
         this.scene = scene;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
         // Create the weight geometry
+=======
+        this.physicsWorld = physicsWorld;
+        this.category = 'weight';
+        /// Three.js geometry for the weight
+>>>>>>> Stashed changes
 =======
         this.physicsWorld = physicsWorld;
         this.category = 'weight';
