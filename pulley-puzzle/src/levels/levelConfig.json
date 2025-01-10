@@ -19,13 +19,20 @@
       ]
     },
     {
-
       "objects": [
         { "type":  "pulley", "position" : [ 10,  5,  0 ]},
         { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
         { "type":  "rope", "position" : [0, 0, -5]}
-       ]
 
+      ]
+    },
+    {
+      "objects": [
+        { "type":  "pulley", "position" : [ 10,  5,  0 ]},
+        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "type":  "rope", "position" : [0, 0, -5]}
+
+      ]
     }
   ]
 }

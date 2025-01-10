@@ -3,9 +3,11 @@ import * as THREE from 'three';
 import { SUBTRACTION, Brush, Evaluator } from 'three-bvh-csg';
 
 export class Room{
-    constructor(scene, size){
+    constructor(scene, size, physicsWorld){
         this.size = size;
         this.scene = scene;
+        this.physicsWorld = physicsWorld;
+
         this.wallIn;
         this.wallOut;
         this.wallL;
@@ -34,48 +36,48 @@ export class Room{
     createRoom(position) {
         this.position = position ? position :0;
 
-        this.wallIn = this.wallWithDoor([this.size[0], this.size[2], 1])
-        this.wallIn.position.set(0, this.size[2]/2, this.size[1]/2+this.position);
-        this.wallIn.material = this.wallMaterial;
-        this.scene.add(this.wallIn);
+        this.wallIn = this.createWallWithDoorPhysics(
+            [this.size[0], this.size[2], 1],
+            [0, this.size[2] / 2, this.size[1] / 2 + this.position]
+        );
 
-        this.wallOut = this.wallWithDoor([this.size[0], this.size[2], 1])
-        this.wallOut.position.set(0, this.size[2]/2, -this.size[1]/2+this.position);
-        this.wallOut.material = this.wallMaterial;
-        this.scene.add(this.wallOut);
+        this.wallOut = this.createWallWithDoorPhysics(
+            [this.size[0], this.size[2], 1],
+            [0, this.size[2] / 2, -this.size[1] / 2 + this.position]
+        );
 
-        this.wallL = this.wall([this.size[1], this.size[2], 1])
-        this.wallL.position.set(-this.size[0]/2, this.size[2]/2, 0+this.position);
-        this.wallL.rotation.y = Math.PI / 2;
-        this.wallL.material = this.wallMaterial;
-        this.scene.add(this.wallL);
 
-        this.wallR = this.wall([this.size[1], this.size[2], 1])
-        this.wallR.position.set(this.size[0]/2, this.size[2]/2 , 0+this.position);
-        this.wallR.rotation.y = Math.PI / 2;
-        this.wallR.material = this.wallMaterial;
+        this.wallL = this.createWallWithPhysics(
+            [this.size[1], this.size[2], 1],
+            [-this.size[0] / 2, this.size[2] / 2, 0 + this.position],
+            Math.PI / 2
+        );
+        this.scene.add(this.wallL)
+        this.wallR = this.createWallWithPhysics(
+            [this.size[1], this.size[2], 1],
+            [this.size[0] / 2, this.size[2] / 2, 0 + this.position],
+            Math.PI / 2
+        );
         this.scene.add(this.wallR);
 
-        this.floor = this.wall([this.size[0], 1, this.size[1]]);
+        // Create and add floor
+        this.floor = this.createWallWithPhysics(
+            [this.size[0], 1, this.size[1]],
+            [0, -0.5, this.position]
+        );
+
         this.floor.material = this.floorMaterial;
-        this.floor.position.y = -0.5;
-        this.floor.position.z = this.position;
         this.scene.add(this.floor);
 
-        this.ceiling = this.wall([this.size[0], 1, this.size[1]]);
+        // Create and add ceiling
+        this.ceiling = this.createWallWithPhysics(
+            [this.size[0], 1, this.size[1]],
+            [0, this.size[2], this.position]
+        );
         this.ceiling.material = this.floorMaterial;
-        this.ceiling.position.y = this.size[2];
-        this.ceiling.position.z = this.position;
         this.scene.add(this.ceiling);
 
-        // Add basic lighting to the scene
-        const light = new THREE.PointLight(0xffffff, 1);
-        light.position.set(0, 10, 10); // Position the light in the scene
-        this.scene.add(light);
 
-// Optional: Ambient light for general illumination
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5); // Soft light
-        this.scene.add(ambientLight);
     }
 
     wall(size) {
@@ -109,6 +111,79 @@ export class Room{
 
         return wallWithDoorMesh;
 
+    }
+    createWallWithPhysics(size, position, rotationY = 0) {
+        // Create the Three.js mesh
+        const geometry = new THREE.BoxGeometry(size[0], size[1], size[2]);
+        const material = this.wallMaterial;
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(position[0], position[1], position[2]);
+        mesh.rotation.y = rotationY;
+        //this.scene.add(mesh);
+
+        // Create the Ammo.js physics body
+        const mass = 0; // Static object
+        const shape = new this.physicsWorld.AmmoLib.btBoxShape(
+            new this.physicsWorld.AmmoLib.btVector3(size[0] / 2, size[1] / 2, size[2] / 2)
+        );
+
+        const transform = new this.physicsWorld.AmmoLib.btTransform();
+        transform.setIdentity();
+        transform.setOrigin(
+            new this.physicsWorld.AmmoLib.btVector3(position[0], position[1], position[2])
+        );
+
+        const motionState = new this.physicsWorld.AmmoLib.btDefaultMotionState(transform);
+        const bodyInfo = new this.physicsWorld.AmmoLib.btRigidBodyConstructionInfo(mass, motionState, shape);
+        const body = new this.physicsWorld.AmmoLib.btRigidBody(bodyInfo);
+
+        this.physicsWorld.physicsWorld.addRigidBody(body);
+
+        return mesh;
+    }
+    createWallWithDoorPhysics(size, position, rotationY = 0) {
+        // Create the Three.js mesh
+        const material = this.wallMaterial;
+        const wallGeometry = new THREE.BoxGeometry(size[0], size[1], size[2]);
+        const wallBrush = new Brush(wallGeometry);
+
+        // Create the door geometry and apply transformations
+        const doorWidth = 10;
+        const doorHeight = 15;
+        const doorDepth = size[2];
+        const doorGeometry = new THREE.BoxGeometry(doorWidth, doorHeight, doorDepth);
+
+        // Position the door within the wall
+        doorGeometry.translate(0, -size[1] / 2 + doorHeight / 2, 0);
+
+        const doorBrush = new Brush(doorGeometry);
+
+        const evaluator = new Evaluator();
+        let wallWithDoorMesh = evaluator.evaluate( wallBrush, doorBrush, SUBTRACTION);
+        wallWithDoorMesh.position.set(position[0], position[1], position[2]);
+        wallWithDoorMesh.rotation.y = rotationY;
+        wallWithDoorMesh.material = material;
+        this.scene.add(wallWithDoorMesh);
+
+        // Create the Ammo.js physics body
+        const mass = 0; // Static object
+        const shape = new this.physicsWorld.AmmoLib.btBoxShape(
+            new this.physicsWorld.AmmoLib.btVector3(size[0] / 2, size[1] / 2, size[2] / 2)
+        );
+
+        const transform = new this.physicsWorld.AmmoLib.btTransform();
+        transform.setIdentity();
+        transform.setOrigin(
+            new this.physicsWorld.AmmoLib.btVector3(position[0], position[1], position[2])
+        );
+
+        const motionState = new this.physicsWorld.AmmoLib.btDefaultMotionState(transform);
+        const bodyInfo = new this.physicsWorld.AmmoLib.btRigidBodyConstructionInfo(mass, motionState, shape);
+        const body = new this.physicsWorld.AmmoLib.btRigidBody(bodyInfo);
+
+        this.physicsWorld.physicsWorld.addRigidBody(body);
+
+        return wallWithDoorMesh;
     }
 }
 

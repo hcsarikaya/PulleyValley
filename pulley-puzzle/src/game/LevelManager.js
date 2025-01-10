@@ -4,8 +4,9 @@ import {Level} from "../levels/level.js";
 
 
 export class LevelManager {
-    constructor(scene) {
+    constructor(scene, physicsWorld) {
         this.scene = scene;
+        this.physicsWorld = physicsWorld; // <<-- store reference
         this.pos = 0;
         this.levels = []
         this.roomSize = [50,50,30]
@@ -26,27 +27,14 @@ export class LevelManager {
 
 
 
-        this.rooms.push(new Room(this.scene, this.roomSize));
+        this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
         this.rooms[level-1].createRoom(this.pos);
         this.pos = this.pos- this.roomSize[0];
 
-        this.levels.push(new Level(this.rooms[level-1]));
+        this.levels.push(new Level(this.rooms[level-1], this.physicsWorld));
         this.levels[level-1].addObject(level);
 
-        // Load the appropriate level based on level number
-        /*
 
-        switch (level) {
-            case "1":
-                loadLevel1(this.scene);
-                break;
-            case "2":
-                loadLevel2(this.scene);
-                break;
-            default:
-                console.error('Level not implemented!');
-        }
-        */
     };
     levelAnimation(level, check){
         //console.log(this.rooms[level -1].wallOut.position.y)

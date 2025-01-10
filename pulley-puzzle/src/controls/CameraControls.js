@@ -1,88 +1,90 @@
 import * as THREE from 'three';
+import SoundManager from "../game/SoundManager.js";
 
 export class CameraControls {
     constructor(camera, renderer, options = {}) {
         this.camera = camera;
         this.renderer = renderer;
+        this.soundManager = new SoundManager();
 
-        // Serbest uçuş (free-fly) için ayarlar
-        this.freeMoveSpeed = options.freeMoveSpeed || 0.2;
-        this.mouseSensitivity = options.mouseSensitivity || 0.002;
+        // Load sounds
+        this.soundManager.loadSounds();
 
-        // Kamera mod kontrolü
-        this.isFreeMode = false;
+        // Start background music
+        this.soundManager.playMusic();
 
-        // Kamera Euler açıları (serbest moda geçtiğimizde kullanıyoruz)
-        this.pitch = 0;  // X ekseni etrafında dönme
-        this.yaw = 0;    // Y ekseni etrafında dönme
+        // Movement settings
+        this.moveSpeed       = options.moveSpeed       || 10;
+        this.jumpSpeed       = options.jumpSpeed       || 20;
+        this.gravity         = options.gravity         || 20;
+        this.mouseSensitivity= options.mouseSensitivity|| 0.002;
+        this.eyeHeight       = options.eyeHeight       || 7;
 
-        // Hangi tuşlara basılı tutuyoruz?
+        // Camera state
+        this.isJumping = false;
+        this.verticalVelocity = 0;
+        this.pitch = 0; // Rotation around X axis
+        this.yaw   = 0; // Rotation around Y axis
+
+        // Keyboard keys
         this.keys = {
             w: false,
             a: false,
             s: false,
-            d: false
+            d: false,
+            space: false
         };
 
-        // Odadaki sınırlara ek olarak kameranın "hitbox" yarıçapı.
-        // Bu sayede, duvara tam yapışmadan önce çarpışma olduğunu varsayacağız.
-        this.cameraCollisionRadius = 0.1; // Daha küçük yaparsanız duvara daha çok yaklaşabilirsiniz.
+        // Set an initial camera position or use your own
+        this.camera.position.set(0, this.eyeHeight, 5);
 
-        // Sınırlar (örnek değerler)
-        this.bounds = {  //TODO room sizea göre ayarlanacak
-            min: new THREE.Vector3(-20, 0, -20),
-            max: new THREE.Vector3( 20, 20, 20)
-        };
+        // Pointer lock when clicking on renderer’s canvas
+        this.renderer.domElement.addEventListener('click', () => {
+            this.renderer.domElement.requestPointerLock();
+        });
 
-        // Event listener tanımları
+        // Event listeners
         document.addEventListener('keydown', (e) => this.onKeyDown(e));
         document.addEventListener('keyup',   (e) => this.onKeyUp(e));
-        document.addEventListener('mousemove', (e) => this.onMouseMove(e));
+        document.addEventListener('mousemove',(e) => this.onMouseMove(e));
     }
 
     /**
-     * "P" tuşuna basıldığında mod değiştiriyoruz
-     * Normal mod <--> Serbest uçuş (free-fly) mod
-     */
-    toggleCameraMode() {
-        this.isFreeMode = !this.isFreeMode;
-        if (this.isFreeMode) {
-            // Fareyi yakalıyoruz (pointer lock)
-            this.renderer.domElement.requestPointerLock();
-
-            // Mevcut kamera yönünü Euler açılara çeviriyoruz
-            const euler = new THREE.Euler().setFromQuaternion(this.camera.quaternion, 'YXZ');
-            this.yaw = euler.y;
-            this.pitch = euler.x;
-
-            console.log('Serbest uçuş moduna geçildi.');
-        } else {
-            // Pointer lock’tan çık
-            document.exitPointerLock();
-            console.log('Normal moda geçildi.');
-        }
-    }
-
-    /**
-     * Klavyeden tuşa basma
+     * Handle key press events
      */
     onKeyDown(event) {
         switch (event.key.toLowerCase()) {
-            case 'p':
-                // Kamera modunu değiştir
-                this.toggleCameraMode();
-                break;
             case 'w':
+                if (!this.keys.w) {
+                    this.soundManager.playLoop('walk');
+                }
                 this.keys.w = true;
                 break;
             case 'a':
+                if (!this.keys.a) {
+                    this.soundManager.playLoop('walk');
+                }
                 this.keys.a = true;
                 break;
             case 's':
+                if (!this.keys.s) {
+                    this.soundManager.playLoop('walk');
+                }
                 this.keys.s = true;
                 break;
             case 'd':
+                if (!this.keys.d) {
+                    this.soundManager.playLoop('walk');
+                }
                 this.keys.d = true;
+                break;
+            case ' ':
+                // Jump only if not already in the air
+                if (!this.isJumping) {
+                    this.isJumping = true;
+                    this.verticalVelocity = this.jumpSpeed;
+                    this.soundManager.playSound('jump');
+                }
                 break;
             default:
                 break;
@@ -90,21 +92,28 @@ export class CameraControls {
     }
 
     /**
-     * Klavyeden tuşu bırakma
+     * Handle key release events
      */
     onKeyUp(event) {
         switch (event.key.toLowerCase()) {
             case 'w':
                 this.keys.w = false;
+                this.checkStopWalking();
                 break;
             case 'a':
                 this.keys.a = false;
+                this.checkStopWalking();
                 break;
             case 's':
                 this.keys.s = false;
+                this.checkStopWalking();
                 break;
             case 'd':
                 this.keys.d = false;
+                this.checkStopWalking();
+                break;
+            case ' ':
+                this.keys.space = false;
                 break;
             default:
                 break;
@@ -112,73 +121,94 @@ export class CameraControls {
     }
 
     /**
-     * Fare hareketleri (sadece serbest moddayken işlem yap)
+     * Check if any movement keys are still pressed; if not, stop walking sound
      */
-    onMouseMove(event) {
-        if (!this.isFreeMode) return;
-
-        // Pointer lock aktif mi kontrol et
-        if (document.pointerLockElement !== this.renderer.domElement) return;
-
-        // Fare hareketine göre yaw ve pitch değerlerini güncelle
-        this.yaw   -= event.movementX * this.mouseSensitivity;
-        this.pitch -= event.movementY * this.mouseSensitivity;
-
-        // Pitch değerini (-90°, +90°) aralığında sınırlıyoruz
-        const maxPitch = Math.PI / 2 - 0.1;
-        this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
+    checkStopWalking() {
+        const isMoving = this.keys.w || this.keys.a || this.keys.s || this.keys.d;
+        if (!isMoving) {
+            this.soundManager.stopLoop('walk');
+        }
     }
 
     /**
-     * Her karede çağrılacak update fonksiyonu
+     * Handle mouse movement for looking around (pitch & yaw)
      */
-    update(delta) {
-        if (!this.isFreeMode) {
-            // Normal moda ait kamera davranışları
-            return;
-        }
+    onMouseMove(event) {
+        // Only rotate if pointer is locked on the renderer
+        if (document.pointerLockElement !== this.renderer.domElement) return;
 
-        // --- Serbest uçuş modunda kamera dönüşü ---
+        // Yaw (left/right) and Pitch (up/down)
+        this.yaw   -= event.movementX * this.mouseSensitivity;
+        this.pitch -= event.movementY * this.mouseSensitivity;
+
+        // Clamp pitch so you can’t flip the camera fully
+        const maxPitch = Math.PI / 2 - 0.01;
+        this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
+
+        // Update the camera rotation using Euler angles
         const euler = new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ');
         this.camera.quaternion.setFromEuler(euler);
+    }
 
-        // Kamera yön vektörlerini belirle
+    /**
+     * Update function (call every frame or in your render loop)
+     */
+    update(deltaTime) {
+        // Calculate direction vectors from camera orientation
         const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
         const right   = new THREE.Vector3(1, 0,  0).applyQuaternion(this.camera.quaternion);
 
-        // Delta (örneğin ms cinsinden) ile hız çarpmasını eklemek isterseniz:
-        const moveSpeed = this.freeMoveSpeed * (delta || 1);
+        // Zero out Y so movement is restricted to horizontal plane
+        forward.y = 0;
+        right.y   = 0;
+        forward.normalize();
+        right.normalize();
 
-        // WASD hareketi
+        // Movement speed factor
+        const speed = this.moveSpeed * deltaTime;
+
+        let isMoving = false;
+
+        // Move the camera based on keys pressed
         if (this.keys.w) {
-            this.camera.position.addScaledVector(forward, moveSpeed);
+            this.camera.position.addScaledVector(forward, speed);
+            isMoving = true;
         }
         if (this.keys.s) {
-            this.camera.position.addScaledVector(forward, -moveSpeed);
+            this.camera.position.addScaledVector(forward, -speed);
+            isMoving = true;
         }
         if (this.keys.a) {
-            this.camera.position.addScaledVector(right, -moveSpeed);
+            this.camera.position.addScaledVector(right, -speed);
+            isMoving = true;
         }
         if (this.keys.d) {
-            this.camera.position.addScaledVector(right, moveSpeed);
+            this.camera.position.addScaledVector(right, speed);
+            isMoving = true;
         }
 
-        // --- Kameranın konumunu sınırlara göre “clamp” et ---
-        // Kamera çarpışma yarıçapını hesaba katmak için min/max'e offset ekliyoruz
-        // Pozisyonun x, y, z'ini sırasıyla düzelt
-        this.camera.position.x = Math.max(
-            this.bounds.min.x + this.cameraCollisionRadius,
-            Math.min(this.bounds.max.x - this.cameraCollisionRadius, this.camera.position.x)
-        );
+        // Optionally, handle continuous sound playing based on movement state
+        // For example, if using footsteps with footsteps sound frequency based on speed
+        // This example uses a simple looping walk sound
 
-        this.camera.position.y = Math.max(
-            this.bounds.min.y + this.cameraCollisionRadius,
-            Math.min(this.bounds.max.y - this.cameraCollisionRadius, this.camera.position.y)
-        );
+        // Jumping and gravity
+        if (this.isJumping) {
+            // Apply vertical velocity
+            this.camera.position.y += this.verticalVelocity * deltaTime;
+            // Apply gravity
+            this.verticalVelocity -= this.gravity * deltaTime;
+            // Check if landed (below or at eye height)
+            if (this.camera.position.y <= this.eyeHeight) {
+                this.camera.position.y = this.eyeHeight;
+                this.isJumping = false;
+                this.verticalVelocity = 0;
+            }
+        } else {
+            // Keep camera at a fixed eye height if not jumping
+            this.camera.position.y = this.eyeHeight;
+        }
 
-        this.camera.position.z = Math.max(
-            this.bounds.min.z + this.cameraCollisionRadius,
-            Math.min(this.bounds.max.z - this.cameraCollisionRadius, this.camera.position.z)
-        );
+        // Optionally, add other sound effects based on actions here
+        // e.g., footsteps intensity based on movement speed, landing sounds, etc.
     }
 }
