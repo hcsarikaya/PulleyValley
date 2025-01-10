@@ -5,18 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5fccdedc-4e53-4fb0-a1d7-d330d890acc2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/interactionManager.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Game.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Game1.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/LevelManager.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Player.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Player.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/game/Room.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level1.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level2.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Door.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/levels/level.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/levels/level.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Pulley.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" beforeDir="false" afterPath="$PROJECT_DIR$/pulley-puzzle/src/objects/Weight.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +51,7 @@
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "cagri",
+    "git-widget-placeholder": "kutay",
     "last_opened_file_path": "C:/Users/ahbeh/Desktop/412 Project",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -77,7 +70,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-WS-242.23339.15" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-WS-242.23726.96" />
       </set>
     </attachedChunks>
   </component>
@@ -96,6 +89,7 @@
       <workItem from="1733483552188" duration="2086000" />
       <workItem from="1733573204947" duration="879000" />
       <workItem from="1734688666205" duration="1131000" />
+      <workItem from="1736514595832" duration="965000" />
     </task>
     <servers />
   </component>
