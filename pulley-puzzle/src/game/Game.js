@@ -22,10 +22,10 @@ export async function initGame(level) {
     physicsWorld = new PhysicsWorld();
     await physicsWorld.init(); //Wait for Ammo to load
 
-    let roomSize = [50,50,30];
+    let roomSize = [80,50,45];
     let roomCenter =  [0,0,0];
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    //camera.position.set(0, 5, 10);
+
 
     inventoryUI = new InventoryUI('inventory-hotbar');
     soundManager = new SoundManager();
@@ -56,8 +56,9 @@ export async function initGame(level) {
 
     // Initialize and load the level
     levelManager = new LevelManager(scene, physicsWorld);
-    levelManager.loadLevel(level);
     levelManager.roomSize = roomSize;
+    levelManager.loadLevel(level);
+
     
 
     // Create player
@@ -107,7 +108,7 @@ export async function initGame(level) {
                             roomCenter[2] -= roomSize[0];
                             levelManager.loadLevel(level+1);
 
-                            levelManager.rooms[level].wallIn.position.y -=30
+                            levelManager.rooms[level].wallIn.position.y -=45
 
                             levelManager.checkLevel = true
 

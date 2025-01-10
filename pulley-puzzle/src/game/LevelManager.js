@@ -9,7 +9,7 @@ export class LevelManager {
         this.physicsWorld = physicsWorld; // <<-- store reference
         this.pos = 0;
         this.levels = []
-        this.roomSize = [50,50,30]
+        this.roomSize = [80,50,45]
         this.rooms = []
         this.checkLevel = false
         this.currentLevel = 1;
@@ -29,7 +29,7 @@ export class LevelManager {
 
         this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
         this.rooms[level-1].createRoom(this.pos);
-        this.pos = this.pos- this.roomSize[0];
+        this.pos = this.pos- this.roomSize[1];
 
         this.levels.push(new Level(this.rooms[level-1], this.physicsWorld));
         this.levels[level-1].addObject(level);
@@ -38,7 +38,7 @@ export class LevelManager {
     };
     levelAnimation(level, check){
         //console.log(this.rooms[level -1].wallOut.position.y)
-        if(check && Number(this.rooms[level -1].wallOut.position.y) < 45){
+        if(check && Number(this.rooms[level -1].wallOut.position.y) < 68){
             this.rooms[level -1].wallOut.position.y +=0.1
             this.levels[level-1].doorOut.mesh.position.y += 0.1
 
