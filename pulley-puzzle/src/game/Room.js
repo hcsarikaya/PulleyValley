@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { SUBTRACTION, Brush, Evaluator } from 'three-bvh-csg';
+import { woodVertexShader, woodFragmentShader } from '../shaders/WoodShader.js';
 
 export class Room{
     constructor(scene, size, physicsWorld){
@@ -61,12 +62,10 @@ export class Room{
         this.scene.add(this.wallR);
 
         // Create and add floor
-        this.floor = this.createWallWithPhysics(
+        this.floor = this.createFloorWithWoodShader(
             [this.size[0], 1, this.size[1]],
             [0, -0.5, this.position]
         );
-
-        this.floor.material = this.floorMaterial;
         this.scene.add(this.floor);
 
         // Create and add ceiling
@@ -184,6 +183,42 @@ export class Room{
         this.physicsWorld.physicsWorld.addRigidBody(body);
 
         return wallWithDoorMesh;
+    }
+
+    createFloorWithWoodShader(size, position, rotationY = 0) {
+        // A) Create geometry
+        const geometry = new THREE.BoxGeometry(size[0], size[1], size[2]);
+
+        // B) Create a ShaderMaterial for the floor wood
+        const woodShaderMaterial = new THREE.ShaderMaterial({
+            vertexShader: woodVertexShader,
+            fragmentShader: woodFragmentShader
+            // no uniforms needed except if you wanted to animate
+        });
+
+        const mesh = new THREE.Mesh(geometry, woodShaderMaterial);
+        mesh.position.set(position[0], position[1], position[2]);
+        mesh.rotation.y = rotationY;
+
+        // C) Physics: static rigid body
+        const mass = 0;
+        const shape = new this.physicsWorld.AmmoLib.btBoxShape(
+            new this.physicsWorld.AmmoLib.btVector3(size[0]/2, size[1]/2, size[2]/2)
+        );
+
+        const transform = new this.physicsWorld.AmmoLib.btTransform();
+        transform.setIdentity();
+        transform.setOrigin(
+            new this.physicsWorld.AmmoLib.btVector3(position[0], position[1], position[2])
+        );
+
+        const motionState = new this.physicsWorld.AmmoLib.btDefaultMotionState(transform);
+        const bodyInfo = new this.physicsWorld.AmmoLib.btRigidBodyConstructionInfo(mass, motionState, shape);
+        const body = new this.physicsWorld.AmmoLib.btRigidBody(bodyInfo);
+
+        this.physicsWorld.physicsWorld.addRigidBody(body);
+
+        return mesh;
     }
 }
 
