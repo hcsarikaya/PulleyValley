@@ -38,11 +38,6 @@ export async function initGame(level) {
     document.getElementById('game-container').appendChild(renderer.domElement);
 
     cameraControls = new CameraControls(camera, renderer, {
-        moveSpeed: 10,
-        jumpSpeed: 20,
-        gravity: 20,
-        mouseSensitivity: 0.002,
-        eyeHeight: 7
     });
 
     // Add basic lighting
