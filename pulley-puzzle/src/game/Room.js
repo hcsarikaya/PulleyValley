@@ -27,11 +27,11 @@ export class Room{
         // Repeat and wrap textures for better appearance
         wallTexture.wrapS = wallTexture.wrapT = THREE.RepeatWrapping;
         wallTexture.repeat.set(5, 2); // Adjust based on your texture size
-        this.wallMaterial = new THREE.MeshBasicMaterial({color: 0xFF8844, map: wallTexture});
+        this.wallMaterial = new THREE.MeshBasicMaterial({color: 0x787171, map: wallTexture});
 
         floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
         floorTexture.repeat.set(5, 5);
-        this.floorMaterial = new THREE.MeshBasicMaterial({color: 0xFF8844, map: floorTexture});
+        this.floorMaterial = new THREE.MeshBasicMaterial({color:0x787171, map: floorTexture});
 
     }
     createRoom(position) {
