@@ -8,10 +8,17 @@ import InventoryUI from '../ui/InventoryUI.js';
 import SoundManager from './SoundManager.js';
 import HelpMenu from '../ui/HelpMenu.js';
 import SettingsMenu  from "../ui/SettingsMenu.js";
+import { DustParticleSystem } from '../objects/DustParticleSystem.js';
 
 let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI, soundManager, helpMenu, settingsMenu;
 let clock = new THREE.Clock();  // For deltaTime
 let physicsWorld;
+let dustSystem;
+
+let lastSpawnTime = 0;
+const spawnInterval = 1.0; // 1 second
+const dustSpawnPosition = new THREE.Vector3(0, 0, 0); // wherever you want dust
+
 //let editMode = false;
 
 import { PhysicsWorld } from '../objects/PhysicsWorld.js';
@@ -44,6 +51,8 @@ export async function initGame(level) {
 
     cameraControls = new CameraControls(camera, renderer, {
     });
+
+    dustSystem = new DustParticleSystem(scene);
 
     // Add basic lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -192,6 +201,16 @@ function animate() {
         });
     });
 
+    // Update dustSystem
+    dustSystem.update(delta);
+
+    // Check if it's time to spawn a new dust burst
+    const now = clock.elapsedTime; // or performance.now()*0.001
+    if (now - lastSpawnTime >= spawnInterval) {
+        lastSpawnTime = now;
+
+        dustSystem.spawnDust(dustSpawnPosition, 50);
+    }
 
 
     renderer.render(scene, camera);
