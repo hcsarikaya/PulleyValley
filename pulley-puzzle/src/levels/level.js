@@ -28,7 +28,7 @@ export class Level{
 
     addObject(level){
 
-        const data = levels.levels[level-1].objects;
+        const data = levels.levels[level].objects;
         data.forEach(obj=> {
             this.createObject(obj);
         })

@@ -15,35 +15,31 @@ export class LevelManager {
         this.currentLevel = 1;
     }
 
-    loadLevel(level) {
-        // Clear the current scene (remove previous objects)
-        /*
-        while (this.scene.children.length > 0) {
-            this.scene.remove(this.scene.children[0]);
+    loadLevel() {
+
+
+        for(let i = 0; i < 4; i++) {
+            this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
+            this.rooms[i].createRoom(this.pos);
+            this.pos = this.pos- this.roomSize[1];
+
+            this.levels.push(new Level(this.rooms[i], this.physicsWorld));
+            this.levels[i].addObject(i);
         }
 
-         */
 
 
-
-
-        this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
-        this.rooms[level-1].createRoom(this.pos);
-        this.pos = this.pos- this.roomSize[1];
-
-        this.levels.push(new Level(this.rooms[level-1], this.physicsWorld));
-        this.levels[level-1].addObject(level);
 
 
     };
     levelAnimation(level, check){
         //console.log(this.rooms[level -1].wallOut.position.y)
         if(check && Number(this.rooms[level -1].wallOut.position.y) < 68){
-            this.rooms[level -1].wallOut.position.y +=0.1
-            this.levels[level-1].doorOut.mesh.position.y += 0.1
+            this.rooms[level -1].wallOut.position.y +=0.15
+            this.levels[level-1].doorOut.mesh.position.y += 0.15
 
-            this.rooms[level].wallIn.position.y +=0.1
-            //this.levels[level].doorIn.mesh.position.y += 0.1
+            this.rooms[level].wallIn.position.y +=0.15
+
         }else{
             check = false;
         }
