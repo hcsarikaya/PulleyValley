@@ -14,17 +14,26 @@ export class CameraControls {
         this.soundManager.playMusic();
 
         // Movement settings
-        this.moveSpeed       = options.moveSpeed       || 10;
-        this.jumpSpeed       = options.jumpSpeed       || 20;
-        this.gravity         = options.gravity         || 20;
-        this.mouseSensitivity= options.mouseSensitivity|| 0.002;
-        this.eyeHeight       = options.eyeHeight       || 7;
+        this.moveSpeed        = options.moveSpeed        || 20;
+        this.runMultiplier    = options.runMultiplier    || 2; // Speed multiplier when running
+        this.dashSpeed        = options.dashSpeed        || 80; // Speed during dash
+        this.dashDuration     = options.dashDuration     || 0.2; // Duration of dash in seconds
+        this.dashCooldown     = options.dashCooldown     || 0.1;   // Cooldown between dashes in seconds
+        this.jumpSpeed        = options.jumpSpeed        || 20;
+        this.gravity          = options.gravity          || 20;
+        this.mouseSensitivity = options.mouseSensitivity || 0.002;
+        this.eyeHeight        = options.eyeHeight        || 7;
 
         // Camera state
-        this.isJumping = false;
-        this.verticalVelocity = 0;
-        this.pitch = 0; // Rotation around X axis
-        this.yaw   = 0; // Rotation around Y axis
+        this.isJumping         = false;
+        this.verticalVelocity  = 0;
+        this.pitch             = 0; // Rotation around X axis
+        this.yaw               = 0; // Rotation around Y axis
+
+        // Dash state
+        this.isDashing         = false;
+        this.dashTimeRemaining = 0;
+        this.lastDashTime      = -Infinity;
 
         // Keyboard keys
         this.keys = {
@@ -32,7 +41,9 @@ export class CameraControls {
             a: false,
             s: false,
             d: false,
-            space: false
+            space: false,
+            shift: false,
+            ctrl: false
         };
 
         // Set an initial camera position or use your own
@@ -53,30 +64,34 @@ export class CameraControls {
      * Handle key press events
      */
     onKeyDown(event) {
-        switch (event.key.toLowerCase()) {
+        const key = event.key.toLowerCase();
+        switch (key) {
             case 'w':
-                if (!this.keys.w) {
-                    this.soundManager.playLoop('walk');
-                }
-                this.keys.w = true;
-                break;
             case 'a':
-                if (!this.keys.a) {
-                    this.soundManager.playLoop('walk');
-                }
-                this.keys.a = true;
-                break;
             case 's':
-                if (!this.keys.s) {
-                    this.soundManager.playLoop('walk');
-                }
-                this.keys.s = true;
-                break;
             case 'd':
-                if (!this.keys.d) {
-                    this.soundManager.playLoop('walk');
+                if (!this.keys[key]) {
+                    if (!this.keys.shift) { // Only play walk sound if not running
+                        this.soundManager.playLoop('walk');
+                    }
                 }
-                this.keys.d = true;
+                this.keys[key] = true;
+                break;
+            case 'shift':
+                if (!this.keys.shift) {
+                    this.keys.shift = true;
+                    // Stop walk sound if it's playing
+                    this.soundManager.stopLoop('walk');
+                    // Start run sound
+                    this.soundManager.playLoop('run');
+                }
+                break;
+            case 'ctrl':
+            case 'control':
+                if (!this.keys.ctrl) {
+                    this.keys.ctrl = true;
+                    this.initiateDash();
+                }
                 break;
             case ' ':
                 // Jump only if not already in the air
@@ -95,22 +110,29 @@ export class CameraControls {
      * Handle key release events
      */
     onKeyUp(event) {
-        switch (event.key.toLowerCase()) {
+        const key = event.key.toLowerCase();
+        switch (key) {
             case 'w':
-                this.keys.w = false;
-                this.checkStopWalking();
-                break;
             case 'a':
-                this.keys.a = false;
-                this.checkStopWalking();
-                break;
             case 's':
-                this.keys.s = false;
+            case 'd':
+                this.keys[key] = false;
                 this.checkStopWalking();
                 break;
-            case 'd':
-                this.keys.d = false;
-                this.checkStopWalking();
+            case 'shift':
+                if (this.keys.shift) {
+                    this.keys.shift = false;
+                    // Stop run sound
+                    this.soundManager.stopLoop('run');
+                    // If movement keys are still pressed, start walk sound
+                    if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
+                        this.soundManager.playLoop('walk');
+                    }
+                }
+                break;
+            case 'ctrl':
+            case 'control':
+                this.keys.ctrl = false;
                 break;
             case ' ':
                 this.keys.space = false;
@@ -151,6 +173,24 @@ export class CameraControls {
     }
 
     /**
+     * Initiate a dash if cooldown allows
+     */
+    initiateDash() {
+        const currentTime = performance.now() / 1000; // Convert to seconds
+        if (currentTime - this.lastDashTime < this.dashCooldown) {
+            // Cooldown not yet passed
+            return;
+        }
+
+        this.isDashing = true;
+        this.dashTimeRemaining = this.dashDuration;
+        this.lastDashTime = currentTime;
+
+        // Play dash sound
+        this.soundManager.playSound('dash');
+    }
+
+    /**
      * Update function (call every frame or in your render loop)
      */
     update(deltaTime) {
@@ -164,35 +204,50 @@ export class CameraControls {
         forward.normalize();
         right.normalize();
 
+        // Determine current speed
+        let speed = this.moveSpeed;
+
+        if (this.keys.shift && !this.isDashing) {
+            speed *= this.runMultiplier;
+        }
+
         // Movement speed factor
-        const speed = this.moveSpeed * deltaTime;
+        const velocity = speed * deltaTime;
 
         let isMoving = false;
 
         // Move the camera based on keys pressed
         if (this.keys.w) {
-            this.camera.position.addScaledVector(forward, speed);
+            this.camera.position.addScaledVector(forward, velocity);
             isMoving = true;
         }
         if (this.keys.s) {
-            this.camera.position.addScaledVector(forward, -speed);
+            this.camera.position.addScaledVector(forward, -velocity);
             isMoving = true;
         }
         if (this.keys.a) {
-            this.camera.position.addScaledVector(right, -speed);
+            this.camera.position.addScaledVector(right, -velocity);
             isMoving = true;
         }
         if (this.keys.d) {
-            this.camera.position.addScaledVector(right, speed);
+            this.camera.position.addScaledVector(right, velocity);
             isMoving = true;
         }
 
-        // Optionally, handle continuous sound playing based on movement state
-        // For example, if using footsteps with footsteps sound frequency based on speed
-        // This example uses a simple looping walk sound
+        // Handle dashing
+        if (this.isDashing) {
+            const dashVelocity = this.dashSpeed * deltaTime;
+            this.camera.position.addScaledVector(forward, dashVelocity);
+            this.dashTimeRemaining -= deltaTime;
+            if (this.dashTimeRemaining <= 0) {
+                this.isDashing = false;
+            }
+        }
 
         // Jumping and gravity
         if (this.isJumping) {
+            this.soundManager.stopLoop('walk');
+            this.soundManager.stopLoop("run");
             // Apply vertical velocity
             this.camera.position.y += this.verticalVelocity * deltaTime;
             // Apply gravity
@@ -208,7 +263,6 @@ export class CameraControls {
             this.camera.position.y = this.eyeHeight;
         }
 
-        // Optionally, add other sound effects based on actions here
-        // e.g., footsteps intensity based on movement speed, landing sounds, etc.
+        // Optional: Additional sound effects based on actions
     }
 }
