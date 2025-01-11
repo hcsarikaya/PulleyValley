@@ -138,6 +138,7 @@ export async function initGame(level) {
         }
     });
 
+
     interectionSystem.addInteractiveObject(levelManager.levels[level-1].doorOut, {
         proximityThreshold: 15,
         promptText: 'Press "E" to open door',

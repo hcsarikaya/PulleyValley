@@ -12,10 +12,14 @@
     },
     {
       "objects": [
-        { "type":  "pulley", "position" : [ 10,  5,  0 ]},
-        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "type":  "pulley", "position" : [ 10,  25,  -21.5 ]},
+        { "type":  "pulley", "position" : [ 20,  25,  -21.5 ]},
+        { "type":  "pulley", "position" : [ 0, 25, -22 ]},
+        { "type":  "weight", "position" : [ 10,  5.5,  -21.5 ]},
+        { "type":  "weight", "position" : [ 15,  7.5,  -21.5 ]},
+        { "type":  "pallet", "position" : [25, 0, -20 ], "scale": [2, 2, 2]},
+        { "type":  "boulder", "position" : [-2.5, 0, -22 ], "scale": [1.5, 1.2, 1.2], "mass": 10},
         { "type":  "rope", "position" : [0, 0, -5]}
-
       ]
     },
     {

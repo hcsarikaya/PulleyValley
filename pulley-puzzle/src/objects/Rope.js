@@ -7,8 +7,15 @@ export class Rope {
         this.physicsWorld = physicsWorld;
         this.category = 'rope';
 
-        this.startPos = [startObj.mesh.position.x, startObj.mesh.position.y, startObj.mesh.position.z];
-        this.endPos = [endObj.mesh.position.x, endObj.mesh.position.y, endObj.mesh.position.z];
+        if(startObj.mesh && endObj.mesh){
+            this.startPos = [startObj.mesh.position.x, startObj.mesh.position.y, startObj.mesh.position.z];
+            this.endPos = [endObj.mesh.position.x, endObj.mesh.position.y, endObj.mesh.position.z];
+        }
+
+        if(startObj.model && endObj.model){
+            this.startPos = [startObj.model.position.x, startObj.model.position.y, startObj.model.position.z];
+            this.endPos = [endObj.model.position.x, endObj.model.position.y, endObj.model.position.z];
+        }
 
         const AmmoLib = this.physicsWorld.AmmoLib; // Already loaded in PhysicsWorld
         const softBodyHelpers = this.physicsWorld.softBodyHelpers;
@@ -27,9 +34,9 @@ export class Rope {
         );
 
         // Set rope properties (tweak as needed)
-        this.ropeSoftBody.get_m_materials().at(0).set_m_kLST(0.9); // linear stiffness
+        this.ropeSoftBody.get_m_materials().at(0).set_m_kLST(1.0); // linear stiffness
         this.ropeSoftBody.setTotalMass(1, false);
-        this.ropeSoftBody.setCollisionFlags(0);
+        this.ropeSoftBody.setCollisionFlags(0.99);
 
         // Add it to the physics world
         this.physicsWorld.physicsWorld.addSoftBody(this.ropeSoftBody, 1, -1);
@@ -41,7 +48,7 @@ export class Rope {
         ropeGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
         // Simple line material
-        const ropeMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        const ropeMaterial = new THREE.LineBasicMaterial({ color: 0x8e4d1e });
         this.ropeMesh = new THREE.Line(ropeGeometry, ropeMaterial);
 
         scene.add(this.ropeMesh);

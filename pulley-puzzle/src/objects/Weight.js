@@ -1,16 +1,36 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export class Weight {
-    constructor(scene,physicsWorld, position = [ 5,  0.5,  5 ]) {
+    constructor(scene, physicsWorld, position = [5, 0.5, 5]) {
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.category = 'weight';
-        /// Three.js geometry for the weight
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x333333 });
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.set(position[0], position[1], position[2]);
-        scene.add(this.mesh);
+        this.model = null;
+        this.body = null;
+
+        const modelPath = '../models/5kg.glb';
+
+        // Load GLTF model
+        const loader = new GLTFLoader();
+        loader.load(
+            modelPath,
+            (gltf) => {
+                this.model = gltf.scene;
+                this.model.position.set(position[0], position[1], position[2]);
+                this.model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
+                });
+                scene.add(this.model);
+            },
+            undefined,
+            (error) => {
+                console.error('Error loading GLTF model:', error);
+            }
+        );
 
         // Ammo.js physics body
         const mass = 5; // Adjust as needed
@@ -37,8 +57,10 @@ export class Weight {
         );
 
         this.body = new physicsWorld.AmmoLib.btRigidBody(bodyInfo);
-        this.mesh.userData.physicsBody = this.body;
-        physicsWorld.physicsWorld.addRigidBody(this.body);
+        if (this.model) {
+            this.model.userData.physicsBody = this.body;
+        }
+        this.physicsWorld.physicsWorld.addRigidBody(this.body);
     }
 
     update() {
@@ -49,7 +71,9 @@ export class Weight {
         const origin = transform.getOrigin();
         const rotation = transform.getRotation();
 
-        this.mesh.position.set(origin.x(), origin.y(), origin.z());
-        this.mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+        if (this.model) {
+            this.model.position.set(origin.x(), origin.y(), origin.z());
+            this.model.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+        }
     }
 }

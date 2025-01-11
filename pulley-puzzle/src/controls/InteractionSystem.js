@@ -37,12 +37,18 @@ export class InteractionSystem {
 
     addInteractiveObject(object, options = {}) {
         const interactiveObject = {
-            mesh: object.mesh,
+            mesh: object.mesh || object.model,
             proximityThreshold: options.proximityThreshold || 5,
             promptText: options.promptText || 'Press "E" to interact',
             onInteract: options.onInteract || (() => {}),
             isInRange: false
         };
+
+        if (!interactiveObject.mesh) {
+            console.warn('Interactive object must have a mesh or model with a position.');
+            return;
+        }
+
         this.interactiveObjects.push(interactiveObject);
     }
 
@@ -92,7 +98,8 @@ export class InteractionSystem {
         if (!this.player) return;
 
         this.interactiveObjects.forEach(obj => {
-            const distance = this.player.position.distanceTo(obj.mesh.position);
+            const target = obj.mesh || obj.model;
+            const distance = this.player.position.distanceTo(target.position);
 
             obj.isInRange = distance < obj.proximityThreshold;
         });

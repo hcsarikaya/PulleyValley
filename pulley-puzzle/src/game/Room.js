@@ -18,7 +18,7 @@ export class Room{
 
         const loader = new THREE.TextureLoader();
 
-        const wallTexture = loader.load('https://threejs.org/manual/examples/resources/images/wall.jpg');
+        const wallTexture = loader.load('/src/textures/MossyBrick.jpg');
         const floorTexture = loader.load('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/6176f303-518c-4b9f-a201-b6fe1b4239b2/d6xlhqd-f35f4ff4-2fb0-4396-8640-ccb1ab5ac076.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzYxNzZmMzAzLTUxOGMtNGI5Zi1hMjAxLWI2ZmUxYjQyMzliMlwvZDZ4bGhxZC1mMzVmNGZmNC0yZmIwLTQzOTYtODY0MC1jY2IxYWI1YWMwNzYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.Jd-8zva1jG355B9yMCWHRKGI50mKb-tcCVIIX-FMPlI');
         wallTexture.colorSpace = THREE.SRGBColorSpace;
         floorTexture.colorSpace = THREE.SRGBColorSpace;
