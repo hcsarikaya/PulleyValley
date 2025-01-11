@@ -46,3 +46,31 @@ button {
   border-color: green; /* Highlight the selected slot with a green border */
   background: rgba(0, 255, 0, 0.2); /* Optional: Add a light green background */
 }
+
+/* style.css (partial) */
+
+#helpMenu {
+  display: none;                  /* Hidden by default */
+  position: fixed;               /* Stay in place */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  max-width: 80%;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border: 2px solid #999;
+  border-radius: 8px;
+  z-index: 9999;                 /* Make sure it’s on top */
+}
+
+#helpMenu h2 {
+  margin-top: 0;
+  font-size: 1.5em;
+}
+
+#helpMenu ul {
+  margin-left: 20px;
+}
+
