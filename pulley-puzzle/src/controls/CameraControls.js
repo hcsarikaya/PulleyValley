@@ -15,25 +15,28 @@ export class CameraControls {
 
         // Movement settings
         this.moveSpeed        = options.moveSpeed        || 20;
-        this.runMultiplier    = options.runMultiplier    || 2; // Speed multiplier when running
+        this.runMultiplier    = options.runMultiplier    || 2;  // Speed multiplier when running (or flying faster)
         this.dashSpeed        = options.dashSpeed        || 80; // Speed during dash
-        this.dashDuration     = options.dashDuration     || 0.2; // Duration of dash in seconds
-        this.dashCooldown     = options.dashCooldown     || 0.1;   // Cooldown between dashes in seconds
+        this.dashDuration     = options.dashDuration     || 0.2;
+        this.dashCooldown     = options.dashCooldown     || 0.1;
         this.jumpSpeed        = options.jumpSpeed        || 20;
         this.gravity          = options.gravity          || 20;
         this.mouseSensitivity = options.mouseSensitivity || 0.002;
         this.eyeHeight        = options.eyeHeight        || 7;
 
         // Camera state
-        this.isJumping         = false;
-        this.verticalVelocity  = 0;
-        this.pitch             = 0; // Rotation around X axis
-        this.yaw               = 0; // Rotation around Y axis
+        this.isJumping        = false;
+        this.verticalVelocity = 0;
+        this.pitch            = 0; // Rotation around X axis
+        this.yaw              = 0; // Rotation around Y axis
 
         // Dash state
         this.isDashing         = false;
         this.dashTimeRemaining = 0;
         this.lastDashTime      = -Infinity;
+
+        // Free-fly mode
+        this.isFreeFly = false; // Toggled by pressing E
 
         // Keyboard keys
         this.keys = {
@@ -43,10 +46,11 @@ export class CameraControls {
             d: false,
             space: false,
             shift: false,
-            ctrl: false
+            ctrl: false,
+            e: false
         };
 
-        // Set an initial camera position or use your own
+        // Set an initial camera position
         this.camera.position.set(0, this.eyeHeight, 5);
 
         // Pointer lock when clicking on renderer’s canvas
@@ -70,37 +74,76 @@ export class CameraControls {
             case 'a':
             case 's':
             case 'd':
-                if (!this.keys[key]) {
-                    if (!this.keys.shift) { // Only play walk sound if not running
+                this.keys[key] = true;
+
+                // If not free-fly, handle walking/running sounds
+                if (!this.isFreeFly) {
+                    // If SHIFT not pressed and we just started moving
+                    if (!this.keys.shift) {
+                        // Play walk if not already walking
                         this.soundManager.playLoop('walk');
                     }
                 }
-                this.keys[key] = true;
                 break;
+
             case 'shift':
-                if (!this.keys.shift) {
-                    this.keys.shift = true;
-                    // Stop walk sound if it's playing
+                this.keys.shift = true;
+
+                // If not free-fly, handle running sounds
+                if (!this.isFreeFly) {
+                    // Stop walk sound
                     this.soundManager.stopLoop('walk');
                     // Start run sound
                     this.soundManager.playLoop('run');
                 }
                 break;
+
             case 'ctrl':
             case 'control':
-                if (!this.keys.ctrl) {
-                    this.keys.ctrl = true;
+                this.keys.ctrl = true;
+
+                // Only initiate dash if not free-fly
+                if (!this.isFreeFly) {
                     this.initiateDash();
                 }
                 break;
+
             case ' ':
-                // Jump only if not already in the air
-                if (!this.isJumping) {
-                    this.isJumping = true;
-                    this.verticalVelocity = this.jumpSpeed;
-                    this.soundManager.playSound('jump');
+                this.keys.space = true;
+                // Jump (only in normal mode)
+                if (!this.isFreeFly) {
+                    // Jump only if not already in the air
+                    if (!this.isJumping) {
+                        this.isJumping = true;
+                        this.verticalVelocity = this.jumpSpeed;
+                        this.soundManager.playSound('jump');
+                    }
                 }
                 break;
+
+            case 'f':
+                // Toggle free fly
+                this.isFreeFly = !this.isFreeFly;
+
+                // Stop any movement sounds if switching into free-fly
+                if (this.isFreeFly) {
+                    this.soundManager.stopLoop('walk');
+                    this.soundManager.stopLoop('run');
+                    // Also cancel dash if mid-dash
+                    this.isDashing = false;
+                } else {
+                    // If toggling back to normal mode, ensure correct sounds if moving
+                    if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
+                        // If SHIFT is also pressed, play run; else play walk
+                        if (this.keys.shift) {
+                            this.soundManager.playLoop('run');
+                        } else {
+                            this.soundManager.playLoop('walk');
+                        }
+                    }
+                }
+                break;
+
             default:
                 break;
         }
@@ -117,12 +160,16 @@ export class CameraControls {
             case 's':
             case 'd':
                 this.keys[key] = false;
-                this.checkStopWalking();
+                // In normal mode, check if we need to stop walking sound
+                if (!this.isFreeFly) {
+                    this.checkStopWalking();
+                }
                 break;
+
             case 'shift':
-                if (this.keys.shift) {
-                    this.keys.shift = false;
-                    // Stop run sound
+                this.keys.shift = false;
+                // In normal mode, stop run sound; possibly resume walk
+                if (!this.isFreeFly) {
                     this.soundManager.stopLoop('run');
                     // If movement keys are still pressed, start walk sound
                     if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
@@ -130,13 +177,16 @@ export class CameraControls {
                     }
                 }
                 break;
+
             case 'ctrl':
             case 'control':
                 this.keys.ctrl = false;
                 break;
+
             case ' ':
                 this.keys.space = false;
                 break;
+
             default:
                 break;
         }
@@ -173,9 +223,12 @@ export class CameraControls {
     }
 
     /**
-     * Initiate a dash if cooldown allows
+     * Initiate a dash if cooldown allows (only in normal mode)
      */
     initiateDash() {
+        // If already in free-fly, no dash
+        if (this.isFreeFly) return;
+
         const currentTime = performance.now() / 1000; // Convert to seconds
         if (currentTime - this.lastDashTime < this.dashCooldown) {
             // Cooldown not yet passed
@@ -195,10 +248,38 @@ export class CameraControls {
      */
     update(deltaTime) {
         // Calculate direction vectors from camera orientation
-        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion);
-        const right   = new THREE.Vector3(1, 0,  0).applyQuaternion(this.camera.quaternion);
+        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion).normalize();
+        const right   = new THREE.Vector3(1, 0,  0).applyQuaternion(this.camera.quaternion).normalize();
 
-        // Zero out Y so movement is restricted to horizontal plane
+        // FREE-FLY MODE
+        if (this.isFreeFly) {
+            // In free-fly, no gravity or jump logic. SHIFT = fly faster.
+            let speed = this.moveSpeed;
+            if (this.keys.shift) {
+                speed *= this.runMultiplier;
+            }
+            const velocity = speed * deltaTime;
+
+            // Move horizontally
+            if (this.keys.w) this.camera.position.addScaledVector(forward, velocity);
+            if (this.keys.s) this.camera.position.addScaledVector(forward, -velocity);
+            if (this.keys.a) this.camera.position.addScaledVector(right, -velocity);
+            if (this.keys.d) this.camera.position.addScaledVector(right, velocity);
+
+            // Move vertically if you want SPACE/CTRL to go up/down
+            if (this.keys.space) {
+                this.camera.position.y += velocity;
+            }
+            if (this.keys.ctrl) {
+                this.camera.position.y -= velocity;
+            }
+
+            // Ignore dashing, jumping, gravity, etc.
+            return;
+        }
+
+        // NORMAL MODE (not free-fly)
+        // Zero out Y for movement so it’s only horizontal
         forward.y = 0;
         right.y   = 0;
         forward.normalize();
@@ -206,7 +287,6 @@ export class CameraControls {
 
         // Determine current speed
         let speed = this.moveSpeed;
-
         if (this.keys.shift && !this.isDashing) {
             speed *= this.runMultiplier;
         }
@@ -214,25 +294,11 @@ export class CameraControls {
         // Movement speed factor
         const velocity = speed * deltaTime;
 
-        let isMoving = false;
-
         // Move the camera based on keys pressed
-        if (this.keys.w) {
-            this.camera.position.addScaledVector(forward, velocity);
-            isMoving = true;
-        }
-        if (this.keys.s) {
-            this.camera.position.addScaledVector(forward, -velocity);
-            isMoving = true;
-        }
-        if (this.keys.a) {
-            this.camera.position.addScaledVector(right, -velocity);
-            isMoving = true;
-        }
-        if (this.keys.d) {
-            this.camera.position.addScaledVector(right, velocity);
-            isMoving = true;
-        }
+        if (this.keys.w) this.camera.position.addScaledVector(forward, velocity);
+        if (this.keys.s) this.camera.position.addScaledVector(forward, -velocity);
+        if (this.keys.a) this.camera.position.addScaledVector(right, -velocity);
+        if (this.keys.d) this.camera.position.addScaledVector(right, velocity);
 
         // Handle dashing
         if (this.isDashing) {
@@ -246,12 +312,15 @@ export class CameraControls {
 
         // Jumping and gravity
         if (this.isJumping) {
+            // Stop footstep sounds in mid-air
             this.soundManager.stopLoop('walk');
-            this.soundManager.stopLoop("run");
+            this.soundManager.stopLoop('run');
+
             // Apply vertical velocity
             this.camera.position.y += this.verticalVelocity * deltaTime;
             // Apply gravity
             this.verticalVelocity -= this.gravity * deltaTime;
+
             // Check if landed (below or at eye height)
             if (this.camera.position.y <= this.eyeHeight) {
                 this.camera.position.y = this.eyeHeight;
@@ -262,7 +331,5 @@ export class CameraControls {
             // Keep camera at a fixed eye height if not jumping
             this.camera.position.y = this.eyeHeight;
         }
-
-        // Optional: Additional sound effects based on actions
     }
 }
