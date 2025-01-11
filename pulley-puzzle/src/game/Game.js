@@ -7,8 +7,9 @@ import { CameraControls } from '../controls/CameraControls.js';
 import InventoryUI from '../ui/InventoryUI.js';
 import SoundManager from './SoundManager.js';
 import HelpMenu from '../ui/HelpMenu.js';
+import SettingsMenu  from "../ui/SettingsMenu.js";
 
-let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI, soundManager, helpMenu;
+let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI, soundManager, helpMenu, settingsMenu;
 let clock = new THREE.Clock();  // For deltaTime
 let physicsWorld;
 //let editMode = false;
@@ -31,10 +32,11 @@ export async function initGame(level) {
     inventoryUI = new InventoryUI('inventory-hotbar');
     helpMenu = new HelpMenu();
 
-
     soundManager = new SoundManager();
     soundManager.loadSounds();
     soundManager.playMusic();
+
+    settingsMenu = new SettingsMenu(soundManager);
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -154,6 +156,12 @@ export async function initGame(level) {
     document.addEventListener('keydown', (event) => {
         if (event.key.toLowerCase() === 'h') {
             helpMenu.toggle();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'l' || e.key === 'L') {
+            settingsMenu.toggle();
         }
     });
 

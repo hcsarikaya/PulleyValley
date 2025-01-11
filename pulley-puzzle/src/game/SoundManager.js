@@ -18,8 +18,8 @@ export default class SoundManager {
         this.sounds.run.volume = 0.5;
 
         this.sounds.dash = new Audio('/src/sounds/Dashing_in_Air_Whoos.mp3');
-        this.sounds.dash.loop = false; // Assuming it's a one-time sound
-        this.sounds.dash.volume = 0.2; // Initially set to 0
+        this.sounds.dash.loop = false; // One-time sound
+        this.sounds.dash.volume = 0.2;
 
         this.sounds.jump = new Audio('/src/sounds/Jumping_Sound_of_a_p.mp3');
         this.sounds.jump.volume = 1.0;
@@ -29,9 +29,9 @@ export default class SoundManager {
         this.music.loop = true;
         this.music.volume = 0.0;
 
-        // Load other sounds as needed
-        // this.sounds.objectAdd = new Audio('assets/sounds/objectAdd.mp3');
-        // this.sounds.objectRemove = new Audio('assets/sounds/objectRemove.mp3');
+        // Load other sounds if needed:
+        // this.sounds.objectAdd = new Audio('/src/sounds/objectAdd.mp3');
+        // this.sounds.objectRemove = new Audio('/src/sounds/objectRemove.mp3');
     }
 
     // Play background music
@@ -52,8 +52,9 @@ export default class SoundManager {
     playSound(name) {
         if (!this.sounds[name]) return;
         const sound = this.sounds[name].cloneNode();
-        sound.muted = this.sounds[name].muted; // Ensure mute state is inherited
-        sound.volume = this.sounds[name].volume; // Ensure volume is inherited
+        // Inherit volume and mute state
+        sound.volume = this.sounds[name].volume;
+        sound.muted = this.sounds[name].muted;
         sound.play();
     }
 
@@ -89,6 +90,6 @@ export default class SoundManager {
         }
     }
 
-    // For advanced usage, add methods to pause sounds, fade volumes, etc.
-    // ...
+    // Additional helpers could go here...
+    // For example: fade in/out, toggling global mute, etc.
 }
