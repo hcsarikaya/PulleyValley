@@ -48,7 +48,9 @@ export async function initGame(level) {
     soundManager.loadSounds();
     soundManager.playMusic();
 
-    settingsMenu = new SettingsMenu(soundManager);
+    settingsMenu = new SettingsMenu(soundManager, (newSensitivity) => {
+        cameraControls.mouseSensitivity = newSensitivity;
+    });
 
     // Renderer setup
     renderer = new THREE.WebGLRenderer();

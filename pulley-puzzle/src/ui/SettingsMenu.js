@@ -1,6 +1,13 @@
+// SettingsMenu.js
+
 export default class SettingsMenu {
-    constructor(soundManager) {
+    /**
+     * @param {SoundManager} soundManager - Instance of the SoundManager.
+     * @param {Function} onMouseSensitivityChange - Callback to handle mouse sensitivity changes.
+     */
+    constructor(soundManager, onMouseSensitivityChange) {
         this.soundManager = soundManager;
+        this.onMouseSensitivityChange = onMouseSensitivityChange; // Callback function
         this.isVisible = false;
         this.container = null;
         this.#createDOM();
@@ -20,29 +27,35 @@ export default class SettingsMenu {
         this.container.style.flexDirection = 'column';
         this.container.style.zIndex = '9999';
         this.container.style.minWidth = '200px';
+        this.container.style.borderRadius = '8px';
+        this.container.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
 
         // Title
         const title = document.createElement('h2');
         title.textContent = 'Settings';
         title.style.marginTop = '0';
+        title.style.textAlign = 'center';
         this.container.appendChild(title);
 
-        // --- Example Setting: Music Volume ---
+        // --- Music Volume Slider ---
         const musicContainer = document.createElement('div');
         musicContainer.style.margin = '10px 0';
+        musicContainer.style.display = 'flex';
+        musicContainer.style.alignItems = 'center';
 
         const musicLabel = document.createElement('label');
         musicLabel.textContent = 'Music Volume: ';
-        musicLabel.style.display = 'inline-block';
-        musicLabel.style.width = '120px';
+        musicLabel.style.flex = '1';
+        musicLabel.style.marginRight = '10px';
         musicContainer.appendChild(musicLabel);
 
         const musicVolume = document.createElement('input');
         musicVolume.type = 'range';
         musicVolume.min = '0';
         musicVolume.max = '1';
-        musicVolume.step = '0.1';
+        musicVolume.step = '0.01';
         musicVolume.value = this.soundManager.music.volume;
+        musicVolume.style.flex = '2';
         musicVolume.addEventListener('input', (e) => {
             // Adjust background music volume
             const newVolume = parseFloat(e.target.value);
@@ -51,43 +64,38 @@ export default class SettingsMenu {
         musicContainer.appendChild(musicVolume);
         this.container.appendChild(musicContainer);
 
-        // --- Example Setting: Mute/Unmute Entire Game ---
-        const muteContainer = document.createElement('div');
-        muteContainer.style.margin = '10px 0';
+        // --- Mouse Sensitivity Slider ---
+        const sensitivityContainer = document.createElement('div');
+        sensitivityContainer.style.margin = '10px 0';
+        sensitivityContainer.style.display = 'flex';
+        sensitivityContainer.style.alignItems = 'center';
 
-        const muteLabel = document.createElement('label');
-        muteLabel.textContent = 'Mute All Sounds: ';
-        muteLabel.style.display = 'inline-block';
-        muteLabel.style.width = '120px';
-        muteContainer.appendChild(muteLabel);
+        const sensitivityLabel = document.createElement('label');
+        sensitivityLabel.textContent = 'Mouse Sensitivity: ';
+        sensitivityLabel.style.flex = '1';
+        sensitivityLabel.style.marginRight = '10px';
+        sensitivityContainer.appendChild(sensitivityLabel);
 
-        const muteCheckbox = document.createElement('input');
-        muteCheckbox.type = 'checkbox';
-        muteCheckbox.checked = false; // default
-        muteCheckbox.addEventListener('change', (e) => {
-            const shouldMute = e.target.checked;
-            this.#muteAll(shouldMute);
+        const sensitivitySlider = document.createElement('input');
+        sensitivitySlider.type = 'range';
+        sensitivitySlider.min = '0.001';
+        sensitivitySlider.max = '0.01';
+        sensitivitySlider.step = '0.001';
+        sensitivitySlider.value = this.onMouseSensitivityChange.currentValue || '0.002'; // Default value
+        sensitivitySlider.style.flex = '2';
+        sensitivitySlider.addEventListener('input', (e) => {
+            const newSensitivity = parseFloat(e.target.value);
+            if (typeof this.onMouseSensitivityChange === 'function') {
+                this.onMouseSensitivityChange(newSensitivity);
+            }
         });
-        muteContainer.appendChild(muteCheckbox);
-        this.container.appendChild(muteContainer);
+        sensitivityContainer.appendChild(sensitivitySlider);
+        this.container.appendChild(sensitivityContainer);
 
-        // You can add more sliders/checks for run/walk/dash volumes, etc.
+        // You can add more sliders/checks for other settings here
 
         // Append container to body
         document.body.appendChild(this.container);
-    }
-
-    /**
-     * Mute/Unmute all known sounds
-     */
-    #muteAll(isMute) {
-        // Mute or unmute the background music
-        this.soundManager.music.muted = isMute;
-
-        // Mute or unmute all loaded sounds
-        for (let soundKey in this.soundManager.sounds) {
-            this.soundManager.sounds[soundKey].muted = isMute;
-        }
     }
 
     show() {

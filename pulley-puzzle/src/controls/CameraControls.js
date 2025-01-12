@@ -101,6 +101,7 @@ export class CameraControls {
 
         // Current room index, but now we consider rooms extending in negative Z
         this.currentRoom = 0;
+        this.levelPassed = 0;
 
         // Door region (for crossing between rooms)
         this.doorXMin = -5;
@@ -581,7 +582,6 @@ export class CameraControls {
                 camPos.y >= this.doorYMin && camPos.y <= this.doorYMax
             ) {
                 this.currentRoom++;
-                this.soundManager.playSound('nextLevel'); // Play the "nextLevel" sound
             } else {
                 // Block movement at zMin
                 camPos.z = zMin;
@@ -601,6 +601,12 @@ export class CameraControls {
                 // Block movement at zMax
                 camPos.z = zMax;
             }
+        }
+
+        console.log("camera pos:" + this.camera.position.z +" current: " + this.currentRoom +   " level passed: "+ this.levelPassed);
+        if (this.camera.position.z < -1 * this.levelPassed * roomDepth - 30 && this.currentRoom === this.levelPassed + 1) {
+            this.soundManager.playSound("nextLevel");
+            this.levelPassed += 1;
         }
     }
 
