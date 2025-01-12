@@ -140,4 +140,23 @@ button {
 }
 
 
+/* Existing styles ... */
+
+/* ======== Stopwatch ====== */
+#stopwatch {
+  position: fixed;                /* Fix position relative to viewport */
+  top: 10px;                      /* 10px from the top */
+  left: 10px;                     /* 10px from the left */
+  color: white;                   /* White text for visibility */
+  font-size: 24px;                /* Larger font size */
+  font-family: Arial, sans-serif; /* Choose a readable font */
+  z-index: 10000;                 /* Ensure it's on top of other elements */
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  padding: 5px 10px;              /* Some padding for aesthetics */
+  border-radius: 5px;             /* Rounded corners */
+  pointer-events: none;           /* Allows clicks to pass through */
+}
+
+
+
 
