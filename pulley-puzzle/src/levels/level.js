@@ -26,18 +26,17 @@ export class Level{
 
     }
 
-    addObject(level){
+    async addObject(level){
 
         const data = levels.levels[level].objects;
-        data.forEach(obj=> {
-            this.createObject(obj);
-        })
-
+        for(let obj of data){
+            await this.createObject(obj);
+        }
 
     }
 
 
-    createObject(obj) {
+    async createObject(obj) {
 
 
         let object;
@@ -52,7 +51,9 @@ export class Level{
             case "weight":
                 position = obj.position
                 position[2] += this.pos
-                object = new Weight(this.scene,this.physicsWorld ,position);
+                object = await Weight.create(this.scene,this.physicsWorld ,position);
+                //object = new Weight(this.scene, this.physicsWorld, position);
+
                 this.objects.push(object);
 
                 break;

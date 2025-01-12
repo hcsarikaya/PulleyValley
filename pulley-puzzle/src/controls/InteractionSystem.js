@@ -45,24 +45,12 @@ export class InteractionSystem {
         window.addEventListener("mouseup", (e) => this.onMouseUp(e));
     }
 
-    addInteractiveObject(object, options = {}) {
-        const interactiveObject = {
-            mesh: object.mesh || object.model,
-            proximityThreshold: options.proximityThreshold || 5,
-            promptText: options.promptText || 'Press "E" to interact',
-            onInteract: options.onInteract || (() => {}),
-            isInRange: false
-        };
+    addInteractiveObject(object ) {
 
-        if (!interactiveObject.mesh) {
-            console.warn('Interactive object must have a mesh or model with a position.');
-            return;
-        }
 
-        this.interactiveObjects.push(interactiveObject);
+        this.interactiveObjects.push(object);
     }
     onMouseUp(event){
-        console.log("pres")
         if(this.edit && this.objToCarry){
             this.objToCarry = null;
         }
@@ -72,17 +60,18 @@ export class InteractionSystem {
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
+        console.log("df")
         const intersects = this.raycaster.intersectObjects(
-            this.interactiveObjects.map(obj => obj.mesh)
+            this.interactiveObjects.map(obj => obj.mesh || obj.model)
         );
-
+        console.log(intersects);
         if (intersects.length > 0) {
             const clickedObject = this.interactiveObjects.find(
-                obj => obj.mesh === intersects[0].object
+                obj => ( obj.model === intersects[0].object || obj.mesh === intersects[0].object)
             );
+            console.log(clickedObject);
             if(this.edit){
                 this.objToCarry = clickedObject;
-                console.log(this.objToCarry.mesh.position)
                 this.objToCarry.mesh.position.x = this.player.position.x;
                 this.objToCarry.mesh.position.y = this.player.position.y + 6;
                 this.objToCarry.mesh.position.z = this.player.position.z - 4;
@@ -132,6 +121,7 @@ export class InteractionSystem {
 
     onKeyPress(event) {
         if (event.key.toLowerCase() === 'e') {
+            console.log(this.interactiveObjects)
             this.interactiveObjects.forEach(obj => {
                 if (obj.isInRange) {
                     obj.onInteract(obj.mesh);
@@ -171,14 +161,17 @@ export class InteractionSystem {
 
         }
         if(this.objToCarry){
-            console.log("sdg")
+
             this.carryObj();
         }
+        /*
         this.interactiveObjects.forEach(obj => {
-            const target = obj.mesh || obj.model;
-            const distance = this.player.position.distanceTo(target.position);
+            const target = obj.mesh;
+            //const distance = this.player.position.distanceTo(target.mesh.position || target.model.position);
 
-            obj.isInRange = distance < obj.proximityThreshold;
+            //obj.isInRange = distance < obj.proximityThreshold;
         });
+
+         */
     }
 }
