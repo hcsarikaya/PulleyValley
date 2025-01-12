@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import {loadModel} from "../controls/ObjLoader.js";
 
 export class Weight {
     constructor(scene, physicsWorld, position = [5, 0.5, 5]) {
@@ -9,30 +10,7 @@ export class Weight {
         this.model = null;
         this.body = null;
 
-        const modelPath = '../models/5kg.glb';
-
-        // Load GLTF model
-        const loader = new GLTFLoader();
-        loader.load(
-            modelPath,
-            (gltf) => {
-                this.model = gltf.scene;
-                this.model.position.set(position[0], position[1], position[2]);
-                this.model.traverse((child) => {
-                    if (child.isMesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                    }
-                });
-                scene.add(this.model);
-            },
-            undefined,
-            (error) => {
-                console.error('Error loading GLTF model:', error);
-            }
-        );
-
-        // Ammo.js physics body
+        // Ammo.js physics body setup
         const mass = 5; // Adjust as needed
         const shape = new physicsWorld.AmmoLib.btBoxShape(
             new physicsWorld.AmmoLib.btVector3(0.5, 0.5, 0.5)
@@ -57,10 +35,25 @@ export class Weight {
         );
 
         this.body = new physicsWorld.AmmoLib.btRigidBody(bodyInfo);
-        if (this.model) {
-            this.model.userData.physicsBody = this.body;
-        }
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
+    }
+
+    static async create(scene, physicsWorld, position = [5, 0.5, 5]) {
+        const weight = new Weight(scene, physicsWorld, position);
+        const modelPath = '../models/5kg.glb';
+
+        // Wait for the model to load
+        weight.model = await loadModel(modelPath);
+        weight.model.position.set(position[0], position[1], position[2]);
+        weight.model.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = false;
+                child.receiveShadow = false;
+            }
+        });
+        scene.add(weight.model);
+
+        return weight; // Return the fully initialized Weight instance
     }
 
     update() {
@@ -76,4 +69,25 @@ export class Weight {
             this.model.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
         }
     }
+    moveTo(newPosition) {
+        const transform = new this.physicsWorld.AmmoLib.btTransform();
+        transform.setIdentity();
+
+        // Set the new position
+        transform.setOrigin(
+            new this.physicsWorld.AmmoLib.btVector3(newPosition[0], newPosition[1], newPosition[2])
+        );
+
+        // Optionally preserve the current rotation
+        const currentRotation = this.body.getWorldTransform().getRotation();
+        transform.setRotation(currentRotation);
+
+        // Apply the new transform to the body
+        this.body.setWorldTransform(transform);
+
+        // Reset velocity (optional, if you don't want the body to continue moving)
+        this.body.setLinearVelocity(new this.physicsWorld.AmmoLib.btVector3(0, 0, 0));
+        this.body.setAngularVelocity(new this.physicsWorld.AmmoLib.btVector3(0, 0, 0));
+    }
+
 }

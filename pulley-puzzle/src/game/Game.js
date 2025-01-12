@@ -71,7 +71,8 @@ export async function initGame(level) {
     // Initialize and load the level
     levelManager = new LevelManager(scene, physicsWorld);
     levelManager.roomSize = roomSize;
-    levelManager.loadLevel(level);
+
+    await levelManager.loadLevel(level);
 
     
 
@@ -84,7 +85,8 @@ export async function initGame(level) {
 
     levelManager.levels.forEach(lvl => {
         lvl.objects.forEach(obj => {
-            console.log(obj.category)
+            interectionSystem.addInteractiveObject(obj)
+            /*
             if (obj.category === 'pulley') {
                 interectionSystem.addInteractiveObject(obj, {
                     proximityThreshold: 15,
@@ -136,13 +138,15 @@ export async function initGame(level) {
                             }
                         });
                         break
-
                 }
 
             }
+
+
+             */
         });
     });
-
+    /*
     interectionSystem.addInteractiveObject(levelManager.levels[level-1].doorOut, {
         proximityThreshold: 15,
         promptText: 'Press "E" to open door',
@@ -155,6 +159,8 @@ export async function initGame(level) {
             levelManager.loadLevel(level);
         }
     });
+
+     */
 
     document.addEventListener('keydown', (event) => {
         if (event.key.toLowerCase() === 'h') {

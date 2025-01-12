@@ -21,14 +21,14 @@ export class Pulley {
             (gltf) => {
                 console.log('Model loaded:', gltf);
 
-                const model = gltf.scene;
+                this.model = gltf.scene;
 
-                model.position.set(position[0], position[1], position[2]);
-                model.scale.set(scale,scale,scale);
-                model.rotation.y = Math.PI / 2;
+                this.model.position.set(position[0], position[1], position[2]);
+                this.model.scale.set(scale,scale,scale);
+                this.model.rotation.y = Math.PI / 2;
                 //this.mesh=model;
 
-                scene.add(model);
+                scene.add(this.model);
             },
             undefined,
             (error) => {
