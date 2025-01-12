@@ -24,6 +24,9 @@ export default class SoundManager {
         this.sounds.jump = new Audio('/src/sounds/Jumping_Sound_of_a_p.mp3');
         this.sounds.jump.volume = 1.0;
 
+        this.sounds.nextLevel = new Audio('/src/sounds/next level.mp3');
+        this.sounds.nextLevel.volume = 0.5;
+
         // Background music
         this.music = new Audio('/src/sounds/minecraft-starting-song.mp3');
         this.music.loop = true;
