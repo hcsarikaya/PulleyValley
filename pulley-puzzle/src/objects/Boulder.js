@@ -35,11 +35,8 @@ export class Boulder {
                     });
                 });
 
-
-
                 scene.add(this.mesh);
 
-                // Create Ammo.js physics body after model is loaded
                 this.createPhysicsBody(position, scale, mass);
             },
             undefined,
@@ -52,9 +49,13 @@ export class Boulder {
     createPhysicsBody(position, scale, mass) {
         const AmmoLib = this.physicsWorld.AmmoLib;
 
-        // Approximate the shape as a sphere based on the scale
-        const radius = Math.max(...scale) / 2;
-        const shape = new AmmoLib.btSphereShape(radius);
+        // Use a btBoxShape to better match the rock's tall and skinny shape
+        const halfExtents = new AmmoLib.btVector3(
+            scale[0] / 2, // Half width
+            scale[1] / 2,
+            scale[2] / 2  // Half depth
+        );
+        const shape = new AmmoLib.btBoxShape(halfExtents);
 
         // Set the initial transform
         const transform = new AmmoLib.btTransform();
@@ -63,7 +64,7 @@ export class Boulder {
 
         const motionState = new AmmoLib.btDefaultMotionState(transform);
 
-        // Calculate inertia
+        // Calculate inertia for the box shape
         const localInertia = new AmmoLib.btVector3(0, 0, 0);
         shape.calculateLocalInertia(mass, localInertia);
 
@@ -78,10 +79,10 @@ export class Boulder {
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
     }
 
+
     update() {
         if (!this.body) return;
 
-        // Sync the Three.js mesh with the Ammo.js body
         const transform = new this.physicsWorld.AmmoLib.btTransform();
         this.body.getMotionState().getWorldTransform(transform);
 

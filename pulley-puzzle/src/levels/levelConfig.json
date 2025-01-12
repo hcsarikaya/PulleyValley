@@ -26,9 +26,11 @@
       "objects": [
         { "id": "pulley2", "type": "pulley", "position": [25, 25, -21.5] },
         { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
-        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "type":  "weight", "position" : [ 25,  10,  -20 ]},
+        { "type":  "weight", "position" : [ 25,  5,  -20 ]},
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
         { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] },
+        { "type":  "weight", "position" : [ 25,  10.5,  -20 ]},
         { "type":  "rope", "position" : [0, 0, -5]}
       ]
     },
