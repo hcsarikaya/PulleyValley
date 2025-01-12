@@ -1,7 +1,12 @@
 /* ========== Basic global styles ========== */
 body {
+  background-image: url('/public/img/background2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   margin: 0;
   overflow: hidden;
+  height: 100vh;
 }
 
 /* ========== Layout containers ========== */
