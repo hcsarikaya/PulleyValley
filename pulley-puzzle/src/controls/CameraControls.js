@@ -14,29 +14,38 @@ export class CameraControls {
         this.soundManager.playMusic();
 
         // Movement settings
-        this.moveSpeed        = options.moveSpeed        || 20;
-        this.runMultiplier    = options.runMultiplier    || 2;  // Speed multiplier when running (or flying faster)
-        this.dashSpeed        = options.dashSpeed        || 80; // Speed during dash
-        this.dashDuration     = options.dashDuration     || 0.2;
-        this.dashCooldown     = options.dashCooldown     || 0.1;
-        this.jumpSpeed        = options.jumpSpeed        || 20;
-        this.gravity          = options.gravity          || 20;
+        this.moveSpeed = options.moveSpeed || 20;
+        this.runMultiplier = options.runMultiplier || 2;  // Speed multiplier when running (or flying faster)
+        this.dashSpeed = options.dashSpeed || 80; // Speed during dash
+        this.dashDuration = options.dashDuration || 0.2;
+        this.dashCooldown = options.dashCooldown || 0.1;
+        this.jumpSpeed = options.jumpSpeed || 20;
+        this.gravity = options.gravity || 20;
         this.mouseSensitivity = options.mouseSensitivity || 0.002;
-        this.eyeHeight        = options.eyeHeight        || 7;
+        this.eyeHeight = options.eyeHeight || 7;
 
         // Camera state
-        this.isJumping        = false;
+        this.isJumping = false;
         this.verticalVelocity = 0;
-        this.pitch            = 0; // Rotation around X axis
-        this.yaw              = 0; // Rotation around Y axis
+        this.pitch = 0; // Rotation around X axis
+        this.yaw = 0; // Rotation around Y axis
 
         // Dash state
-        this.isDashing         = false;
+        this.isDashing = false;
         this.dashTimeRemaining = 0;
-        this.lastDashTime      = -Infinity;
+        this.lastDashTime = -Infinity;
 
         // Free-fly mode
         this.isFreeFly = false; // Toggled by pressing E
+
+        // Path movement state
+        this.isInPathMovement = false;
+        this.pathStage = 0; // 0: not started, 1: moving to ground, 2: moving to origin, 3: rotating
+        this.pathTarget = new THREE.Vector3();
+        this.pathStartPosition = new THREE.Vector3();
+        this.pathStartRotation = new THREE.Euler();
+        this.pathMovementSpeed = options.pathMovementSpeed || 80;
+        this.pathRotationSpeed = options.pathRotationSpeed || 5;
 
         // Keyboard keys
         this.keys = {
@@ -47,28 +56,33 @@ export class CameraControls {
             space: false,
             shift: false,
             ctrl: false,
-            e: false
+            e: false,
+            p: false
         };
 
         // Set an initial camera position
         this.camera.position.set(0, this.eyeHeight, 5);
 
-        // Pointer lock when clicking on renderer’s canvas
+        // Pointer lock when clicking on renderer's canvas
         this.renderer.domElement.addEventListener('click', () => {
             this.renderer.domElement.requestPointerLock();
         });
 
         // Event listeners
         document.addEventListener('keydown', (e) => this.onKeyDown(e));
-        document.addEventListener('keyup',   (e) => this.onKeyUp(e));
-        document.addEventListener('mousemove',(e) => this.onMouseMove(e));
+        document.addEventListener('keyup', (e) => this.onKeyUp(e));
+        document.addEventListener('mousemove', (e) => this.onMouseMove(e));
     }
 
-    /**
-     * Handle key press events
-     */
     onKeyDown(event) {
         const key = event.key.toLowerCase();
+
+        // Handle P key for path movement
+        if (key === 'p' && !this.isInPathMovement) {
+            this.startPathMovement();
+            return;
+        }
+
         switch (key) {
             case 'w':
             case 'a':
@@ -149,9 +163,6 @@ export class CameraControls {
         }
     }
 
-    /**
-     * Handle key release events
-     */
     onKeyUp(event) {
         const key = event.key.toLowerCase();
         switch (key) {
@@ -192,9 +203,6 @@ export class CameraControls {
         }
     }
 
-    /**
-     * Check if any movement keys are still pressed; if not, stop walking sound
-     */
     checkStopWalking() {
         const isMoving = this.keys.w || this.keys.a || this.keys.s || this.keys.d;
         if (!isMoving) {
@@ -202,29 +210,22 @@ export class CameraControls {
         }
     }
 
-    /**
-     * Handle mouse movement for looking around (pitch & yaw)
-     */
     onMouseMove(event) {
         // Only rotate if pointer is locked on the renderer
         if (document.pointerLockElement !== this.renderer.domElement) return;
 
         // Yaw (left/right) and Pitch (up/down)
-        this.yaw   -= event.movementX * this.mouseSensitivity;
+        this.yaw -= event.movementX * this.mouseSensitivity;
         this.pitch -= event.movementY * this.mouseSensitivity;
 
-        // Clamp pitch so you can’t flip the camera fully
+        // Clamp pitch so you can't flip the camera fully
         const maxPitch = Math.PI / 2 - 0.01;
         this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
 
         // Update the camera rotation using Euler angles
-        const euler = new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ');
-        this.camera.quaternion.setFromEuler(euler);
+        this.updateCameraRotation();
     }
 
-    /**
-     * Initiate a dash if cooldown allows (only in normal mode)
-     */
     initiateDash() {
         // If already in free-fly, no dash
         if (this.isFreeFly) return;
@@ -243,13 +244,90 @@ export class CameraControls {
         this.soundManager.playSound('dash');
     }
 
-    /**
-     * Update function (call every frame or in your render loop)
-     */
+    startPathMovement() {
+        this.isInPathMovement = true;
+        this.pathStage = 1;
+        this.pathStartPosition.copy(this.camera.position);
+        this.pathStartRotation.copy(this.camera.rotation);
+
+        // Set initial target to ground position
+        this.pathTarget.set(0, this.camera.position.y, this.camera.position.z);
+
+        // Disable other movement controls
+        Object.keys(this.keys).forEach(key => this.keys[key] = false);
+    }
+
+    updatePathMovement(deltaTime) {
+        if (!this.isInPathMovement) return;
+
+        const moveStep = this.pathMovementSpeed * deltaTime;
+        const rotationStep = this.pathRotationSpeed * deltaTime;
+
+        switch (this.pathStage) {
+            case 1: // Moving to ground
+                if (this.moveTowardsTarget(moveStep)) {
+                    this.pathStage = 2;
+                    this.pathTarget.set(0, this.camera.position.y, 0);
+                }
+                break;
+
+            case 2: // Moving to origin
+                if (this.moveTowardsTarget(moveStep)) {
+                    this.pathStage = 3;
+                    // Store target rotation (facing +z)
+                    this.pathTarget.set(0, this.camera.position.y, 0);
+                    this.pitch = 0;
+                }
+                break;
+
+            case 3: // Rotating to face +z
+                const targetYaw = 0;
+                const yawDiff = targetYaw - this.yaw;
+
+                if (Math.abs(yawDiff) < rotationStep) {
+                    this.yaw = targetYaw;
+                    this.updateCameraRotation();
+                    this.isInPathMovement = false;
+                    return;
+                }
+
+                this.yaw += Math.sign(yawDiff) * rotationStep;
+                this.updateCameraRotation();
+                break;
+        }
+    }
+
+    moveTowardsTarget(step) {
+        const direction = new THREE.Vector3()
+            .subVectors(this.pathTarget, this.camera.position)
+            .normalize();
+
+        const distance = this.camera.position.distanceTo(this.pathTarget);
+
+        if (distance < step) {
+            this.camera.position.copy(this.pathTarget);
+            return true;
+        }
+
+        this.camera.position.add(direction.multiplyScalar(step));
+        return false;
+    }
+
+    updateCameraRotation() {
+        const euler = new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ');
+        this.camera.quaternion.setFromEuler(euler);
+    }
+
     update(deltaTime) {
+        // Handle path movement if active
+        if (this.isInPathMovement) {
+            this.updatePathMovement(deltaTime);
+            return;
+        }
+
         // Calculate direction vectors from camera orientation
         const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion).normalize();
-        const right   = new THREE.Vector3(1, 0,  0).applyQuaternion(this.camera.quaternion).normalize();
+        const right = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion).normalize();
 
         // FREE-FLY MODE
         if (this.isFreeFly) {
@@ -279,9 +357,9 @@ export class CameraControls {
         }
 
         // NORMAL MODE (not free-fly)
-        // Zero out Y for movement so it’s only horizontal
+        // Zero out Y for movement so it's only horizontal
         forward.y = 0;
-        right.y   = 0;
+        right.y = 0;
         forward.normalize();
         right.normalize();
 

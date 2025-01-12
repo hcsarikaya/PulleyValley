@@ -17,9 +17,11 @@ export default class HelpMenu {
             <li>Ctrl to dash</li>
             <li>Left click to interact with objects</li>
             <li>F to toggle free fly mode</li>
+            <li>P to move origin</li>
             <li>L to open the settings menu</li>
             <li>B to enable edit mode</li>
             <li>H to toggle this help menu</li>
+            
           </ul>
         `;
 
