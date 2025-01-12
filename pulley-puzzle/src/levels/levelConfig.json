@@ -10,30 +10,36 @@
     },
     {
       "objects": [
-        { "type":  "pulley", "position" : [ 10,  25,  -21.5 ]},
-        { "type":  "pulley", "position" : [ 20,  25,  -21.5 ]},
-        { "type":  "pulley", "position" : [ 0, 25, -22 ]},
-        { "type":  "weight", "position" : [ 10,  5.5,  -21.5 ]},
-        { "type":  "weight", "position" : [ 15,  7.5,  -21.5 ]},
-        { "type":  "pallet", "position" : [25, 0, -20 ], "scale": [2, 2, 2]},
-        { "type":  "boulder", "position" : [-2.5, 0, -22 ], "scale": [1.5, 1.2, 1.2], "mass": 10},
+        { "id": "pulley2", "type": "pulley", "position": [25, 25, -21.5] },
+        { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
+        { "id": "weight1", "type": "weight", "position": [ 20 ,0, -10] },
+        { "id": "weight2", "type": "weight", "position": [25, 0, -10] },
+        { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] },
+        { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
+        { "id": "rope1", "type": "rope", "start": "pulley1", "end": "pallet1", "segments": 15 },
+        { "id": "rope2", "type": "rope", "start": "pulley1", "end": "pulley3", "segments": 15 },
+        { "id": "rope3", "type": "rope", "start": "pulley3", "end": "boulder1", "segments": 20 }
+      ]
+
+    },
+    {
+      "objects": [
+        { "id": "pulley2", "type": "pulley", "position": [25, 25, -21.5] },
+        { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
+        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
+        { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] },
         { "type":  "rope", "position" : [0, 0, -5]}
       ]
     },
     {
       "objects": [
-        { "type":  "pulley", "position" : [ 10,  5,  0 ]},
+        { "id": "pulley2", "type": "pulley", "position": [30, 25, -21.5] },
+        { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
         { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
+        { "id": "pallet1", "type": "pallet", "position": [30, 0, -20], "scale": [2, 2, 2] },
         { "type":  "rope", "position" : [0, 0, -5]}
-
-      ]
-    },
-    {
-      "objects": [
-        { "type":  "pulley", "position" : [ 10,  5,  0 ]},
-        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
-        { "type":  "rope", "position" : [0, 0, -5]}
-
       ]
     }
   ]

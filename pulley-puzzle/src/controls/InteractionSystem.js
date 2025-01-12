@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import SoundManager from "../game/SoundManager.js";
+
 export class InteractionSystem {
     constructor(scene, camera) {
         this.scene = scene;
@@ -9,6 +11,7 @@ export class InteractionSystem {
         this.mouse = new THREE.Vector2();
         this.edit = false;
         this.objToCarry = null;
+        this.soundManager = new SoundManager();
 
         // Create HTML element for interaction prompt
         this.promptElement = document.createElement('div');
@@ -16,12 +19,14 @@ export class InteractionSystem {
         this.promptElement.style.padding = '10px';
         this.promptElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
         this.promptElement.style.color = 'white';
-        this.promptElement.style.fontFamily = 'Arial';
+        this.promptElement.style.fontFamily = 'Arial, sans-serif';
         this.promptElement.style.fontSize = '16px';
         this.promptElement.style.display = 'none';
-        this.promptElement.style.top = '50%';
         this.promptElement.style.left = '50%';
-        this.promptElement.style.transform = 'translate(-50%, -50%)';
+        this.promptElement.style.bottom = '10px';
+        this.promptElement.style.transform = 'translateX(-50%)';
+        this.promptElement.style.borderRadius = '8px';
+        this.promptElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
         document.body.appendChild(this.promptElement);
 
         // Bind event listeners
@@ -68,10 +73,12 @@ export class InteractionSystem {
             if(this.edit){
                 this.objToCarry = clickedObject;
                 this.objToCarry.mesh.position.x = this.player.position.x;
-                this.objToCarry.mesh.position.y = this.player.position.y+6;
-                this.objToCarry.mesh.position.z = this.player.position.z-4;
-            }
+                this.objToCarry.mesh.position.y = this.player.position.y + 6;
+                this.objToCarry.mesh.position.z = this.player.position.z - 4;
 
+                // Play the "pull" sound
+                this.soundManager.playSound('pull');
+            }
 
             if (clickedObject && clickedObject.isInRange) {
                 this.showPrompt(clickedObject.promptText);
@@ -80,6 +87,7 @@ export class InteractionSystem {
             this.hidePrompt();
         }
     }
+
 
     onMouseClick(event) {
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;

@@ -9,7 +9,7 @@ export class Door {
         // Create the door geometry and material
         const geometry = new THREE.BoxGeometry(10, 15, 0.5);
         geometry.translate(0, -7.5, 0);
-        const material = new THREE.MeshBasicMaterial({ color: 0x8B4513 });
+        const material = new THREE.MeshBasicMaterial({ color: 0x787171 });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.position.set(position[0], position[1], position[2]);
 
