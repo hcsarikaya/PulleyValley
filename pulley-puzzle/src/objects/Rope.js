@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Ammo from 'ammo.js/ammo.js'
 
 export class Rope {
-    constructor(scene,physicsWorld, startObj = [0, 10, 0], endObj = [0, 5, 0], segments = 10) {
+    constructor(scene,physicsWorld, startObj, endObj, segments = 10) {
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.category = 'rope';
