@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pullez Puzzle</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -17,8 +17,15 @@
     <button class="level-btn" data-level="3">Level 3</button>
   </div>
 </div>
-<div id="game-container" style="display:none;"></div>
-<div id="inventory-hotbar"></div>
+
+<!-- Game Container -->
+<div id="game-container" style="display:none;">
+  <!-- Stopwatch Element -->
+  <div id="stopwatch">00:00</div>
+  <!-- Your existing game canvas and elements will be appended here -->
+</div>
+
+<div id="center-cross"></div>
 <script type="module" src="main.js"></script>
 </body>
 </html>
