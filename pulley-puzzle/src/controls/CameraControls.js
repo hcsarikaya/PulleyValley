@@ -15,8 +15,8 @@ export class CameraControls {
 
         // Movement settings
         this.moveSpeed = options.moveSpeed || 20;
-        this.runMultiplier = options.runMultiplier || 2;  // Speed multiplier when running (or flying faster)
-        this.dashSpeed = options.dashSpeed || 80; // Speed during dash
+        this.runMultiplier = options.runMultiplier || 2;    // Speed multiplier when running (or flying faster)
+        this.dashSpeed = options.dashSpeed || 80;          // Speed during dash
         this.dashDuration = options.dashDuration || 0.2;
         this.dashCooldown = options.dashCooldown || 0.1;
         this.jumpSpeed = options.jumpSpeed || 20;
@@ -28,7 +28,7 @@ export class CameraControls {
         this.isJumping = false;
         this.verticalVelocity = 0;
         this.pitch = 0; // Rotation around X axis
-        this.yaw = 0; // Rotation around Y axis
+        this.yaw = 0;   // Rotation around Y axis
 
         // Dash state
         this.isDashing = false;
@@ -36,11 +36,11 @@ export class CameraControls {
         this.lastDashTime = -Infinity;
 
         // Free-fly mode
-        this.isFreeFly = false; // Toggled by pressing E
+        this.isFreeFly = false; // Toggled by pressing F
 
         // Path movement state
         this.isInPathMovement = false;
-        this.pathStage = 0; // 0: not started, 1: moving to ground, 2: moving to origin, 3: rotating
+        this.pathStage = 0; // 0: not started
         this.pathTarget = new THREE.Vector3();
         this.pathStartPosition = new THREE.Vector3();
         this.pathStartRotation = new THREE.Euler();
@@ -57,7 +57,7 @@ export class CameraControls {
             shift: false,
             ctrl: false,
             e: false,
-            p: false
+            p: false,
         };
 
         // Set an initial camera position
@@ -244,14 +244,19 @@ export class CameraControls {
         this.soundManager.playSound('dash');
     }
 
+    // ----------------------------------------------------------------
+    // START THE PATH MOVEMENT
+    // ----------------------------------------------------------------
     startPathMovement() {
         this.isInPathMovement = true;
         this.pathStage = 1;
         this.pathStartPosition.copy(this.camera.position);
         this.pathStartRotation.copy(this.camera.rotation);
 
-        // Set initial target to ground position
-        this.pathTarget.set(0, this.camera.position.y, this.camera.position.z);
+        // Stage 1: Set first rotation target (facing opposite of [0, y, z])
+        const firstTarget = new THREE.Vector3(0, this.camera.position.y, this.camera.position.z);
+        const firstDirection = new THREE.Vector3().subVectors(this.camera.position, firstTarget).normalize();
+        this.targetYaw = Math.atan2(firstDirection.x, firstDirection.z);
 
         // Disable other movement controls
         Object.keys(this.keys).forEach(key => this.keys[key] = false);
@@ -264,60 +269,120 @@ export class CameraControls {
         const rotationStep = this.pathRotationSpeed * deltaTime;
 
         switch (this.pathStage) {
-            case 1: // Moving to ground
-                if (this.moveTowardsTarget(moveStep)) {
+            case 1: // First rotation (facing opposite of [0, y, z])
+                const yawDiff1 = this.targetYaw - this.yaw;
+                if (Math.abs(yawDiff1) < rotationStep) {
+                    this.yaw = this.targetYaw;
+                    this.updateCameraRotation();
                     this.pathStage = 2;
-                    this.pathTarget.set(0, this.camera.position.y, 0);
+                    // Set target for first movement
+                    this.pathTarget.set(0, this.camera.position.y, this.camera.position.z);
+                } else {
+                    this.yaw += Math.sign(yawDiff1) * rotationStep;
+                    this.updateCameraRotation();
                 }
                 break;
 
-            case 2: // Moving to origin
+            case 2: // First movement (to [0, y, z])
                 if (this.moveTowardsTarget(moveStep)) {
                     this.pathStage = 3;
-                    // Store target rotation (facing +z)
-                    this.pathTarget.set(0, this.camera.position.y, 0);
-                    this.pitch = 0;
+                    // Calculate second rotation target (facing opposite of [0, y, 0])
+                    const secondTarget = new THREE.Vector3(0, this.camera.position.y, 0);
+                    const secondDirection = new THREE.Vector3().subVectors(this.camera.position, secondTarget).normalize();
+                    this.targetYaw = Math.atan2(secondDirection.x, secondDirection.z);
                 }
                 break;
 
-            case 3: // Rotating to face +z
-                const targetYaw = 0;
-                const yawDiff = targetYaw - this.yaw;
-
-                if (Math.abs(yawDiff) < rotationStep) {
-                    this.yaw = targetYaw;
+            case 3: // Second rotation (facing opposite of [0, y, 0])
+                const yawDiff2 = this.targetYaw - this.yaw;
+                if (Math.abs(yawDiff2) < rotationStep) {
+                    this.yaw = this.targetYaw;
                     this.updateCameraRotation();
-                    this.isInPathMovement = false;
-                    return;
+                    this.pathStage = 4;
+                    // Set target for final movement
+                    this.pathTarget.set(0, this.camera.position.y, 0);
+                } else {
+                    this.yaw += Math.sign(yawDiff2) * rotationStep;
+                    this.updateCameraRotation();
                 }
+                break;
 
-                this.yaw += Math.sign(yawDiff) * rotationStep;
-                this.updateCameraRotation();
+            case 4: // Final movement (to [0, y, 0])
+                if (this.moveTowardsTarget(moveStep)) {
+                    this.isInPathMovement = false;
+                }
                 break;
         }
     }
 
-    moveTowardsTarget(step) {
-        const direction = new THREE.Vector3()
-            .subVectors(this.pathTarget, this.camera.position)
-            .normalize();
+    // ----------------------------------------------------------------
+    // ROTATE TOWARDS TARGET (yaw only; ignoring pitch)
+    // ----------------------------------------------------------------
+    rotateTowardsTarget(targetPos, rotationStep) {
+        // Direction on the horizontal plane
+        const direction = new THREE.Vector3().subVectors(targetPos, this.camera.position);
+        direction.y = 0; // ignore vertical for yaw
+        direction.normalize();
 
+        // If the direction is too small, rotation is basically done
+        if (direction.lengthSq() < 1e-6) {
+            return true;
+        }
+
+        // Compute target yaw
+        // Because default camera forward is -Z, use atan2(x, z)
+        const targetYaw = Math.atan2(direction.x, direction.z);
+
+        // Current difference in yaw
+        let yawDiff = targetYaw - this.yaw;
+
+        // Normalize yawDiff to [-PI, PI]
+        yawDiff = ((yawDiff + Math.PI) % (2 * Math.PI)) - Math.PI;
+
+        // If within rotation step, snap directly
+        if (Math.abs(yawDiff) < rotationStep) {
+            this.yaw = targetYaw;
+            this.updateCameraRotation();
+            return true;
+        }
+
+        // Otherwise, rotate a bit each frame
+        this.yaw += Math.sign(yawDiff) * rotationStep;
+        this.updateCameraRotation();
+        return false;
+    }
+
+    // ----------------------------------------------------------------
+    // MOVE TOWARDS TARGET (this.pathTarget)
+    // ----------------------------------------------------------------
+    moveTowardsTarget(step) {
         const distance = this.camera.position.distanceTo(this.pathTarget);
 
+        // If close enough, snap to target
         if (distance < step) {
             this.camera.position.copy(this.pathTarget);
             return true;
         }
 
+        const direction = new THREE.Vector3()
+            .subVectors(this.pathTarget, this.camera.position)
+            .normalize();
+
         this.camera.position.add(direction.multiplyScalar(step));
         return false;
     }
 
+    // ----------------------------------------------------------------
+    // UPDATE CAMERA ROTATION
+    // ----------------------------------------------------------------
     updateCameraRotation() {
         const euler = new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ');
         this.camera.quaternion.setFromEuler(euler);
     }
 
+    // ----------------------------------------------------------------
+    // MAIN UPDATE LOOP
+    // ----------------------------------------------------------------
     update(deltaTime) {
         // Handle path movement if active
         if (this.isInPathMovement) {
@@ -327,7 +392,7 @@ export class CameraControls {
 
         // Calculate direction vectors from camera orientation
         const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion).normalize();
-        const right = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion).normalize();
+        const right   = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion).normalize();
 
         // FREE-FLY MODE
         if (this.isFreeFly) {
@@ -339,12 +404,12 @@ export class CameraControls {
             const velocity = speed * deltaTime;
 
             // Move horizontally
-            if (this.keys.w) this.camera.position.addScaledVector(forward, velocity);
+            if (this.keys.w) this.camera.position.addScaledVector(forward,  velocity);
             if (this.keys.s) this.camera.position.addScaledVector(forward, -velocity);
-            if (this.keys.a) this.camera.position.addScaledVector(right, -velocity);
-            if (this.keys.d) this.camera.position.addScaledVector(right, velocity);
+            if (this.keys.a) this.camera.position.addScaledVector(right,   -velocity);
+            if (this.keys.d) this.camera.position.addScaledVector(right,    velocity);
 
-            // Move vertically if you want SPACE/CTRL to go up/down
+            // Move vertically (SPACE = up, CTRL = down)
             if (this.keys.space) {
                 this.camera.position.y += velocity;
             }
@@ -359,7 +424,7 @@ export class CameraControls {
         // NORMAL MODE (not free-fly)
         // Zero out Y for movement so it's only horizontal
         forward.y = 0;
-        right.y = 0;
+        right.y   = 0;
         forward.normalize();
         right.normalize();
 
@@ -373,10 +438,10 @@ export class CameraControls {
         const velocity = speed * deltaTime;
 
         // Move the camera based on keys pressed
-        if (this.keys.w) this.camera.position.addScaledVector(forward, velocity);
+        if (this.keys.w) this.camera.position.addScaledVector(forward,  velocity);
         if (this.keys.s) this.camera.position.addScaledVector(forward, -velocity);
-        if (this.keys.a) this.camera.position.addScaledVector(right, -velocity);
-        if (this.keys.d) this.camera.position.addScaledVector(right, velocity);
+        if (this.keys.a) this.camera.position.addScaledVector(right,   -velocity);
+        if (this.keys.d) this.camera.position.addScaledVector(right,    velocity);
 
         // Handle dashing
         if (this.isDashing) {

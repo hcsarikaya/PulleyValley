@@ -49,7 +49,7 @@ export class WizardParticleSystem {
         // Get spawn position slightly in front of camera
         const spawnPosition = new THREE.Vector3();
         this.camera.getWorldPosition(spawnPosition);
-        spawnPosition.add(cameraDirection.multiplyScalar(5)); // Spawn 5 units in front of camera
+        spawnPosition.add(cameraDirection.multiplyScalar(2)); // Spawn 5 units in front of camera
 
         const posSpread = 1;
         const velBase = 5; // Base velocity in camera direction
