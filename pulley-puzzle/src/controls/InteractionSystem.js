@@ -22,11 +22,11 @@ export class InteractionSystem {
         this.promptElement.style.fontFamily = 'Arial, sans-serif';
         this.promptElement.style.fontSize = '16px';
         this.promptElement.style.display = 'none';
-        this.promptElement.style.left = '50%'; // Yatayda ortala
-        this.promptElement.style.bottom = '10px'; // Ekranın altından 10px yukarıda
-        this.promptElement.style.transform = 'translateX(-50%)'; // Sadece yatayda ortala
-        this.promptElement.style.borderRadius = '8px'; // Kenarları yuvarlat
-        this.promptElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)'; // (Opsiyonel) Gölge ekle
+        this.promptElement.style.left = '50%';
+        this.promptElement.style.bottom = '10px';
+        this.promptElement.style.transform = 'translateX(-50%)';
+        this.promptElement.style.borderRadius = '8px';
+        this.promptElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
         document.body.appendChild(this.promptElement);
 
         // Bind event listeners
