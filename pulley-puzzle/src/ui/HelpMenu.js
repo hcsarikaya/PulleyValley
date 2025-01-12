@@ -8,17 +8,21 @@ export default class HelpMenu {
 
         // You can fill this with whatever help text or instructions you like.
         this.container.innerHTML = `
-      <h2>Help</h2>
-      <p>Controls:</p>
-      <ul>
-        <li>W/A/S/D to move</li>
-        <li>Shift to run</li>
-        <li>Ctrl to dash</li>
-        <li>Space to jump</li>
-        <li>Mouse click to interact</li>
-        <li>H to toggle this help menu</li>
-      </ul>
-    `;
+          <h2>Help</h2>
+          <p>Controls:</p>
+          <ul>
+            <li>W/A/S/D to move</li>
+            <li>Space to jump</li>
+            <li>Shift to run</li>
+            <li>Ctrl to dash</li>
+            <li>Left click to interact with objects</li>
+            <li>F to toggle free fly mode</li>
+            <li>L to open the settings menu</li>
+            <li>B to enable edit mode</li>
+            <li>H to toggle this help menu</li>
+          </ul>
+        `;
+
 
         // Initially hidden
         this.isVisible = false;

@@ -4,16 +4,18 @@ import { Player } from './Player.js';
 import { LevelManager } from './LevelManager.js';
 import { InteractionSystem } from "../controls/InteractionSystem.js"
 import { CameraControls } from '../controls/CameraControls.js';
-import InventoryUI from '../ui/InventoryUI.js';
+//import InventoryUI from '../ui/InventoryUI.js';
 import SoundManager from './SoundManager.js';
 import HelpMenu from '../ui/HelpMenu.js';
 import SettingsMenu  from "../ui/SettingsMenu.js";
 import { DustParticleSystem } from '../objects/DustParticleSystem.js';
+import {WizardParticleSystem} from "../objects/WizardParticleSystem.js";
 
 let scene, camera, renderer, controls, player, levelManager, interectionSystem, cameraControls, inventoryUI, soundManager, helpMenu, settingsMenu;
 let clock = new THREE.Clock();  // For deltaTime
 let physicsWorld;
 let dustSystem;
+let wizardSystem;
 
 let lastSpawnTime = 0;
 const spawnInterval = 1.0; // 1 second
@@ -36,7 +38,7 @@ export async function initGame(level) {
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 
-    inventoryUI = new InventoryUI('inventory-hotbar');
+    //inventoryUI = new InventoryUI('inventory-hotbar');
     helpMenu = new HelpMenu();
 
     soundManager = new SoundManager();
@@ -54,6 +56,9 @@ export async function initGame(level) {
 
     dustSystem = new DustParticleSystem(scene);
 
+    wizardSystem = new WizardParticleSystem(scene, camera);
+
+
     // Add basic lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
@@ -68,7 +73,7 @@ export async function initGame(level) {
     levelManager.roomSize = roomSize;
     levelManager.loadLevel(level);
 
-    
+
 
     // Create player
     player = new Player(scene,cameraControls.camera);
@@ -77,7 +82,7 @@ export async function initGame(level) {
     interectionSystem = new InteractionSystem(scene, camera);
     interectionSystem.setPlayer(player.mesh);
 
-    
+
     //tüm levellardaki objeleri eklemek için loop gerekli
     levelManager.levels[level - 1].objects.forEach((obj) => {
         if (obj.category === 'Pulley') {
@@ -161,7 +166,7 @@ export async function initGame(level) {
             roomCenter[2] -= roomSize[0];
             levelManager.loadLevel(level);
         }
-    });
+    })
 
     document.addEventListener('keydown', (event) => {
         if (event.key.toLowerCase() === 'h') {
@@ -174,6 +179,7 @@ export async function initGame(level) {
             settingsMenu.toggle();
         }
     });
+
 
 
 
@@ -204,6 +210,7 @@ function animate() {
 
     // Update dustSystem
     dustSystem.update(delta);
+    wizardSystem.update(delta);
 
     // Check if it's time to spawn a new dust burst
     const now = clock.elapsedTime; // or performance.now()*0.001
