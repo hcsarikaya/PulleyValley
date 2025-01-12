@@ -7,8 +7,12 @@ export class Boulder {
         this.physicsWorld = physicsWorld;
         this.mesh = null; // Three.js mesh
         this.body = null; // Ammo.js rigid body
+
         const modelPath = '../public/models/kaya2.glb';
+        const texturePath = '/src/textures/boulder.jpg';
+
         this.category = 'boulder';
+
 
         // Load the GLTF model
         const loader = new GLTFLoader();
@@ -18,6 +22,21 @@ export class Boulder {
                 this.mesh = gltf.scene;
                 this.mesh.scale.set(scale[0], scale[1], scale[2]);
                 this.mesh.position.set(position[0], position[1], position[2]);
+
+
+                const textureLoader = new THREE.TextureLoader();
+                textureLoader.load(texturePath, (texture) => {
+                    this.mesh.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material = new THREE.MeshStandardMaterial({
+                                map: texture,
+                            });
+                        }
+                    });
+                });
+
+
+
                 scene.add(this.mesh);
 
                 // Create Ammo.js physics body after model is loaded
