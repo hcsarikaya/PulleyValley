@@ -51,7 +51,7 @@ export class Level{
             case "weight":
                 position = obj.position
                 position[2] += this.pos
-                object = await Weight.create(this.scene,this.physicsWorld ,position);
+                object = await Weight.create(this.scene,this.physicsWorld ,position, obj.path);
                 //object = new Weight(this.scene, this.physicsWorld, position);
 
                 this.objects.push(object);
@@ -63,7 +63,7 @@ export class Level{
             case "button":
                 position = obj.position
                 position[2] += this.pos
-                object = new Button(this.scene, position, obj.opt);
+                object = new Button(this.scene, this.physicsWorld,position, obj.opt);
                 this.objects.push(object);
 
                 break

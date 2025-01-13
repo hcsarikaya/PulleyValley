@@ -5,15 +5,17 @@
       "objects": [
         { "type":  "button", "position" : [-15, 0, 0], "opt":  "setting"},
         { "type":  "button", "position" : [15, 0, 0], "opt":  1},
-        { "type":  "weight", "position" : [ 10,  0.5,  10 ]}
+        { "type":  "weight", "position" : [ 10,  0.5,  10 ],
+          "path": "../models/5kg.glb"
+        }
       ]
     },
     {
       "objects": [
         { "id": "pulley2", "type": "pulley", "position": [25, 25, -21.5] },
         { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
-        { "id": "weight1", "type": "weight", "position": [ 20 ,0, -10] },
-        { "id": "weight2", "type": "weight", "position": [25, 0, -10] },
+        { "id": "weight1", "type": "weight", "position": [ 20 ,0, -10],"path": "../models/5kg.glb" },
+        { "id": "weight2", "type": "weight", "position": [25, 0, -10],"path": "../models/5kg.glb" },
         { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] },
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
         { "id": "rope1", "type": "rope", "start": "pulley1", "end": "pallet1", "segments": 15 },
@@ -26,7 +28,7 @@
       "objects": [
         { "id": "pulley2", "type": "pulley", "position": [25, 25, -21.5] },
         { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
-        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "type":  "weight", "position" : [ 5,  0.5,  5 ],"path": "../models/5kg.glb"},
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
         { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] },
         { "type":  "rope", "position" : [0, 0, -5]}
@@ -36,7 +38,7 @@
       "objects": [
         { "id": "pulley2", "type": "pulley", "position": [30, 25, -21.5] },
         { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
-        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "type":  "weight", "position" : [ 5,  0.5,  5 ],"path": "../models/5kg.glb"},
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
         { "id": "pallet1", "type": "pallet", "position": [30, 0, -20], "scale": [2, 2, 2] },
         { "type":  "rope", "position" : [0, 0, -5]}
