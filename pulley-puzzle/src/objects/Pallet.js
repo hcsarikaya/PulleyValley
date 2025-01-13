@@ -9,6 +9,7 @@ export class Pallet {
         this.mesh = null;
         this.body = null;
         this.scale = scale;
+        this.weights = [];
 
         this.createPhysicsBody(position);
 
@@ -86,8 +87,22 @@ export class Pallet {
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
     }
 
+    addWeight(weight) {
+        this.weights.push(weight);
+    }
+
+    removeWeight(weight) {
+        const index = this.weights.indexOf(weight);
+        if (index > -1) {
+            this.weights.splice(index, 1);
+        }
+    }
+
+    calculateTotalMass() {
+        return this.weights.reduce((total, weight) => total + weight.body.getMass(), 0);
+    }
+
     update() {
-        // Sync the Three.js model with Ammo.js physics body
         if (!this.body || !this.mesh) return;
 
         const transform = new this.physicsWorld.AmmoLib.btTransform();

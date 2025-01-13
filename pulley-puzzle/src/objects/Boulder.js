@@ -51,6 +51,16 @@ export class Boulder {
                 console.error('Failed to load boulder model:', error);
             }
         );
+
+
+    }
+
+    getMass() {
+        if (!this.body) {
+            console.error("Boulder physics body is not initialized.");
+            return 0;
+        }
+        return this.body.getMass();
     }
 
     createPhysicsBody(position, scale, mass) {

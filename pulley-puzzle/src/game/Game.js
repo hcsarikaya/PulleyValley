@@ -99,8 +99,8 @@ export async function initGame(level) {
 
     // Second room spotlight
     const spotLight2 = new THREE.SpotLight(0xffffff, 10.0);
-    spotLight2.position.set(0, 40, -45); // Positioned at second room's center
-    spotLight2.target.position.set(0, 0, -45);
+    spotLight2.position.set(25, 41, -60); // Positioned at between Pulleys to be able to see the pulleys
+    spotLight2.target.position.set(10, 0, -60);
     scene.add(spotLight2.target);
 
     spotLight2.angle = Math.PI / 2.5;

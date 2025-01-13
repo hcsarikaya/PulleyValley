@@ -58,8 +58,31 @@ export class Level{
 
                 break;
             case "rope":
+                /*
+                const startObject = this.objects.find(o => o.id === obj.start);
+                const endObject = this.objects.find(o => o.id === obj.end);
 
-                break
+                if (startObject && endObject) {
+                    object = new Rope(
+                        this.scene,
+                        this.physicsWorld,
+                        {
+                            startObject,
+                            endObject,
+                            segments: obj.segments || 20,
+                            ropeColor: obj.ropeColor || 0x333333,
+                            stiffness: obj.stiffness || 0.5,
+                            damping: obj.damping || 0.99,
+                            gravity: new THREE.Vector3(0, -9.8, 0),
+                        }
+                    );
+                    this.objects.push(object);
+                } else {
+                    console.error("Invalid start or end object for rope:", obj);
+                }
+
+                 */
+                break;
             case "button":
                 position = obj.position
                 position[2] += this.pos

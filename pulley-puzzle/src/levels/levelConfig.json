@@ -16,9 +16,7 @@
         { "id": "weight2", "type": "weight", "position": [25, 0, -10] },
         { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] },
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
-        { "id": "rope1", "type": "rope", "start": "pulley1", "end": "pallet1", "segments": 15 },
-        { "id": "rope2", "type": "rope", "start": "pulley1", "end": "pulley3", "segments": 15 },
-        { "id": "rope3", "type": "rope", "start": "pulley3", "end": "boulder1", "segments": 20 }
+        { "id": "rope1", "type": "rope", "start": "pulley2", "end": "pallet1", "segments": 15 }
       ]
 
     },

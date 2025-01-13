@@ -13,7 +13,7 @@ export class Weight {
         // Ammo.js physics body setup
         const mass = 5;
         const shape = new physicsWorld.AmmoLib.btBoxShape(
-            new physicsWorld.AmmoLib.btVector3(0.5, 0.5, 0.5)
+            new physicsWorld.AmmoLib.btVector3(1.5, 0.75 , 1.5)
         );
 
         const transform = new physicsWorld.AmmoLib.btTransform();
