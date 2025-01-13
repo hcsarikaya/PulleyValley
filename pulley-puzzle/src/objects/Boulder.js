@@ -6,11 +6,13 @@ export class Boulder {
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.mesh = null;
+        this.model = null;
         this.body = null;
         this.position = position;
         this.scale = scale;
         this.mass = mass;
         this.category = 'boulder';
+        this.name = null;
 
         this.modelPath = '../public/models/kaya2.glb';
         this.texturePath = '/src/textures/boulder.jpg';
