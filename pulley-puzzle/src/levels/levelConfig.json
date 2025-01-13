@@ -3,9 +3,121 @@
     {
 
       "objects": [
-        { "type":  "button", "position" : [-15, 0, 0], "opt":  "setting"},
-        { "type":  "button", "position" : [15, 0, 0], "opt":  1},
-        { "type":  "weight", "position" : [ 0 , 0 , 0 ],"path":  "../models/5kg.glb","mass": 5}
+        { "type":  "weight", "position" : [ 24 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 26 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 28 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 30 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 32 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+
+
+        { "type":  "weight", "position" : [ 34 , 0 , -12 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 31 , 0 , -12 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 28 , 0 , -16 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 25 , 0 , -12 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 22 , 0 , -12 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type": "weight", "position": [32, 0.5, -2] ,"path":  "../models/5kg.glb","mass": 5},
+        { "type": "weight", "position": [30, 0.5, -2] ,"path":  "../models/5kg.glb","mass": 5},
+        { "type": "weight", "position": [28, 0.5, -2] ,"path":  "../models/5kg.glb","mass": 5},
+        { "type": "weight", "position": [26, 0.5, -2] ,"path":  "../models/5kg.glb","mass": 5},
+        { "type": "weight", "position": [24, 0.5, -2] ,"path":  "../models/5kg.glb","mass": 5},
+
+        { "type": "weight", "position": [34, 0, 1],"path":  "../models/5kg.glb","mass": 5 },
+        { "type": "weight", "position": [28, 0, 1],"path":  "../models/5kg.glb","mass": 5 },
+
+        { "type": "weight", "position": [32, 0.5, 5] ,"path":  "../models/5kg.glb","mass": 5},
+        { "type": "weight", "position": [30, 0.5, 5] ,"path":  "../models/5kg.glb","mass": 5},
+        { "type": "weight", "position": [28, 0.5, 5] ,"path":  "../models/5kg.glb","mass": 5},
+        { "type": "weight", "position": [26, 0.5, 5] ,"path":  "../models/5kg.glb","mass": 5},
+        { "type": "weight", "position": [24, 0.5, 5] ,"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ 12, 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 10 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 8 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 6 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 4 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ 8 , 0 , -16 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 8 , 0 , -14 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ 12, 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 10 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 8 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 6 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 4 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ 14 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 12 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 16 , 0 , 1 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 16 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ 10 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 10 , 0 , 1 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 8 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ 6 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ 4 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 4 , 0 , 1 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 4 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ -4 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -6 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -8 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -10 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -12 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+
+
+        { "type":  "weight", "position" : [ -14 , 0 , -12 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -11 , 0 , -12 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -8 , 0 , -16 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -5 , 0 , -12 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -2 , 0 , -12 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ -4 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -6 , 0 , -2],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -8 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -10 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -12 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ -14 , 0 , 1 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -2 , 0 , 1],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ -4 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -6 , 0 , 5],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -8 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -10 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -12 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [-32, 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -30 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -28 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -26 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -24 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ -28 , 0 , -16 ],"path":  "../models/5kg.glb","mass": 5},
+
+
+        { "type":  "weight", "position" : [ -32, 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -30 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -28 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -26 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -24 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ -32 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -30 , 0 , -2],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -28 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -26 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -24 , 0 , -2 ],"path":  "../models/5kg.glb","mass": 5},
+
+        { "type":  "weight", "position" : [ -34 , 0 , 1 ],"path":  "../models/5kg.glb","mass": 5},
+
+
+        { "type":  "weight", "position" : [ -32 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -30 , 0 , 5],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -28 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -26 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ -24 , 0 , 5 ],"path":  "../models/5kg.glb","mass": 5}
       ]
     },
     {
