@@ -47,6 +47,9 @@ export class Level{
                 position[2] += this.pos;
                 object = new Pulley(this.scene, this.physicsWorld, position, 1.5);
                 await object.load();
+                if(obj.id){
+                    object.name = obj.id;
+                }
                 this.objects.push(object);
                 break;
             case "weight":
@@ -60,9 +63,9 @@ export class Level{
 
                 break;
             case "rope":
-                /*
-                const startObject = this.objects.find(o => o.id === obj.start);
-                const endObject = this.objects.find(o => o.id === obj.end);
+
+                const startObject = this.objects.find(o => o.name === obj.start);
+                const endObject = this.objects.find(o => o.name === obj.start);
 
                 if (startObject && endObject) {
                     object = new Rope(
@@ -83,12 +86,12 @@ export class Level{
                     console.error("Invalid start or end object for rope:", obj);
                 }
 
-                 */
+
                 break;
             case "button":
                 position = obj.position
                 position[2] += this.pos
-                object = new Button(this.scene, position, obj.opt);
+                object = new Button(this.scene,this.physicsWorld, position, obj.opt);
                 this.objects.push(object);
 
                 break
@@ -97,6 +100,10 @@ export class Level{
                 position[2] += this.pos;
                 object = new Pallet(this.scene, this.physicsWorld, position, obj.scale || [1, 1, 1], obj.path);
                 await object.load();
+                if(obj.id){
+                    object.name = obj.id;
+                }
+                console.log(object)
                 this.objects.push(object);
                 break
             case "boulder":
@@ -104,6 +111,10 @@ export class Level{
                 position[2] += this.pos;
                 object = new Boulder(this.scene, this.physicsWorld, position,obj.scale || [1, 1, 1],);
                 await object.load();
+                if(obj.id){
+                    object.name = obj.id;
+                }
+                console.log(object)
                 this.objects.push(object);
 
                 break
