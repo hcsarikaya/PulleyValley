@@ -76,7 +76,7 @@ export async function initGame(level) {
     levelManager = new LevelManager(scene, physicsWorld);
     levelManager.roomSize = roomSize;
 
-    await levelManager.loadLevel(level);
+    await levelManager.loadLevel(Number(level));
 
     // Create player
     player = new Player(scene, cameraControls.camera, physicsWorld);
