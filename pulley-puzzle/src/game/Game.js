@@ -1,12 +1,17 @@
 // Import statements remain unchanged
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { Player } from './Player.js';
 import { LevelManager } from './LevelManager.js';
 import { InteractionSystem } from "../controls/InteractionSystem.js";
 import { CameraControls } from '../controls/CameraControls.js';
 import { DustParticleSystem } from '../objects/DustParticleSystem.js';
 import { WizardParticleSystem } from "../objects/WizardParticleSystem.js";
+import { NightVisionShader } from '../shaders/NightVisionShader.js';
+
 import { PhysicsWorld } from '../objects/PhysicsWorld.js';
 //import InventoryUI from '../ui/InventoryUI.js';
 import SoundManager from './SoundManager.js';
@@ -23,7 +28,9 @@ const spawnInterval = 1.0;
 const dustSpawnPosition = new THREE.Vector3(0, 0, 0);
 let helpMenu, settingsMenu, soundManager;
 let stopwatchElement;
-let spotlight1;
+let spotlight1, spotlight2;
+let composer, nightVisionPass;
+let nightVisionEnabled = false;
 
 // Add movement speed constant for spotlight
 const SPOTLIGHT_MOVE_SPEED = 2;
@@ -98,25 +105,25 @@ export async function initGame(level) {
     scene.add(spotlight1);
 
     // Second room spotlight
-    const spotLight2 = new THREE.SpotLight(0xffffff, 10.0);
-    spotLight2.position.set(0, 40, -45); // Positioned at second room's center
-    spotLight2.target.position.set(0, 0, -45);
-    scene.add(spotLight2.target);
+    spotlight2 = new THREE.SpotLight(0xffffff, 10.0);
+    spotlight2.position.set(25, 41, -60);
+    spotlight2.target.position.set(10, 0, -60);
+    scene.add(spotlight2.target);
 
-    spotLight2.angle = Math.PI / 2.5;
-    spotLight2.penumbra = 0.1;
-    spotLight2.decay = 0.2;
-    spotLight2.distance = 200;
+    spotlight2.angle = Math.PI / 2.5;
+    spotlight2.penumbra = 0.1;
+    spotlight2.decay = 0.2;
+    spotlight2.distance = 200;
 
-    spotLight2.castShadow = true;
-    spotLight2.shadow.mapSize.width = 2048;
-    spotLight2.shadow.mapSize.height = 2048;
-    spotLight2.shadow.camera.near = 1;
-    spotLight2.shadow.camera.far = 200;
-    spotLight2.shadow.camera.fov = 90;
-    spotLight2.shadow.bias = -0.001;
+    spotlight2.castShadow = true;
+    spotlight2.shadow.mapSize.width = 2048;
+    spotlight2.shadow.mapSize.height = 2048;
+    spotlight2.shadow.camera.near = 1;
+    spotlight2.shadow.camera.far = 200;
+    spotlight2.shadow.camera.fov = 90;
+    spotlight2.shadow.bias = -0.001;
 
-    scene.add(spotLight2);
+    scene.add(spotlight2);
 
     // 9) LEVEL MANAGER
     let roomSize = [80, 50, 45];
@@ -149,15 +156,33 @@ export async function initGame(level) {
         cameraControls.mouseSensitivity = newSensitivity;
     });
 
+    // post-processing
+    composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    // Add night vision pass
+    nightVisionPass = new ShaderPass(NightVisionShader);
+    nightVisionPass.enabled = false; 
+    composer.addPass(nightVisionPass);
+
     document.addEventListener('keydown', (event) => {
         if (event.key.toLowerCase() === 'h') {
             helpMenu.toggle();
         }
-        if (event.key.toLowerCase() === 'l') {
-            settingsMenu.toggle();
-        }
         if (event.key.toLowerCase() === 'k') {
             spotlight1.visible = !spotlight1.visible;
+            spotlight2.visible = !spotlight2.visible;
+            if (spotlight1.visible) {
+                nightVisionPass.enabled = false;
+                nightVisionEnabled = false;
+            }
+        }
+        if (event.key === '1') {
+            if (!spotlight1.visible) {
+                nightVisionEnabled = !nightVisionEnabled;
+                nightVisionPass.enabled = nightVisionEnabled;
+            }
         }
         if (event.key === '+' || event.key === '=') {
             spotlight1.intensity = Math.min(20, spotlight1.intensity + 1);
@@ -222,6 +247,10 @@ function animate() {
 
     const delta = clock.getDelta();
 
+    if (nightVisionPass) {
+        nightVisionPass.uniforms.time.value = clock.getElapsedTime();
+    }
+
     // Update player, interactions, camera
     player.update();
     interectionSystem.update();
@@ -230,6 +259,37 @@ function animate() {
     // Update Level Manager / physics
     levelManager.update();
     physicsWorld.update(delta);
+
+    // Update floor shader uniforms for spotlight changes
+    levelManager.rooms.forEach(room => {
+        if (room.floor && room.floor.userData.woodShaderMaterial) {
+            const material = room.floor.userData.woodShaderMaterial;
+            // Update first spotlight properties
+            material.uniforms.spotLights.value[0] = {
+                position: spotlight1.position,
+                direction: new THREE.Vector3(0, -1, 0),
+                color: new THREE.Color(0xffffff),
+                distance: spotlight1.distance,
+                decay: spotlight1.decay,
+                coneCos: Math.cos(spotlight1.angle),
+                penumbraCos: Math.cos(spotlight1.angle + spotlight1.penumbra),
+                intensity: spotlight1.intensity,
+                visible: spotlight1.visible
+            };
+            // Update second spotlight properties
+            material.uniforms.spotLights.value[1] = {
+                position: spotlight2.position,
+                direction: new THREE.Vector3(0, -1, 0),
+                color: new THREE.Color(0xffffff),
+                distance: spotlight2.distance,
+                decay: spotlight2.decay,
+                coneCos: Math.cos(spotlight2.angle),
+                penumbraCos: Math.cos(spotlight2.angle + spotlight2.penumbra),
+                intensity: spotlight2.intensity,
+                visible: spotlight2.visible
+            };
+        }
+    });
 
     // Let each object sync with Ammo.js
     levelManager.levels.forEach(lvl => {
@@ -251,7 +311,7 @@ function animate() {
     }
 
     updateStopwatch();
-    renderer.render(scene, camera);
+    composer.render();
 }
 
 function updateStopwatch() {

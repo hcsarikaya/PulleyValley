@@ -160,26 +160,32 @@ export class Room {
             vertexShader: woodVertexShader,
             fragmentShader: woodFragmentShader,
             uniforms: {
-                spotLights: { value: [
-                    {
-                        position: new THREE.Vector3(0, 40, 0),
-                        direction: new THREE.Vector3(0, -1, 0),
-                        color: new THREE.Color(0xffffff),
-                        distance: 200,
-                        decay: 0.2,
-                        coneCos: Math.cos(Math.PI / 2.5),
-                        penumbraCos: Math.cos(Math.PI / 2.5 + 0.1)
-                    },
-                    {
-                        position: new THREE.Vector3(0, 40, -45),
-                        direction: new THREE.Vector3(0, -1, 0),
-                        color: new THREE.Color(0xffffff),
-                        distance: 200,
-                        decay: 0.2,
-                        coneCos: Math.cos(Math.PI / 2.5),
-                        penumbraCos: Math.cos(Math.PI / 2.5 + 0.1)
-                    }
-                ]}
+                spotLights: { 
+                    value: [
+                        {
+                            position: new THREE.Vector3(0, 40, 0),
+                            direction: new THREE.Vector3(0, -1, 0),
+                            color: new THREE.Color(0xffffff),
+                            distance: 200,
+                            decay: 0.2,
+                            coneCos: Math.cos(Math.PI / 2.5),
+                            penumbraCos: Math.cos(Math.PI / 2.5 + 0.1),
+                            intensity: 10.0,
+                            visible: true
+                        },
+                        {
+                            position: new THREE.Vector3(0, 40, -45),
+                            direction: new THREE.Vector3(0, -1, 0),
+                            color: new THREE.Color(0xffffff),
+                            distance: 200,
+                            decay: 0.2,
+                            coneCos: Math.cos(Math.PI / 2.5),
+                            penumbraCos: Math.cos(Math.PI / 2.5 + 0.1),
+                            intensity: 10.0,
+                            visible: true
+                        }
+                    ]
+                }
             }
         });
 
@@ -189,6 +195,9 @@ export class Room {
 
         mesh.position.set(position[0], position[1], position[2]);
         mesh.rotation.y = rotationY;
+
+        // Store material reference for updates
+        mesh.userData.woodShaderMaterial = woodShaderMaterial;
 
         // Physics
         const mass = 0;
