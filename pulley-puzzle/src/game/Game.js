@@ -33,7 +33,7 @@ export async function initGame(level) {
     // 1) SCENE
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);  // Black background
-    scene.fog = null;  // Ensure no fog is affecting visibility
+    scene.fog = null;
 
     // 2) PHYSICS
     physicsWorld = new PhysicsWorld();
@@ -134,21 +134,48 @@ export async function initGame(level) {
 
     // ADD code for collecting objects, door interactions, etc.
     // Example: add interactive door
-    if (levelManager.levels.length > 0) {
-        const currentLevel = levelManager.levels[level - 1];
-        if (currentLevel && currentLevel.doorOut) {
-            interectionSystem.addInteractiveObject(currentLevel.doorOut, {
-                proximityThreshold: 15,
-                promptText: 'Press "E" to open door',
-                onInteract: (doorMesh) => {
-                    console.log('Opening door...');
-                    doorMesh.rotation.y += Math.PI / 2;
-                    level += 1;
-                    levelManager.loadLevel(level);
+    levelManager.levels.forEach(lvl => {
+        lvl.objects.forEach(obj => {
+            console.log(obj.category);
+            if (['pulley', 'weight', 'boulder'].includes(obj.category)) {
+                interectionSystem.addInteractiveObject(obj, {
+                    proximityThreshold: 15,
+                    promptText: 'Press "E" to collect',
+                    onInteract: (objMesh) => {
+                        console.log('Collecting...');
+                        scene.remove(objMesh);
+                        // Optionally, add sound or animation here
+                    }
+                });
+            } else if(obj.category === 'button') {
+                switch (obj.opt){
+                    case "setting":
+                        interectionSystem.addInteractiveObject(obj, {
+                            proximityThreshold: 15,
+                            promptText: 'Settings',
+                            onInteract: (objMesh) => {
+                                console.log('Settings...');
+                                settingsMenu.toggle(); // Show settings menu
+                                // Optionally, remove or disable the button
+                            }
+                        });
+                        break;
+                    case 1:
+                        interectionSystem.addInteractiveObject(obj, {
+                            proximityThreshold: 15,
+                            promptText: 'Level 1',
+                            onInteract: (objmesh) => {
+                                levelManager.rooms[1].wallIn.position.y -=45;
+                                levelManager.checkLevel = true;
+                                // Optionally, load next level or perform other actions
+                            }
+                        });
+                        break;
+                    // Add more cases as needed
                 }
-            });
-        }
-    }
+            }
+        });
+    });
 
     // 12) MENUS / UI
     helpMenu = new HelpMenu();
@@ -265,7 +292,7 @@ function animate() {
 
 function updateStopwatch() {
     if (!stopwatchElement) return;
-    const elapsedTime = clock.getElapsedTime();
+    const elapsedTime = clock.getElapsedTime(); // in seconds
     stopwatchElement.textContent = formatTime(elapsedTime);
 }
 
