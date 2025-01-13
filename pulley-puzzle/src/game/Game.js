@@ -11,6 +11,7 @@ import { CameraControls } from '../controls/CameraControls.js';
 import { DustParticleSystem } from '../objects/DustParticleSystem.js';
 import { WizardParticleSystem } from "../objects/WizardParticleSystem.js";
 import { NightVisionShader } from '../shaders/NightVisionShader.js';
+import { PixelationShader } from '../shaders/PixelationShader.js';
 
 import { PhysicsWorld } from '../objects/PhysicsWorld.js';
 //import InventoryUI from '../ui/InventoryUI.js';
@@ -29,8 +30,16 @@ const dustSpawnPosition = new THREE.Vector3(0, 0, 0);
 let helpMenu, settingsMenu, soundManager;
 let stopwatchElement;
 let spotlight1, spotlight2;
-let composer, nightVisionPass;
+let composer, nightVisionPass, pixelationPass;
 let nightVisionEnabled = false;
+let pixelationLevel = 0; // 0: off, 1: subtle, 2: medium, 3: strong
+
+// Pixelation levels configuration
+const PIXEL_SIZES = {
+    1: 4.0,  // Subtle pixelation
+    2: 8.0,  // Medium pixelation
+    3: 16.0  // Strong pixelation
+};
 
 // Add movement speed constant for spotlight
 const SPOTLIGHT_MOVE_SPEED = 2;
@@ -163,8 +172,19 @@ export async function initGame(level) {
 
     // Add night vision pass
     nightVisionPass = new ShaderPass(NightVisionShader);
-    nightVisionPass.enabled = false; 
+    nightVisionPass.enabled = false;
     composer.addPass(nightVisionPass);
+
+    // Add pixelation pass
+    pixelationPass = new ShaderPass(PixelationShader);
+    pixelationPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+    pixelationPass.enabled = false;
+    composer.addPass(pixelationPass);
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        pixelationPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+    });
 
     document.addEventListener('keydown', (event) => {
         if (event.key.toLowerCase() === 'h') {
@@ -172,7 +192,6 @@ export async function initGame(level) {
         }
         if (event.key.toLowerCase() === 'k') {
             spotlight1.visible = !spotlight1.visible;
-            spotlight2.visible = !spotlight2.visible;
             if (spotlight1.visible) {
                 nightVisionPass.enabled = false;
                 nightVisionEnabled = false;
@@ -182,47 +201,29 @@ export async function initGame(level) {
             if (!spotlight1.visible) {
                 nightVisionEnabled = !nightVisionEnabled;
                 nightVisionPass.enabled = nightVisionEnabled;
+                // Disable pixelation if night vision is enabled
+                if (nightVisionEnabled) {
+                    pixelationLevel = 0;
+                    pixelationPass.enabled = false;
+                }
             }
         }
-        if (event.key === '+' || event.key === '=') {
-            spotlight1.intensity = Math.min(20, spotlight1.intensity + 1);
-        }
-        if (event.key === '-' || event.key === '_') {
-            spotlight1.intensity = Math.max(0, spotlight1.intensity - 1);
-        }
-
-        // Spotlight position controls
-        switch(event.key) {
-            case 'ArrowUp':
-                if (event.shiftKey) {
-                    // Move forward (Z-axis)
-                    spotlight1.position.z -= SPOTLIGHT_MOVE_SPEED;
-                    spotlight1.target.position.z -= SPOTLIGHT_MOVE_SPEED;
-                } else {
-                    // Move up (Y-axis)
-                    spotlight1.position.y += SPOTLIGHT_MOVE_SPEED;
-                }
-                break;
-            case 'ArrowDown':
-                if (event.shiftKey) {
-                    // Move backward (Z-axis)
-                    spotlight1.position.z += SPOTLIGHT_MOVE_SPEED;
-                    spotlight1.target.position.z += SPOTLIGHT_MOVE_SPEED;
-                } else {
-                    // Move down (Y-axis)
-                    spotlight1.position.y -= SPOTLIGHT_MOVE_SPEED;
-                }
-                break;
-            case 'ArrowLeft':
-                // Move left (X-axis)
-                spotlight1.position.x -= SPOTLIGHT_MOVE_SPEED;
-                spotlight1.target.position.x -= SPOTLIGHT_MOVE_SPEED;
-                break;
-            case 'ArrowRight':
-                // Move right (X-axis)
-                spotlight1.position.x += SPOTLIGHT_MOVE_SPEED;
-                spotlight1.target.position.x += SPOTLIGHT_MOVE_SPEED;
-                break;
+        if (event.key === '2') {
+            // Cycle through pixelation levels
+            pixelationLevel = (pixelationLevel + 1) % 4; // 0->1->2->3->0
+            
+            if (pixelationLevel === 0) {
+                // Turn off pixelation
+                pixelationPass.enabled = false;
+            } else {
+                // Apply pixelation level
+                pixelationPass.enabled = true;
+                pixelationPass.uniforms.pixelSize.value = PIXEL_SIZES[pixelationLevel];
+                
+                // Disable night vision if pixelation is enabled
+                nightVisionEnabled = false;
+                nightVisionPass.enabled = false;
+            }
         }
     });
 
