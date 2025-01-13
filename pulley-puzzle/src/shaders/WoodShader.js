@@ -1,11 +1,19 @@
 export const woodVertexShader = /* glsl */`
 varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec3 vViewPosition;
 
 void main() {
     // Compute world-space position
     vec4 worldPos = modelMatrix * vec4(position, 1.0);
     vPosition = worldPos.xyz;
-
+    
+    // Pass the normal to fragment shader
+    vNormal = normalMatrix * normal;
+    
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    vViewPosition = -mvPosition.xyz;
+    
     // Standard final position
     gl_Position = projectionMatrix * viewMatrix * worldPos;
 }
@@ -15,6 +23,21 @@ export const woodFragmentShader = /* glsl */`
 precision highp float;
 
 varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec3 vViewPosition;
+
+// Light properties
+struct SpotLight {
+    vec3 position;
+    vec3 direction;
+    vec3 color;
+    float distance;
+    float decay;
+    float coneCos;
+    float penumbraCos;
+};
+
+uniform SpotLight spotLights[2];
 
 vec3 mod289(vec3 x){return x - floor(x*(1.0/289.0))*289.0;}
 vec4 mod289(vec4 x){return x - floor(x*(1.0/289.0))*289.0;}
@@ -51,29 +74,67 @@ float noise3D(vec3 P){
     );
     return 2.2*mix(mix(nz.x,nz.z,f.y),mix(nz.y,nz.w,f.y),f.x);
 }
-//-----------------------------------------
+
 float noise2D(vec2 p){
     return noise3D(vec3(p,0.0));
 }
-//-----------------------------------------
 
-void main(){
-    float scale=1.0; 
-    float nx=vPosition.x*scale;
-    float ny=vPosition.z*scale; 
+void main() {
+    // Wood grain calculation
+    float scale = 1.0; 
+    float nx = vPosition.x * scale;
+    float ny = vPosition.z * scale; 
 
-    float val=noise2D(vec2(nx,ny));
-    val=0.5+0.5*val; // [-1..1] to [0..1]
+    float val = noise2D(vec2(nx, ny));
+    val = 0.5 + 0.5 * val; // [-1..1] to [0..1]
 
-    float ringFactor=val*10.0;
-    float ring=fract(ringFactor);
+    float ringFactor = val * 10.0;
+    float ring = fract(ringFactor);
 
-    vec3 woodDark=vec3(0.545,0.27,0.07);
-    vec3 woodLight=vec3(0.87,0.72,0.53);
+    vec3 woodDark = vec3(0.345, 0.17, 0.07);
+    vec3 woodLight = vec3(0.67, 0.52, 0.33);
+    vec3 baseColor = mix(woodDark, woodLight, ring);
 
-    vec3 color=mix(woodDark,woodLight,ring);
-
-    gl_FragColor=vec4(color,1.0);
+    // Lighting calculation
+    vec3 normal = normalize(vNormal);
+    vec3 viewDir = normalize(vViewPosition);
+    
+    // Reduced ambient light
+    float ambientStrength = 0.2;
+    vec3 ambient = ambientStrength * baseColor;
+    
+    // Calculate lighting from both spotlights
+    vec3 totalDiffuse = vec3(0.0);
+    vec3 totalSpecular = vec3(0.0);
+    
+    for(int i = 0; i < 2; i++) {
+        vec3 lightDir = normalize(spotLights[i].position - vPosition);
+        float distance = length(spotLights[i].position - vPosition);
+        
+        // Spotlight effect
+        float spotEffect = dot(normalize(-spotLights[i].direction), lightDir);
+        if(spotEffect > spotLights[i].coneCos) {
+            float spotIntensity = smoothstep(spotLights[i].penumbraCos, spotLights[i].coneCos, spotEffect);
+            float attenuation = pow(clamp(1.0 - distance / spotLights[i].distance, 0.0, 1.0), spotLights[i].decay);
+            
+            // Reduced diffuse intensity
+            float diff = max(dot(normal, lightDir), 0.0) * 0.7;
+            vec3 diffuse = diff * spotLights[i].color;
+            
+            // Reduced specular intensity
+            vec3 halfwayDir = normalize(lightDir + viewDir);
+            float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+            vec3 specular = spec * spotLights[i].color * 0.3;
+            
+            totalDiffuse += diffuse * attenuation * spotIntensity;
+            totalSpecular += specular * attenuation * spotIntensity;
+        }
+    }
+    
+    // Final color with reduced intensity
+    vec3 result = ambient + (totalDiffuse + totalSpecular) * baseColor * 0.8;
+    
+    gl_FragColor = vec4(result, 1.0);
 }
 `;
 
