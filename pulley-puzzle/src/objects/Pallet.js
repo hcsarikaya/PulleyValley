@@ -12,6 +12,7 @@ export class Pallet {
         this.weights = [];
         this.path = path;
         this.position = position;
+        this.name = null;
 
         this.createPhysicsBody(position);
     }
@@ -41,7 +42,7 @@ export class Pallet {
                     });
 
                     this.scene.add(this.mesh);
-
+                    this.mesh.userData.physicsBody = this.body;
                     // Sync physics body position
                     if (this.body) {
                         const transform = new this.physicsWorld.AmmoLib.btTransform();
