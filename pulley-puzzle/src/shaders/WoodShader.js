@@ -35,6 +35,8 @@ struct SpotLight {
     float decay;
     float coneCos;
     float penumbraCos;
+    float intensity;
+    bool visible;
 };
 
 uniform SpotLight spotLights[2];
@@ -99,8 +101,8 @@ void main() {
     vec3 normal = normalize(vNormal);
     vec3 viewDir = normalize(vViewPosition);
     
-    // Reduced ambient light
-    float ambientStrength = 0.2;
+    // Reduced ambient light for darker appearance when lights are off
+    float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * baseColor;
     
     // Calculate lighting from both spotlights
@@ -108,31 +110,36 @@ void main() {
     vec3 totalSpecular = vec3(0.0);
     
     for(int i = 0; i < 2; i++) {
-        vec3 lightDir = normalize(spotLights[i].position - vPosition);
-        float distance = length(spotLights[i].position - vPosition);
-        
-        // Spotlight effect
-        float spotEffect = dot(normalize(-spotLights[i].direction), lightDir);
-        if(spotEffect > spotLights[i].coneCos) {
-            float spotIntensity = smoothstep(spotLights[i].penumbraCos, spotLights[i].coneCos, spotEffect);
-            float attenuation = pow(clamp(1.0 - distance / spotLights[i].distance, 0.0, 1.0), spotLights[i].decay);
+        if (spotLights[i].visible) {
+            vec3 lightDir = normalize(spotLights[i].position - vPosition);
+            float distance = length(spotLights[i].position - vPosition);
             
-            // Reduced diffuse intensity
-            float diff = max(dot(normal, lightDir), 0.0) * 0.7;
-            vec3 diffuse = diff * spotLights[i].color;
-            
-            // Reduced specular intensity
-            vec3 halfwayDir = normalize(lightDir + viewDir);
-            float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
-            vec3 specular = spec * spotLights[i].color * 0.3;
-            
-            totalDiffuse += diffuse * attenuation * spotIntensity;
-            totalSpecular += specular * attenuation * spotIntensity;
+            // Spotlight effect
+            float spotEffect = dot(normalize(-spotLights[i].direction), lightDir);
+            if(spotEffect > spotLights[i].coneCos) {
+                float spotIntensity = smoothstep(spotLights[i].penumbraCos, spotLights[i].coneCos, spotEffect);
+                float attenuation = pow(clamp(1.0 - distance / spotLights[i].distance, 0.0, 1.0), spotLights[i].decay);
+                
+                // Apply spotlight intensity
+                float lightIntensity = spotLights[i].intensity * 0.1; // Scale down the intensity for better control
+                
+                // Diffuse lighting
+                float diff = max(dot(normal, lightDir), 0.0) * 0.7;
+                vec3 diffuse = diff * spotLights[i].color * lightIntensity;
+                
+                // Specular lighting
+                vec3 halfwayDir = normalize(lightDir + viewDir);
+                float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+                vec3 specular = spec * spotLights[i].color * lightIntensity * 0.3;
+                
+                totalDiffuse += diffuse * attenuation * spotIntensity;
+                totalSpecular += specular * attenuation * spotIntensity;
+            }
         }
     }
     
-    // Final color with reduced intensity
-    vec3 result = ambient + (totalDiffuse + totalSpecular) * baseColor * 0.8;
+    // Final color
+    vec3 result = ambient + (totalDiffuse + totalSpecular) * baseColor;
     
     gl_FragColor = vec4(result, 1.0);
 }
