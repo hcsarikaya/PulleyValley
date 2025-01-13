@@ -5,54 +5,61 @@ export class Boulder {
     constructor(scene, physicsWorld, position = [0, 0, 0], scale = [1, 1, 1], mass = 10) {
         this.scene = scene;
         this.physicsWorld = physicsWorld;
-        this.mesh = null; // Three.js mesh
-        this.body = null; // Ammo.js rigid body
-
-        const modelPath = '../public/models/kaya2.glb';
-        const texturePath = '/src/textures/boulder.jpg';
-
+        this.mesh = null;
+        this.body = null;
+        this.position = position;
+        this.scale = scale;
+        this.mass = mass;
         this.category = 'boulder';
 
+        this.modelPath = '../public/models/kaya2.glb';
+        this.texturePath = '/src/textures/boulder.jpg';
 
-        // Load the GLTF model
-        const loader = new GLTFLoader();
-        loader.load(
-            modelPath,
-            (gltf) => {
-                this.mesh = gltf.scene;
-                this.mesh.scale.set(scale[0], scale[1], scale[2]);
-                this.mesh.position.set(position[0], position[1], position[2]);
+        this.createPhysicsBody(position, scale, mass);
+    }
 
+    async load() {
+        return new Promise((resolve, reject) => {
+            const loader = new GLTFLoader();
+            loader.load(
+                this.modelPath,
+                (gltf) => {
+                    this.mesh = gltf.scene;
+                    this.mesh.scale.set(this.scale[0], this.scale[1], this.scale[2]);
+                    this.mesh.position.set(this.position[0], this.position[1], this.position[2]);
 
-                const textureLoader = new THREE.TextureLoader();
-                textureLoader.load(texturePath, (texture) => {
-                    texture.colorSpace = THREE.SRGBColorSpace;
-                    this.mesh.traverse((child) => {
-                        if (child.isMesh) {
-                            child.castShadow = true;
-                            child.receiveShadow = true;
-                            child.material = new THREE.MeshStandardMaterial({
-                                map: texture,
-                                roughness: 0.9,        // Very rough surface
-                                metalness: 0.1,        // Low metalness for rock
-                                color: 0x666666,       // Darker base color
-                                envMapIntensity: 0.5   // Reduce environment lighting
-                            });
-                        }
+                    const textureLoader = new THREE.TextureLoader();
+                    textureLoader.load(this.texturePath, (texture) => {
+                        texture.colorSpace = THREE.SRGBColorSpace;
+                        this.mesh.traverse((child) => {
+                            if (child.isMesh) {
+                                child.castShadow = true;
+                                child.receiveShadow = true;
+                                child.material = new THREE.MeshStandardMaterial({
+                                    map: texture,
+                                    roughness: 0.9,
+                                    metalness: 0.1,
+                                    color: 0x666666,
+                                    envMapIntensity: 0.5
+                                });
+                            }
+                        });
                     });
-                });
 
-                scene.add(this.mesh);
+                    this.scene.add(this.mesh);
 
-                this.createPhysicsBody(position, scale, mass);
-            },
-            undefined,
-            (error) => {
-                console.error('Failed to load boulder model:', error);
-            }
-        );
+                    // Store a reference to the physics body in the mesh's userData
+                    this.mesh.userData.physicsBody = this.body;
 
-
+                    resolve(this);
+                },
+                undefined,
+                (error) => {
+                    console.error('Failed to load boulder model:', error);
+                    reject(error);
+                }
+            );
+        });
     }
 
     getMass() {
@@ -88,9 +95,6 @@ export class Boulder {
         // Create the rigid body
         const bodyInfo = new AmmoLib.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
         this.body = new AmmoLib.btRigidBody(bodyInfo);
-
-        // Store a reference to the physics body in the mesh's userData
-        this.mesh.userData.physicsBody = this.body;
 
         // Add the body to the physics world
         this.physicsWorld.physicsWorld.addRigidBody(this.body);

@@ -46,6 +46,7 @@ export class Level{
                 position = obj.position;
                 position[2] += this.pos;
                 object = new Pulley(this.scene, this.physicsWorld, position, 1.5);
+                await object.load();
                 this.objects.push(object);
                 break;
             case "weight":
@@ -95,12 +96,14 @@ export class Level{
                 position = obj.position;
                 position[2] += this.pos;
                 object = new Pallet(this.scene, this.physicsWorld, position, obj.scale || [1, 1, 1], obj.path);
+                await object.load();
                 this.objects.push(object);
                 break
             case "boulder":
                 position = obj.position;
                 position[2] += this.pos;
                 object = new Boulder(this.scene, this.physicsWorld, position,obj.scale || [1, 1, 1],);
+                await object.load();
                 this.objects.push(object);
 
                 break

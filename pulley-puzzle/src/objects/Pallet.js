@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export class Pallet {
-    constructor(scene, physicsWorld, position = [0, 1, 0], scale = [1, 1, 1],path) {
+    constructor(scene, physicsWorld, position = [0, 1, 0], scale = [1, 1, 1], path) {
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.category = 'pallet';
@@ -11,53 +11,54 @@ export class Pallet {
         this.scale = scale;
         this.weights = [];
         this.path = path;
+        this.position = position;
 
         this.createPhysicsBody(position);
-
-        this.loadModel(position);
-
     }
 
-    loadModel(position) {
-        const loader = new GLTFLoader();
-        loader.load(
-            this.path, // Path to the pallet GLB file
-            (glb) => {
-                this.mesh = glb.scene;
-                this.mesh.position.set(position[0], position[1], position[2]);
-                this.mesh.scale.set(this.scale[0], this.scale[1], this.scale[2]);
-                this.mesh.rotation.y = Math.PI / 2;
+    async load() {
+        return new Promise((resolve, reject) => {
+            const loader = new GLTFLoader();
+            loader.load(
+                this.path,
+                (glb) => {
+                    this.mesh = glb.scene;
+                    this.mesh.position.set(this.position[0], this.position[1], this.position[2]);
+                    this.mesh.scale.set(this.scale[0], this.scale[1], this.scale[2]);
+                    this.mesh.rotation.y = Math.PI / 2;
 
-                // Apply material settings to all meshes
-                this.mesh.traverse((child) => {
-                    if (child.isMesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        // Create a darker, more realistic wood material
-                        child.material = new THREE.MeshStandardMaterial({
-                            color: 0x4a3520,      // Dark wood color
-                            roughness: 0.85,      // Very rough surface
-                            metalness: 0.0,       // No metalness for wood
-                            envMapIntensity: 0.3  // Reduce environment lighting
-                        });
+                    this.mesh.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                            child.material = new THREE.MeshStandardMaterial({
+                                color: 0x4a3520,
+                                roughness: 0.85,
+                                metalness: 0.0,
+                                envMapIntensity: 0.3
+                            });
+                        }
+                    });
+
+                    this.scene.add(this.mesh);
+
+                    // Sync physics body position
+                    if (this.body) {
+                        const transform = new this.physicsWorld.AmmoLib.btTransform();
+                        this.body.getMotionState().getWorldTransform(transform);
+                        const origin = transform.getOrigin();
+                        this.mesh.position.set(origin.x(), origin.y(), origin.z());
                     }
-                });
 
-                this.scene.add(this.mesh);
-
-                // Sync physics body position
-                if (this.body) {
-                    const transform = new this.physicsWorld.AmmoLib.btTransform();
-                    this.body.getMotionState().getWorldTransform(transform);
-                    const origin = transform.getOrigin();
-                    this.mesh.position.set(origin.x(), origin.y(), origin.z());
+                    resolve(this);
+                },
+                undefined,
+                (error) => {
+                    console.error('Error loading pallet model:', error);
+                    reject(error);
                 }
-            },
-            undefined,
-            (error) => {
-                console.error('Error loading pallet model:', error);
-            }
-        );
+            );
+        });
     }
 
     createPhysicsBody(position) {
