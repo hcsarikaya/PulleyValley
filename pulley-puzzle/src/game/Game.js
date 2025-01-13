@@ -1,5 +1,4 @@
-// Game.js
-
+// Import statements remain unchanged
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Player } from './Player.js';
@@ -49,7 +48,7 @@ export async function initGame(level) {
     camera.position.set(0, 10, 20); // Move camera back a bit
 
     // 4) RENDERER
-    renderer = new THREE.WebGLRenderer({ 
+    renderer = new THREE.WebGLRenderer({
         antialias: true,
         powerPreference: "high-performance"
     });
@@ -87,7 +86,7 @@ export async function initGame(level) {
     spotlight1.penumbra = 0.1;
     spotlight1.decay = 0.2;
     spotlight1.distance = 200;
-    
+
     spotlight1.castShadow = true;
     spotlight1.shadow.mapSize.width = 2048;
     spotlight1.shadow.mapSize.height = 2048;
@@ -95,7 +94,7 @@ export async function initGame(level) {
     spotlight1.shadow.camera.far = 200;
     spotlight1.shadow.camera.fov = 90;
     spotlight1.shadow.bias = -0.001;
-    
+
     scene.add(spotlight1);
 
     // Second room spotlight
@@ -108,7 +107,7 @@ export async function initGame(level) {
     spotLight2.penumbra = 0.1;
     spotLight2.decay = 0.2;
     spotLight2.distance = 200;
-    
+
     spotLight2.castShadow = true;
     spotLight2.shadow.mapSize.width = 2048;
     spotLight2.shadow.mapSize.height = 2048;
@@ -116,14 +115,15 @@ export async function initGame(level) {
     spotLight2.shadow.camera.far = 200;
     spotLight2.shadow.camera.fov = 90;
     spotLight2.shadow.bias = -0.001;
-    
+
     scene.add(spotLight2);
 
     // 9) LEVEL MANAGER
     let roomSize = [80, 50, 45];
     levelManager = new LevelManager(scene, physicsWorld);
     levelManager.roomSize = roomSize;
-    levelManager.loadLevel(Number(level));
+
+    await levelManager.loadLevel(level);
 
     // 10) PLAYER
     player = new Player(scene, cameraControls.camera, physicsWorld);
@@ -132,48 +132,11 @@ export async function initGame(level) {
     interectionSystem = new InteractionSystem(scene, camera, physicsWorld);
     interectionSystem.setPlayer(player.mesh);
 
-    // ADD code for collecting objects, door interactions, etc.
-    // Example: add interactive door
+    // Add interactive objects based on category
     levelManager.levels.forEach(lvl => {
         lvl.objects.forEach(obj => {
-            console.log(obj.category);
-            if (['pulley', 'weight', 'boulder'].includes(obj.category)) {
-                interectionSystem.addInteractiveObject(obj, {
-                    proximityThreshold: 15,
-                    promptText: 'Press "E" to collect',
-                    onInteract: (objMesh) => {
-                        console.log('Collecting...');
-                        scene.remove(objMesh);
-                        // Optionally, add sound or animation here
-                    }
-                });
-            } else if(obj.category === 'button') {
-                switch (obj.opt){
-                    case "setting":
-                        interectionSystem.addInteractiveObject(obj, {
-                            proximityThreshold: 15,
-                            promptText: 'Settings',
-                            onInteract: (objMesh) => {
-                                console.log('Settings...');
-                                settingsMenu.toggle(); // Show settings menu
-                                // Optionally, remove or disable the button
-                            }
-                        });
-                        break;
-                    case 1:
-                        interectionSystem.addInteractiveObject(obj, {
-                            proximityThreshold: 15,
-                            promptText: 'Level 1',
-                            onInteract: (objmesh) => {
-                                levelManager.rooms[1].wallIn.position.y -=45;
-                                levelManager.checkLevel = true;
-                                // Optionally, load next level or perform other actions
-                            }
-                        });
-                        break;
-                    // Add more cases as needed
-                }
-            }
+            interectionSystem.addInteractiveObject(obj)
+
         });
     });
 
