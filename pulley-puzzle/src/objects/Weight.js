@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { loadModel } from '../controls/ObjLoader.js';
@@ -12,7 +11,7 @@ export class Weight {
         this.body = null;
 
         // Ammo.js physics body setup
-        const mass = 5; // Adjust as needed
+        const mass = 5;
         const shape = new physicsWorld.AmmoLib.btBoxShape(
             new physicsWorld.AmmoLib.btVector3(0.5, 0.5, 0.5)
         );
@@ -37,21 +36,20 @@ export class Weight {
 
         this.body = new physicsWorld.AmmoLib.btRigidBody(bodyInfo);
 
+        // Add these flags to ensure proper physics behavior
+        this.body.setActivationState(4); // DISABLE_DEACTIVATION
+        this.body.setCollisionFlags(0); // DYNAMIC
+
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
     }
 
-    /**
-     * Factory method to create a Weight instance asynchronously
-     */
     static async create(scene, physicsWorld, position = [5, 0.5, 5]) {
         const weight = new Weight(scene, physicsWorld, position);
         const modelPath = '../models/5kg.glb';
 
-        // Wait for the model to load
         weight.model = await loadModel(modelPath);
         weight.model.position.set(position[0], position[1], position[2]);
 
-        // Optional: disable shadows (tweak as needed)
         weight.model.traverse((child) => {
             if (child.isMesh) {
                 child.castShadow = false;
@@ -61,45 +59,42 @@ export class Weight {
 
         scene.add(weight.model);
 
-        return weight; // Return the fully initialized Weight instance
+        return weight;
     }
 
-    /**
-     * Sync Three.js model with the Ammo.js body transform
-     */
     update() {
         if (!this.model) return;
 
         const transform = new this.physicsWorld.AmmoLib.btTransform();
-        this.body.getMotionState().getWorldTransform(transform);
+        const motionState = this.body.getMotionState();
+        if (motionState) {
+            motionState.getWorldTransform(transform);
+            const origin = transform.getOrigin();
+            const rotation = transform.getRotation();
 
-        const origin = transform.getOrigin();
-        const rotation = transform.getRotation();
-
-        this.model.position.set(origin.x(), origin.y(), origin.z());
-        this.model.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+            this.model.position.set(origin.x(), origin.y(), origin.z());
+            this.model.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+        }
     }
 
-    /**
-     * Move the weight directly in front of the given camera at the specified distance.
-     * This also applies the camera's orientation so the weight is facing the same direction.
-     *
-     * @param {THREE.Camera} camera - The Three.js camera.
-     * @param {number} distance - How far in front of the camera to place the weight.
-     */
     moveTo(camera, distance = 2) {
-        // 1) Calculate position in front of the camera
+        if (!this.body || !camera) return;
 
+        // Calculate position in front of camera
         const forward = new THREE.Vector3();
-        camera.getWorldDirection(forward);  // forward = camera's look direction
+        camera.getWorldDirection(forward);
         forward.normalize().multiplyScalar(distance);
 
-        // The desired position is camera's position plus the forward vector
-        const desiredPosition = new THREE.Vector3().copy(camera.position).add(forward);
+        const desiredPosition = camera.position.clone().add(forward);
 
-        // 2) Create an Ammo.js transform for the new position
+        // Create and set up the transform
         const transform = new this.physicsWorld.AmmoLib.btTransform();
-        transform.setIdentity();
+        const motionState = this.body.getMotionState();
+
+        // First, get current transform
+        motionState.getWorldTransform(transform);
+
+        // Update position
         transform.setOrigin(
             new this.physicsWorld.AmmoLib.btVector3(
                 desiredPosition.x,
@@ -108,21 +103,28 @@ export class Weight {
             )
         );
 
-        // 3) Match the camera’s rotation
+        // Update rotation to match camera
         const cameraQuat = camera.quaternion;
-        const ammoQuat = new this.physicsWorld.AmmoLib.btQuaternion(
-            cameraQuat.x,
-            cameraQuat.y,
-            cameraQuat.z,
-            cameraQuat.w
+        transform.setRotation(
+            new this.physicsWorld.AmmoLib.btQuaternion(
+                cameraQuat.x,
+                cameraQuat.y,
+                cameraQuat.z,
+                cameraQuat.w
+            )
         );
-        transform.setRotation(ammoQuat);
 
-        // 4) Apply this new transform to the physics body
-        this.body.setWorldTransform(transform);
-        console.log(this.body)
-        // 5) (Optional) reset velocity so the object doesn't keep any old momentum
-        this.body.setLinearVelocity(new this.physicsWorld.AmmoLib.btVector3(0, 0, 0));
-        this.body.setAngularVelocity(new this.physicsWorld.AmmoLib.btVector3(0,0, 0));
+        // Activate the body and update its transform
+        this.body.activate(true);
+        motionState.setWorldTransform(transform);
+        this.body.setMotionState(motionState);
+
+        // Reset velocities
+        const zero = new this.physicsWorld.AmmoLib.btVector3(0, 0, 0);
+        this.body.setLinearVelocity(zero);
+        this.body.setAngularVelocity(zero);
+
+        // Force an update of the motion state
+        this.update();
     }
 }

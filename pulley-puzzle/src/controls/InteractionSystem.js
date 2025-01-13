@@ -47,7 +47,6 @@ export class InteractionSystem {
 
     addInteractiveObject(object ) {
 
-
         this.interactiveObjects.push(object);
     }
     onMouseUp(event){
@@ -65,6 +64,9 @@ export class InteractionSystem {
             this.interactiveObjects.map(obj => obj.mesh || obj.model), true
         );
 
+
+        //const intersects = this.raycaster.intersectObjects(this.scene.children)
+
         if (intersects.length > 0) {
             const clickedObject = this.interactiveObjects.find(
                 obj => ( obj.model === intersects[0].object ||obj.model === intersects[0].object.parent || obj.mesh === intersects[0].object)
@@ -72,10 +74,10 @@ export class InteractionSystem {
             console.log(clickedObject);
             if(this.edit){
                 this.objToCarry = clickedObject;
-                console.log(this.objToCarry.category);
+
                 if(this.objToCarry.category === "weight"){
 
-                    this.objToCarry.moveTo(this.camera, 2);
+                    this.objToCarry.moveTo(this.camera, 3);
                 }
 
 
@@ -97,12 +99,15 @@ export class InteractionSystem {
     onKeyPress(event) {
         if (event.key.toLowerCase() === 'e') {
             console.log(this.interactiveObjects)
+            /*
             this.interactiveObjects.forEach(obj => {
                 if (obj.isInRange) {
                     obj.onInteract(obj.mesh);
                     this.hidePrompt();
                 }
             });
+
+             */
         }
         if (event.key.toLowerCase() === 'v') {
             console.log(this.interactiveObjects)
@@ -124,7 +129,7 @@ export class InteractionSystem {
         this.promptElement.style.display = 'none';
     }
     carryObj(){
-        this.objToCarry.moveTo(this.camera, 2);
+        this.objToCarry.moveTo(this.camera, 3);
     }
 
     update() {
@@ -136,6 +141,7 @@ export class InteractionSystem {
         if(this.objToCarry){
 
             this.carryObj();
+            //this.objToCarry.update()
         }
         /*
         this.interactiveObjects.forEach(obj => {
