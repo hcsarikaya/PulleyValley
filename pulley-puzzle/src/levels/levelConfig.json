@@ -5,16 +5,16 @@
       "objects": [
         { "type":  "button", "position" : [-15, 0, 0], "opt":  "setting"},
         { "type":  "button", "position" : [15, 0, 0], "opt":  1},
-        { "type":  "weight", "position" : [ 10,  0.5,  10 ]}
+        { "type":  "weight", "position" : [ 0 , 0 , 0 ],"path":  "../models/5kg.glb","mass": 5}
       ]
     },
     {
       "objects": [
         { "id": "pulley2", "type": "pulley", "position": [25, 25, -21.5] },
         { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
-        { "id": "weight1", "type": "weight", "position": [ 20 ,0, -10] },
-        { "id": "weight2", "type": "weight", "position": [25, 0, -10] },
-        { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] },
+        { "type":  "weight", "position" : [ 20,  5,  -10 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 25,  5,  -10 ],"path":  "../models/10kg.glb","mass": 10},
+        { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] ,"path" : "../models/palett.glb"},
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
         { "id": "rope1", "type": "rope", "start": "pulley2", "end": "pallet1", "segments": 15 }
       ]
@@ -24,11 +24,10 @@
       "objects": [
         { "id": "pulley2", "type": "pulley", "position": [25, 25, -21.5] },
         { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
-        { "type":  "weight", "position" : [ 25,  10,  -20 ]},
-        { "type":  "weight", "position" : [ 25,  5,  -20 ]},
+        { "type":  "weight", "position" : [ 5,  10,  0 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 15,  5,  0 ],"path":  "../models/10kg.glb","mass": 10},
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
-        { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] },
-        { "type":  "weight", "position" : [ 25,  10.5,  -20 ]},
+        { "id": "pallet1", "type": "pallet", "position": [25, 0, -22], "scale": [2, 2, 2] , "path" : "../models/hareketli+palet.glb"},
         { "type":  "rope", "position" : [0, 0, -5]}
       ]
     },
@@ -36,9 +35,10 @@
       "objects": [
         { "id": "pulley2", "type": "pulley", "position": [30, 25, -21.5] },
         { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
-        { "type":  "weight", "position" : [ 5,  0.5,  5 ]},
+        { "type":  "weight", "position" : [ 25,  5,  -10 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 25,  5,  -5 ],"path":  "../models/10kg.glb","mass": 10},
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
-        { "id": "pallet1", "type": "pallet", "position": [30, 0, -20], "scale": [2, 2, 2] },
+        { "id": "pallet1", "type": "pallet", "position": [30, 0, -21], "scale": [2, 2, 2],"path" : "../models/hareketli+palet.glb" },
         { "type":  "rope", "position" : [0, 0, -5]}
       ]
     }

@@ -49,9 +49,10 @@ export class Level{
                 this.objects.push(object);
                 break;
             case "weight":
-                position = obj.position
-                position[2] += this.pos
-                object = await Weight.create(this.scene,this.physicsWorld ,position);
+                position = obj.position;
+                position[2] += this.pos;
+                const modelPath = obj.path;
+                object = await Weight.create(this.scene,this.physicsWorld ,position, modelPath , obj.mass);
                 //object = new Weight(this.scene, this.physicsWorld, position);
 
                 this.objects.push(object);
@@ -93,7 +94,7 @@ export class Level{
             case "pallet":
                 position = obj.position;
                 position[2] += this.pos;
-                object = new Pallet(this.scene, this.physicsWorld, position, obj.scale || [1, 1, 1]);
+                object = new Pallet(this.scene, this.physicsWorld, position, obj.scale || [1, 1, 1], obj.path);
                 this.objects.push(object);
                 break
             case "boulder":

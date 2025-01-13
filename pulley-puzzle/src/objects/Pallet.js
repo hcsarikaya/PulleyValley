@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export class Pallet {
-    constructor(scene, physicsWorld, position = [0, 1, 0], scale = [1, 1, 1]) {
+    constructor(scene, physicsWorld, position = [0, 1, 0], scale = [1, 1, 1],path) {
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.category = 'pallet';
@@ -10,6 +10,7 @@ export class Pallet {
         this.body = null;
         this.scale = scale;
         this.weights = [];
+        this.path = path;
 
         this.createPhysicsBody(position);
 
@@ -20,11 +21,12 @@ export class Pallet {
     loadModel(position) {
         const loader = new GLTFLoader();
         loader.load(
-            '../models/palett.glb', // Path to the pallet GLB file
+            this.path, // Path to the pallet GLB file
             (glb) => {
                 this.mesh = glb.scene;
                 this.mesh.position.set(position[0], position[1], position[2]);
                 this.mesh.scale.set(this.scale[0], this.scale[1], this.scale[2]);
+                this.mesh.rotation.y = Math.PI / 2;
 
                 // Apply material settings to all meshes
                 this.mesh.traverse((child) => {
