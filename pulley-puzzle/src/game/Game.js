@@ -192,6 +192,7 @@ export async function initGame(level) {
         }
         if (event.key.toLowerCase() === 'k') {
             spotlight1.visible = !spotlight1.visible;
+            spotlight2.visible = !spotlight2.visible;
             if (spotlight1.visible) {
                 nightVisionPass.enabled = false;
                 nightVisionEnabled = false;
