@@ -46,37 +46,64 @@ export class Level{
                 position = obj.position;
                 position[2] += this.pos;
                 object = new Pulley(this.scene, this.physicsWorld, position, 1.5);
+                await object.load();
                 this.objects.push(object);
                 break;
             case "weight":
-                position = obj.position
-                position[2] += this.pos
-                object = await Weight.create(this.scene,this.physicsWorld ,position, obj.path);
+                position = obj.position;
+                position[2] += this.pos;
+                const modelPath = obj.path;
+                object = await Weight.create(this.scene,this.physicsWorld ,position, modelPath , obj.mass);
                 //object = new Weight(this.scene, this.physicsWorld, position);
 
                 this.objects.push(object);
 
                 break;
             case "rope":
+                /*
+                const startObject = this.objects.find(o => o.id === obj.start);
+                const endObject = this.objects.find(o => o.id === obj.end);
 
-                break
+                if (startObject && endObject) {
+                    object = new Rope(
+                        this.scene,
+                        this.physicsWorld,
+                        {
+                            startObject,
+                            endObject,
+                            segments: obj.segments || 20,
+                            ropeColor: obj.ropeColor || 0x333333,
+                            stiffness: obj.stiffness || 0.5,
+                            damping: obj.damping || 0.99,
+                            gravity: new THREE.Vector3(0, -9.8, 0),
+                        }
+                    );
+                    this.objects.push(object);
+                } else {
+                    console.error("Invalid start or end object for rope:", obj);
+                }
+
+                 */
+                break;
             case "button":
                 position = obj.position
                 position[2] += this.pos
-                object = new Button(this.scene, this.physicsWorld,position, obj.opt);
+                object = new Button(this.scene, position, obj.opt);
                 this.objects.push(object);
 
                 break
             case "pallet":
                 position = obj.position;
                 position[2] += this.pos;
-                object = new Pallet(this.scene, this.physicsWorld, position, obj.scale || [1, 1, 1]);
+                object = new Pallet(this.scene, this.physicsWorld, position, obj.scale || [1, 1, 1], obj.path);
+                await object.load();
                 this.objects.push(object);
                 break
             case "boulder":
                 position = obj.position;
                 position[2] += this.pos;
                 object = new Boulder(this.scene, this.physicsWorld, position,obj.scale || [1, 1, 1],);
+                await object.load();
                 this.objects.push(object);
 
                 break
