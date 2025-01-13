@@ -9,6 +9,14 @@
       ]
     },
     {
+
+      "objects": [
+        { "type":  "button", "position" : [-15, 0, 0], "opt":  "setting"},
+        { "type":  "button", "position" : [15, 0, 0], "opt":  1},
+        { "type":  "weight", "position" : [ 0 , 0 , 0 ],"path":  "../models/5kg.glb","mass": 5}
+      ]
+    },
+    {
       "objects": [
         { "id": "pulley2", "type": "pulley", "position": [25, 25, -21.5] },
         { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },

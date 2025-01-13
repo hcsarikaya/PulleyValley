@@ -22,9 +22,12 @@ export class LevelManager {
             [firstRoom.size[0], firstRoom.size[2], 1],
             [0, firstRoom.size[2]/2, firstRoom.size[1]/2 + this.pos+this.roomSize[1]])
         this.scene.add(firstRoom.wallIn);
+        this.rooms.push(firstRoom);
+        this.levels.push(new Level(this.rooms[0], this.physicsWorld));
+        await this.levels[0].addObject(0);
 
 
-        for(let i = 0; i < 4; i++) {
+        for(let i = 1; i < 5; i++) {
             this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
             this.rooms[i].createRoom(this.pos);
             this.pos = this.pos- this.roomSize[1];
