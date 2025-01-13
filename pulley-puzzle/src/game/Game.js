@@ -89,79 +89,10 @@ export async function initGame(level) {
     levelManager.levels.forEach(lvl => {
         lvl.objects.forEach(obj => {
             interectionSystem.addInteractiveObject(obj)
-            /*
-            if (obj.category === 'pulley') {
-                interectionSystem.addInteractiveObject(obj, {
-                    proximityThreshold: 15,
-                    promptText: 'Press "E" to colect',
-                    onInteract: (objMesh) => {
-                        console.log('colecting...');
-                        scene.remove(objMesh);
-                    }
-                })
-            }else if(obj.category === 'weight') {
-                interectionSystem.addInteractiveObject(obj, {
-                    proximityThreshold: 15,
-                    promptText: 'Press "E" to colect',
-                    onInteract: (objMesh) => {
-                        console.log('colecting...');
-                        scene.remove(objMesh)
-                    }
-                });
-            }else if(obj.category === 'boulder') {
-                interectionSystem.addInteractiveObject(obj, {
-                    proximityThreshold: 15,
-                    promptText: 'Press "E" to colect',
-                    onInteract: (objMesh) => {
-                        console.log('colecting...');
-                        scene.remove(objMesh)
-                    }
-                });
-            }
 
-            else if(obj.category === 'button') {
-                switch (obj.opt){
-                    case "setting":
-                        interectionSystem.addInteractiveObject(obj, {
-                            proximityThreshold: 15,
-                            promptText: 'Settings',
-                            onInteract: (objMesh) => {
-                                console.log('Settings...');
-                                scene.remove(objMesh)
-                            }
-                        });
-                        break
-                    case 1:
-                        interectionSystem.addInteractiveObject(obj, {
-                            proximityThreshold: 15,
-                            promptText: 'Level 1',
-                            onInteract: (objmesh) => {
-                                levelManager.rooms[1].wallIn.position.y -=45
-                                levelManager.checkLevel = true
-                            }
-                        });
-                        break
-                }
-
-            }
-
-
-             */
         });
     });
-    /*
-    interectionSystem.addInteractiveObject(levelManager.levels[level-1].doorOut, {
-        proximityThreshold: 15,
-        promptText: 'Press "E" to open door',
-        onInteract: (doorMesh) => {
-            console.log('Opening door...');
-            // Add your door opening animation/logic here
-            doorMesh.rotation.y += Math.PI / 2;
-            level += 1;
-            roomCenter[2] -= roomSize[0];
-            levelManager.loadLevel(level);
-        }
-    });
+
 
     // Event listeners for menus
     document.addEventListener('keydown', (event) => {
