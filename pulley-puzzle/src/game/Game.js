@@ -198,11 +198,21 @@ export async function initGame(level) {
                 nightVisionEnabled = false;
             }
         }
+
+        if (event.key === '+' || event.key === '=') {
+            spotlight1.intensity = Math.min(20, spotlight1.intensity + 1);
+            spotlight2.intensity = Math.min(20, spotlight1.intensity + 1);
+
+        }
+        if (event.key === '-' || event.key === '_') {
+            spotlight1.intensity = Math.max(0, spotlight1.intensity - 1);
+            spotlight2.intensity = Math.max(0, spotlight2.intensity - 1);
+        }
+
         if (event.key === '1') {
             if (!spotlight1.visible) {
                 nightVisionEnabled = !nightVisionEnabled;
                 nightVisionPass.enabled = nightVisionEnabled;
-                // Disable pixelation if night vision is enabled
                 if (nightVisionEnabled) {
                     pixelationLevel = 0;
                     pixelationPass.enabled = false;
@@ -210,23 +220,55 @@ export async function initGame(level) {
             }
         }
         if (event.key === '2') {
-            // Cycle through pixelation levels
             pixelationLevel = (pixelationLevel + 1) % 4; // 0->1->2->3->0
             
             if (pixelationLevel === 0) {
-                // Turn off pixelation
                 pixelationPass.enabled = false;
             } else {
-                // Apply pixelation level
                 pixelationPass.enabled = true;
                 pixelationPass.uniforms.pixelSize.value = PIXEL_SIZES[pixelationLevel];
                 
-                // Disable night vision if pixelation is enabled
                 nightVisionEnabled = false;
                 nightVisionPass.enabled = false;
             }
         }
+
+        switch(event.key) {
+            case 'ArrowUp':
+                if (event.shiftKey) {
+                    // Move forward (Z-axis)
+                    spotlight1.position.z -= SPOTLIGHT_MOVE_SPEED;
+                    spotlight1.target.position.z -= SPOTLIGHT_MOVE_SPEED;
+                } else {
+                    // Move up (Y-axis)
+                    spotlight1.position.y += SPOTLIGHT_MOVE_SPEED;
+                }
+                break;
+            case 'ArrowDown':
+                if (event.shiftKey) {
+                    // Move backward (Z-axis)
+                    spotlight1.position.z += SPOTLIGHT_MOVE_SPEED;
+                    spotlight1.target.position.z += SPOTLIGHT_MOVE_SPEED;
+                } else {
+                    // Move down (Y-axis)
+                    spotlight1.position.y -= SPOTLIGHT_MOVE_SPEED;
+                }
+                break;
+            case 'ArrowLeft':
+                // Move left (X-axis)
+                spotlight1.position.x -= SPOTLIGHT_MOVE_SPEED;
+                spotlight1.target.position.x -= SPOTLIGHT_MOVE_SPEED;
+                break;
+            case 'ArrowRight':
+                // Move right (X-axis)
+                spotlight1.position.x += SPOTLIGHT_MOVE_SPEED;
+                spotlight1.target.position.x += SPOTLIGHT_MOVE_SPEED;
+                break;
+        }
+
     });
+
+    
 
     // 13) STOPWATCH
     initializeStopwatch();
