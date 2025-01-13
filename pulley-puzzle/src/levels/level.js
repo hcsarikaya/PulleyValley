@@ -17,13 +17,13 @@ export class Level{
         this.pos = this.room.position;
         this.physicsWorld = physicsWorld;
 
-
+        /*
         if(this.pos === 0){
             this.doorIn = new Door(this.scene,this.physicsWorld, [0, 15, +25+this.pos ]);
 
         }
         this.doorOut = new Door(this.scene,this.physicsWorld, [0, 15, -25+this.pos ]);
-
+        */
     }
 
     async addObject(level){

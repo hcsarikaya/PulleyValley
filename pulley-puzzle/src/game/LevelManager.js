@@ -16,6 +16,12 @@ export class LevelManager {
     }
 
     async loadLevel() {
+        let firstRoom = new Room(this.scene, this.roomSize, this.physicsWorld)
+        firstRoom.createRoom(this.pos +this.roomSize[1]);
+        firstRoom.wallIn = firstRoom.createWallWithPhysics(
+            [firstRoom.size[0], firstRoom.size[2], 1],
+            [0, firstRoom.size[2]/2, firstRoom.size[1]/2 + this.pos+this.roomSize[1]])
+        this.scene.add(firstRoom.wallIn);
 
 
         for(let i = 0; i < 4; i++) {
@@ -26,6 +32,13 @@ export class LevelManager {
             this.levels.push(new Level(this.rooms[i], this.physicsWorld));
             await this.levels[i].addObject(i);
         }
+        let LastRoom = new Room(this.scene, this.roomSize, this.physicsWorld)
+        LastRoom.createRoom(this.pos);
+        LastRoom.wallOut = LastRoom.createWallWithPhysics(
+            [LastRoom.size[0], LastRoom.size[2], 1],
+            [0, LastRoom.size[2]/2, -LastRoom.size[1]/2 + this.pos])
+        this.scene.add(LastRoom.wallOut);
+
 
 
 
@@ -36,8 +49,6 @@ export class LevelManager {
         //console.log(this.rooms[level -1].wallOut.position.y)
         if(check && Number(this.rooms[level -1].wallOut.position.y) < 68){
             this.rooms[level -1].wallOut.position.y +=0.15
-            this.levels[level-1].doorOut.mesh.position.y += 0.15
-
             this.rooms[level].wallIn.position.y +=0.15
 
         }else{
