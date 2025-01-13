@@ -15,7 +15,7 @@ export class LevelManager {
         this.currentLevel = 1;
     }
 
-    loadLevel() {
+    async loadLevel() {
 
 
         for(let i = 0; i < 4; i++) {
@@ -24,7 +24,7 @@ export class LevelManager {
             this.pos = this.pos- this.roomSize[1];
 
             this.levels.push(new Level(this.rooms[i], this.physicsWorld));
-            this.levels[i].addObject(i);
+            await this.levels[i].addObject(i);
         }
 
 

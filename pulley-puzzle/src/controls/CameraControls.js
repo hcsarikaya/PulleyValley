@@ -603,7 +603,7 @@ export class CameraControls {
             }
         }
 
-        console.log("camera pos:" + this.camera.position.z +" current: " + this.currentRoom +   " level passed: "+ this.levelPassed);
+        //console.log("camera pos:" + this.camera.position.z +" current: " + this.currentRoom +   " level passed: "+ this.levelPassed);
         if (this.camera.position.z < -1 * this.levelPassed * roomDepth - 30 && this.currentRoom === this.levelPassed + 1) {
             this.soundManager.playSound("nextLevel");
             this.levelPassed += 1;

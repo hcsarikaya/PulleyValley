@@ -25,6 +25,21 @@ export class Pallet {
                 this.mesh.position.set(position[0], position[1], position[2]);
                 this.mesh.scale.set(this.scale[0], this.scale[1], this.scale[2]);
 
+                // Apply material settings to all meshes
+                this.mesh.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        // Create a darker, more realistic wood material
+                        child.material = new THREE.MeshStandardMaterial({
+                            color: 0x4a3520,      // Dark wood color
+                            roughness: 0.85,      // Very rough surface
+                            metalness: 0.0,       // No metalness for wood
+                            envMapIntensity: 0.3  // Reduce environment lighting
+                        });
+                    }
+                });
+
                 this.scene.add(this.mesh);
 
                 // Sync physics body position

@@ -26,10 +26,17 @@ export class Boulder {
 
                 const textureLoader = new THREE.TextureLoader();
                 textureLoader.load(texturePath, (texture) => {
+                    texture.colorSpace = THREE.SRGBColorSpace;
                     this.mesh.traverse((child) => {
                         if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
                             child.material = new THREE.MeshStandardMaterial({
                                 map: texture,
+                                roughness: 0.9,        // Very rough surface
+                                metalness: 0.1,        // Low metalness for rock
+                                color: 0x666666,       // Darker base color
+                                envMapIntensity: 0.5   // Reduce environment lighting
                             });
                         }
                     });
