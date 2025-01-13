@@ -60,21 +60,26 @@ export class InteractionSystem {
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        console.log("df")
+
         const intersects = this.raycaster.intersectObjects(
-            this.interactiveObjects.map(obj => obj.mesh || obj.model)
+            this.interactiveObjects.map(obj => obj.mesh || obj.model), true
         );
-        console.log(intersects);
+
         if (intersects.length > 0) {
             const clickedObject = this.interactiveObjects.find(
-                obj => ( obj.model === intersects[0].object || obj.mesh === intersects[0].object)
+                obj => ( obj.model === intersects[0].object ||obj.model === intersects[0].object.parent || obj.mesh === intersects[0].object)
             );
             console.log(clickedObject);
             if(this.edit){
                 this.objToCarry = clickedObject;
-                this.objToCarry.mesh.position.x = this.player.position.x;
-                this.objToCarry.mesh.position.y = this.player.position.y + 6;
-                this.objToCarry.mesh.position.z = this.player.position.z - 4;
+                console.log(this.objToCarry.category);
+                if(this.objToCarry.category === "weight"){
+
+                    this.objToCarry.moveTo(this.camera, 2);
+                }
+
+
+
 
                 // Play the "pull" sound
                 this.soundManager.playSound('pull');
@@ -88,36 +93,6 @@ export class InteractionSystem {
         }
     }
 
-
-    onMouseClick(event) {
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObjects(
-            this.interactiveObjects.map(obj => obj.mesh)
-        );
-
-        if (intersects.length > 0) {
-            const clickedObject = this.interactiveObjects.find(
-                obj => obj.mesh === intersects[0].object
-            );
-            if(this.edit){
-                this.objToCarry = clickedObject;
-                console.log(this.objToCarry.mesh.position)
-                this.objToCarry.mesh.position.x = this.player.position.x;
-                this.objToCarry.mesh.position.y = this.player.position.y;
-                this.objToCarry.mesh.position.z = this.player.position.z;
-            }
-
-
-            if (clickedObject && clickedObject.isInRange) {
-                this.showPrompt(clickedObject.promptText);
-            }
-        } else {
-            this.hidePrompt();
-        }
-    }
 
     onKeyPress(event) {
         if (event.key.toLowerCase() === 'e') {
@@ -149,9 +124,7 @@ export class InteractionSystem {
         this.promptElement.style.display = 'none';
     }
     carryObj(){
-        this.objToCarry.mesh.position.x = this.player.position.x;
-        this.objToCarry.mesh.position.y = this.player.position.y+6;
-        this.objToCarry.mesh.position.z = this.player.position.z-4;
+        this.objToCarry.moveTo(this.camera, 2);
     }
 
     update() {
