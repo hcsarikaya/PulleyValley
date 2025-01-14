@@ -24,17 +24,28 @@ export const PixelationShader = {
         varying vec2 vUv;
 
         void main() {
-            // Calculate the pixel grid
-            vec2 pixels = resolution.xy / pixelSize;
+            vec2 dxy = pixelSize / resolution;
+            vec2 pixelatedUv = vec2(
+                floor(vUv.x / dxy.x) * dxy.x + dxy.x * 0.5,
+                floor(vUv.y / dxy.y) * dxy.y + dxy.y * 0.5
+            );
             
-            // Calculate the pixel coordinate
-            vec2 pixelCoord = floor(vUv * pixels) / pixels;
+            // Sample the texture at the pixelated coordinates
+            vec4 pixelatedColor = texture2D(tDiffuse, pixelatedUv);
             
-            // Sample the texture at the pixelated coordinate
-            vec4 color = texture2D(tDiffuse, pixelCoord);
+            // Enhance brightness and contrast slightly
+            vec3 color = pixelatedColor.rgb;
+            color = pow(color, vec3(0.9)); // Reduce gamma slightly to brighten
+            color *= 2.0; 
+
+            // Add a small amount of the original color to maintain lighting detail
+            vec4 originalColor = texture2D(tDiffuse, vUv);
+            color = mix(color, originalColor.rgb, 0.2);
             
-            // Output the pixelated color
-            gl_FragColor = color;
+            // Ensure we don't exceed maximum brightness
+            color = min(color, vec3(1.0));
+            
+            gl_FragColor = vec4(color, pixelatedColor.a);
         }
     `
 }; 
