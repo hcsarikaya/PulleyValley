@@ -49,6 +49,17 @@
         { "id": "pallet1", "type": "pallet", "position": [30, 0, -21], "scale": [2, 2, 2],"path" : "../models/hareketli+palet.glb" },
         { "type":  "rope", "position" : [0, 0, -5]}
       ]
+    },
+    {
+      "objects": [
+        { "id": "pulley2", "type": "pulley", "position": [30, 25, -21.5] },
+        { "id": "pulley3", "type": "pulley", "position": [0, 25, -22] },
+        { "type":  "weight", "position" : [ 25,  5,  -10 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type":  "weight", "position" : [ 25,  5,  -5 ],"path":  "../models/10kg.glb","mass": 10},
+        { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2], "mass": 10 },
+        { "id": "pallet1", "type": "pallet", "position": [30, 0, -21], "scale": [2, 2, 2],"path" : "../models/hareketli+palet.glb" },
+        { "type":  "rope", "position" : [0, 0, -5]}
+      ]
     }
   ]
 }
