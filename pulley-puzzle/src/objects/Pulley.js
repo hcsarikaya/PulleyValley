@@ -118,4 +118,35 @@ export class Pulley {
         if (this.mesh) this.mesh.rotation.z += amount;
         if (this.model) this.model.rotation.z += amount;
     }
+
+    moveTo(camera, distance) {
+        if (!this.body || !this.model) return;
+
+        // Calculate target position in front of camera
+        const cameraDirection = new THREE.Vector3(0, 0, -1);
+        cameraDirection.applyQuaternion(camera.quaternion);
+        const targetPosition = new THREE.Vector3();
+        targetPosition.copy(camera.position).add(cameraDirection.multiplyScalar(distance));
+
+        // Update physics body position
+        const transform = new this.physicsWorld.AmmoLib.btTransform();
+        transform.setIdentity();
+        transform.setOrigin(new this.physicsWorld.AmmoLib.btVector3(
+            targetPosition.x,
+            targetPosition.y - 1, // Offset slightly below camera view
+            targetPosition.z
+        ));
+
+        // Keep the original rotation
+        const currentRotation = new this.physicsWorld.AmmoLib.btTransform();
+        this.body.getMotionState().getWorldTransform(currentRotation);
+        const rotation = currentRotation.getRotation();
+        transform.setRotation(rotation);
+
+        this.body.getMotionState().setWorldTransform(transform);
+        this.body.setWorldTransform(transform);
+        
+        // Activate the body to ensure physics updates
+        this.body.activate();
+    }
 }
