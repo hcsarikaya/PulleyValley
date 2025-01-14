@@ -109,7 +109,7 @@ export class Level{
             case "boulder":
                 position = obj.position;
                 position[2] += this.pos;
-                object = new Boulder(this.scene, this.physicsWorld, position,obj.scale || [1, 1, 1],);
+                object = new Boulder(this.scene, this.physicsWorld, position,obj.scale || [1, 1, 1],obj.path,obj.mass);
                 await object.load();
                 if(obj.id){
                     object.name = obj.id;

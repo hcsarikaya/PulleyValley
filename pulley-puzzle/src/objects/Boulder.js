@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export class Boulder {
-    constructor(scene, physicsWorld, position = [0, 0, 0], scale = [1, 1, 1], mass = 10) {
+    constructor(scene, physicsWorld, position = [0, 0, 0], scale = [1, 1, 1],path, mass = 10) {
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.mesh = null;
@@ -14,7 +14,7 @@ export class Boulder {
         this.category = 'boulder';
         this.name = null;
 
-        this.modelPath = '../public/models/kaya2.glb';
+        this.modelPath = path;
         this.texturePath = '/src/textures/boulder.jpg';
 
         this.createPhysicsBody(position, scale, mass);

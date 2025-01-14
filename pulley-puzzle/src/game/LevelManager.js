@@ -41,6 +41,7 @@ export class LevelManager {
             [LastRoom.size[0], LastRoom.size[2], 1],
             [0, LastRoom.size[2]/2, -LastRoom.size[1]/2 + this.pos])
         this.scene.add(LastRoom.wallOut);
+        
 
 
 

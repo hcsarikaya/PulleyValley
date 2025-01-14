@@ -2,7 +2,6 @@ export function initMenu(startGameCallback) {
     const startGameBtn = document.getElementById('start-game-btn');
     const instructionsBtn = document.getElementById('instructions-btn');
     const exitBtn = document.getElementById('exit-btn');
-    const levelButtons = document.querySelectorAll('.level-btn');
     const mainMenu = document.getElementById('main-menu');
     const gameContainer = document.getElementById('game-container');
 
@@ -25,21 +24,17 @@ export function initMenu(startGameCallback) {
         alert('Thank you for playing!');
     }
 
-    // Function to load selected level
-    function loadLevel(event) {
-        const level = event.target.getAttribute('data-level');
+    // Function to start game
+    function startGame() {
         mainMenu.style.display = 'none';
         gameContainer.style.display = 'block';
-        startGameCallback(level);
+        startGameCallback(1); // Start with level 1 by default
     }
 
     // Event listeners
-    startGameBtn.addEventListener('click', () => {
-        document.getElementById('level-selection').style.display = 'block';
-    });
+    startGameBtn.addEventListener('click', startGame);
     instructionsBtn.addEventListener('click', showInstructions);
     exitBtn.addEventListener('click', exitGame);
-    levelButtons.forEach((button) => button.addEventListener('click', loadLevel));
 
     // Close modal when close button is clicked
     closeBtn.addEventListener('click', closeInstructions);
