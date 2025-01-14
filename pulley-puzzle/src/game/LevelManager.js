@@ -22,9 +22,12 @@ export class LevelManager {
             [firstRoom.size[0], firstRoom.size[2], 1],
             [0, firstRoom.size[2]/2, firstRoom.size[1]/2 + this.pos+this.roomSize[1]])
         this.scene.add(firstRoom.wallIn);
+        this.rooms.push(firstRoom);
+        this.levels.push(new Level(this.rooms[0], this.physicsWorld));
+        await this.levels[0].addObject(0);
 
 
-        for(let i = 0; i < 4; i++) {
+        for(let i = 1; i < 5; i++) {
             this.rooms.push(new Room(this.scene, this.roomSize, this.physicsWorld));
             this.rooms[i].createRoom(this.pos);
             this.pos = this.pos- this.roomSize[1];
@@ -32,12 +35,15 @@ export class LevelManager {
             this.levels.push(new Level(this.rooms[i], this.physicsWorld));
             await this.levels[i].addObject(i);
         }
-        let LastRoom = new Room(this.scene, this.roomSize, this.physicsWorld)
-        LastRoom.createRoom(this.pos);
-        LastRoom.wallOut = LastRoom.createWallWithPhysics(
+        let lastRoom = new Room(this.scene, this.roomSize, this.physicsWorld)
+        lastRoom.createRoom(this.pos);
+        lastRoom.wallOut = lastRoom.createWallWithPhysics(
             [LastRoom.size[0], LastRoom.size[2], 1],
-            [0, LastRoom.size[2]/2, -LastRoom.size[1]/2 + this.pos])
-        this.scene.add(LastRoom.wallOut);
+            [0, lastRoom.size[2]/2, -lastRoom.size[1]/2 + this.pos])
+        this.rooms.push(lastRoom)
+        this.levels.push(new Level(this.rooms[5], this.physicsWorld));
+        await this.levels[5].addObject(5);
+        this.scene.add(lastRoom.wallOut);
 
 
 

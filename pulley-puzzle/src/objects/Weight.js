@@ -3,17 +3,17 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { loadModel } from '../controls/ObjLoader.js';
 
 export class Weight {
-    constructor(scene, physicsWorld, position = [5, 0.5, 5]) {
+    constructor(scene, physicsWorld, position = [5, 0.5, 5], path, mass) {
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.category = 'weight';
         this.model = null;
         this.body = null;
-
+        this.path= path
         // Ammo.js physics body setup
-        const mass = 5;
+
         const shape = new physicsWorld.AmmoLib.btBoxShape(
-            new physicsWorld.AmmoLib.btVector3(0.5, 0.5, 0.5)
+            new physicsWorld.AmmoLib.btVector3(1.5, 0.75 , 1.5)
         );
 
         const transform = new physicsWorld.AmmoLib.btTransform();
@@ -43,11 +43,11 @@ export class Weight {
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
     }
 
-    static async create(scene, physicsWorld, position = [5, 0.5, 5]) {
-        const weight = new Weight(scene, physicsWorld, position);
-        const modelPath = '../models/5kg.glb';
+    static async create(scene, physicsWorld, position = [5, 0.5, 5], path , mass ) {
+        const weight = new Weight(scene, physicsWorld, position, path, mass);
 
-        weight.model = await loadModel(modelPath);
+
+        weight.model = await loadModel(path);
         weight.model.position.set(position[0], position[1], position[2]);
 
         weight.model.traverse((child) => {

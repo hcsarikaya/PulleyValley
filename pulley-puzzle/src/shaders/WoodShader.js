@@ -101,8 +101,8 @@ void main() {
     vec3 normal = normalize(vNormal);
     vec3 viewDir = normalize(vViewPosition);
     
-    // Reduced ambient light for darker appearance when lights are off
-    float ambientStrength = 0.1;
+    // Reduced ambient light even further for darker appearance
+    float ambientStrength = 0.05;
     vec3 ambient = ambientStrength * baseColor;
     
     // Calculate lighting from both spotlights
@@ -120,17 +120,17 @@ void main() {
                 float spotIntensity = smoothstep(spotLights[i].penumbraCos, spotLights[i].coneCos, spotEffect);
                 float attenuation = pow(clamp(1.0 - distance / spotLights[i].distance, 0.0, 1.0), spotLights[i].decay);
                 
-                // Apply spotlight intensity
-                float lightIntensity = spotLights[i].intensity * 0.1; // Scale down the intensity for better control
+                // Reduce light intensity scaling
+                float lightIntensity = spotLights[i].intensity * 0.05; // Reduced from 0.1 to 0.05
                 
-                // Diffuse lighting
-                float diff = max(dot(normal, lightDir), 0.0) * 0.7;
+                // Reduced diffuse contribution
+                float diff = max(dot(normal, lightDir), 0.0) * 0.5; // Reduced from 0.7 to 0.5
                 vec3 diffuse = diff * spotLights[i].color * lightIntensity;
                 
-                // Specular lighting
+                // Reduced specular contribution
                 vec3 halfwayDir = normalize(lightDir + viewDir);
                 float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
-                vec3 specular = spec * spotLights[i].color * lightIntensity * 0.3;
+                vec3 specular = spec * spotLights[i].color * lightIntensity * 0.2; // Reduced from 0.3 to 0.2
                 
                 totalDiffuse += diffuse * attenuation * spotIntensity;
                 totalSpecular += specular * attenuation * spotIntensity;
@@ -138,8 +138,8 @@ void main() {
         }
     }
     
-    // Final color
-    vec3 result = ambient + (totalDiffuse + totalSpecular) * baseColor;
+    // Final color with slightly reduced overall intensity
+    vec3 result = ambient + (totalDiffuse + totalSpecular) * baseColor * 0.9;
     
     gl_FragColor = vec4(result, 1.0);
 }

@@ -6,52 +6,56 @@ export class Pulley {
         this.category = 'pulley';
         this.scene = scene;
         this.physicsWorld = physicsWorld;
+        this.position = position;
+        this.scale = scale;
+        this.name = null;
 
-        this.mesh = null; // Three.js mesh
-        this.body = null; // Ammo.js rigid body
-        this.model = null; // Loaded GLTF model
+        this.mesh = null;
+        this.body = null;
+        this.model = null;
 
         this.createPhysicsBody(position);
+    }
 
-
-        const loader = new GLTFLoader();
-
-        loader.load(
-            '../models/pulley.glb',
-            (gltf) => {
-                console.log('Model loaded:', gltf);
-
-                this.model = gltf.scene;
-
-                this.model.position.set(position[0], position[1], position[2]);
-                this.model.scale.set(scale,scale,scale);
-                this.model.rotation.y = Math.PI / 2;
-                
-                // Enable shadows and proper material for lighting
-                this.model.traverse((child) => {
-                    if (child.isMesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        
-                        // Ensure material reacts to light
-                        if (!child.material.isMeshStandardMaterial && !child.material.isMeshPhongMaterial) {
-                            child.material = new THREE.MeshStandardMaterial({
-                                color: child.material.color || 0x808080,
-                                metalness: 0.5,
-                                roughness: 0.5
-                            });
+    async load() {
+        return new Promise((resolve, reject) => {
+            const loader = new GLTFLoader();
+            
+            loader.load(
+                '../models/pulley.glb',
+                (gltf) => {
+                    this.mesh = gltf.scene;
+                    
+                    this.mesh.position.set(this.position[0], this.position[1], this.position[2]);
+                    this.mesh.scale.set(this.scale, this.scale, this.scale);
+                    this.mesh.rotation.y = Math.PI / 2;
+                    
+                    this.mesh.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                            
+                            if (!child.material.isMeshStandardMaterial && !child.material.isMeshPhongMaterial) {
+                                child.material = new THREE.MeshStandardMaterial({
+                                    color: child.material.color || 0x808080,
+                                    metalness: 0.5,
+                                    roughness: 0.5
+                                });
+                            }
                         }
-                    }
-                });
-                
-                scene.add(this.model);
-            },
-            undefined,
-            (error) => {
-                console.error('Error loading model:', error); // Handle errors
-            }
-        );
-
+                    });
+                    
+                    this.scene.add(this.mesh);
+                    this.mesh.userData.physicsBody = this.body;
+                    resolve(this);
+                },
+                undefined,
+                (error) => {
+                    console.error('Error loading pulley model:', error);
+                    reject(error);
+                }
+            );
+        });
     }
 
     createPhysicsBody(position) {
