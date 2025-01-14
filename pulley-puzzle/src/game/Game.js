@@ -11,6 +11,7 @@ import { CameraControls } from '../controls/CameraControls.js';
 import { DustParticleSystem } from '../objects/DustParticleSystem.js';
 import { WizardParticleSystem } from "../objects/WizardParticleSystem.js";
 import { NightVisionShader } from '../shaders/NightVisionShader.js';
+import { PixelationShader } from '../shaders/PixelationShader.js';
 
 import { PhysicsWorld } from '../objects/PhysicsWorld.js';
 //import InventoryUI from '../ui/InventoryUI.js';
@@ -28,9 +29,17 @@ const spawnInterval = 1.0;
 const dustSpawnPosition = new THREE.Vector3(0, 0, 0);
 let helpMenu, settingsMenu, soundManager;
 let stopwatchElement;
-let spotlight1, spotlight2;
-let composer, nightVisionPass;
+let spotlight1, spotlight2, spotlight3, spotlight4, spotlight5;
+let composer, nightVisionPass, pixelationPass;
 let nightVisionEnabled = false;
+let pixelationLevel = 0; // 0: off, 1: subtle, 2: medium, 3: strong
+
+// Pixelation levels configuration
+const PIXEL_SIZES = {
+    1: 4.0,  // Subtle pixelation
+    2: 8.0,  // Medium pixelation
+    3: 16.0  // Strong pixelation
+};
 
 // Add movement speed constant for spotlight
 const SPOTLIGHT_MOVE_SPEED = 2;
@@ -83,47 +92,36 @@ export async function initGame(level) {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
+    // Create spotlights for all rooms
     // First room spotlight
     spotlight1 = new THREE.SpotLight(0xffffff, 10.0);
     spotlight1.position.set(0, 40, 0);
     spotlight1.target.position.set(0, 0, 0);
-    scene.add(spotlight1.target);
-
-    spotlight1.angle = Math.PI / 2.5;
-    spotlight1.penumbra = 0.1;
-    spotlight1.decay = 0.2;
-    spotlight1.distance = 200;
-
-    spotlight1.castShadow = true;
-    spotlight1.shadow.mapSize.width = 2048;
-    spotlight1.shadow.mapSize.height = 2048;
-    spotlight1.shadow.camera.near = 1;
-    spotlight1.shadow.camera.far = 200;
-    spotlight1.shadow.camera.fov = 90;
-    spotlight1.shadow.bias = -0.001;
-
-    scene.add(spotlight1);
+    setupSpotlight(spotlight1);
 
     // Second room spotlight
     spotlight2 = new THREE.SpotLight(0xffffff, 10.0);
-    spotlight2.position.set(25, 41, -60);
-    spotlight2.target.position.set(10, 0, -60);
-    scene.add(spotlight2.target);
+    spotlight2.position.set(25, 41, -45);
+    spotlight2.target.position.set(10, 0, -45);
+    setupSpotlight(spotlight2);
 
-    spotlight2.angle = Math.PI / 2.5;
-    spotlight2.penumbra = 0.1;
-    spotlight2.decay = 0.2;
-    spotlight2.distance = 200;
+    // Third room spotlight
+    spotlight3 = new THREE.SpotLight(0xffffff, 10.0);
+    spotlight3.position.set(0, 40, -90);
+    spotlight3.target.position.set(0, 0, -90);
+    setupSpotlight(spotlight3);
 
-    spotlight2.castShadow = true;
-    spotlight2.shadow.mapSize.width = 2048;
-    spotlight2.shadow.mapSize.height = 2048;
-    spotlight2.shadow.camera.near = 1;
-    spotlight2.shadow.camera.far = 200;
-    spotlight2.shadow.camera.fov = 90;
-    spotlight2.shadow.bias = -0.001;
+    // Fourth room spotlight
+    spotlight4 = new THREE.SpotLight(0xffffff, 10.0);
+    spotlight4.position.set(0, 40, -135);
+    spotlight4.target.position.set(0, 0, -135);
+    setupSpotlight(spotlight4);
 
-    scene.add(spotlight2);
+    // Fifth room spotlight
+    spotlight5 = new THREE.SpotLight(0xffffff, 10.0);
+    spotlight5.position.set(0, 40, -180);
+    spotlight5.target.position.set(0, 0, -180);
+    setupSpotlight(spotlight5);
 
     // 9) LEVEL MANAGER
     let roomSize = [80, 50, 45];
@@ -163,35 +161,80 @@ export async function initGame(level) {
 
     // Add night vision pass
     nightVisionPass = new ShaderPass(NightVisionShader);
-    nightVisionPass.enabled = false; 
+    nightVisionPass.enabled = false;
     composer.addPass(nightVisionPass);
+
+    // Add pixelation pass
+    pixelationPass = new ShaderPass(PixelationShader);
+    pixelationPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+    pixelationPass.enabled = false;
+    composer.addPass(pixelationPass);
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        pixelationPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+    });
 
     document.addEventListener('keydown', (event) => {
         if (event.key.toLowerCase() === 'h') {
             helpMenu.toggle();
         }
         if (event.key.toLowerCase() === 'k') {
+            // Toggle all spotlights
             spotlight1.visible = !spotlight1.visible;
             spotlight2.visible = !spotlight2.visible;
+            spotlight3.visible = !spotlight3.visible;
+            spotlight4.visible = !spotlight4.visible;
+            spotlight5.visible = !spotlight5.visible;
             if (spotlight1.visible) {
                 nightVisionPass.enabled = false;
                 nightVisionEnabled = false;
             }
         }
+
+        if (event.key === '+' || event.key === '=') {
+            // Increase intensity for all spotlights
+            const newIntensity = Math.min(20, spotlight1.intensity + 1);
+            spotlight1.intensity = newIntensity;
+            spotlight2.intensity = newIntensity;
+            spotlight3.intensity = newIntensity;
+            spotlight4.intensity = newIntensity;
+            spotlight5.intensity = newIntensity;
+        }
+        if (event.key === '-' || event.key === '_') {
+            // Decrease intensity for all spotlights
+            const newIntensity = Math.max(0, spotlight1.intensity - 1);
+            spotlight1.intensity = newIntensity;
+            spotlight2.intensity = newIntensity;
+            spotlight3.intensity = newIntensity;
+            spotlight4.intensity = newIntensity;
+            spotlight5.intensity = newIntensity;
+        }
+
         if (event.key === '1') {
             if (!spotlight1.visible) {
                 nightVisionEnabled = !nightVisionEnabled;
                 nightVisionPass.enabled = nightVisionEnabled;
+                if (nightVisionEnabled) {
+                    pixelationLevel = 0;
+                    pixelationPass.enabled = false;
+                }
             }
         }
-        if (event.key === '+' || event.key === '=') {
-            spotlight1.intensity = Math.min(20, spotlight1.intensity + 1);
-        }
-        if (event.key === '-' || event.key === '_') {
-            spotlight1.intensity = Math.max(0, spotlight1.intensity - 1);
+        if (event.key === '2') {
+            pixelationLevel = (pixelationLevel + 1) % 4; // 0->1->2->3->0
+            
+            if (pixelationLevel === 0) {
+                pixelationPass.enabled = false;
+            } else {
+                pixelationPass.enabled = true;
+                pixelationPass.uniforms.pixelSize.value = PIXEL_SIZES[pixelationLevel];
+                
+                nightVisionEnabled = false;
+                nightVisionPass.enabled = false;
+            }
         }
 
-        // Spotlight position controls
         switch(event.key) {
             case 'ArrowUp':
                 if (event.shiftKey) {
@@ -224,7 +267,10 @@ export async function initGame(level) {
                 spotlight1.target.position.x += SPOTLIGHT_MOVE_SPEED;
                 break;
         }
+
     });
+
+    
 
     // 13) STOPWATCH
     initializeStopwatch();
@@ -261,33 +307,56 @@ function animate() {
     physicsWorld.update(delta);
 
     // Update floor shader uniforms for spotlight changes
-    levelManager.rooms.forEach(room => {
+    levelManager.rooms.forEach((room, index) => {
         if (room.floor && room.floor.userData.woodShaderMaterial) {
             const material = room.floor.userData.woodShaderMaterial;
-            // Update first spotlight properties
+            const spotlights = [spotlight1, spotlight2, spotlight3, spotlight4, spotlight5];
+            
+            // Update spotlight properties for this room's floor
+            // First spotlight (main light for this room)
             material.uniforms.spotLights.value[0] = {
-                position: spotlight1.position,
+                position: spotlights[index].position,
                 direction: new THREE.Vector3(0, -1, 0),
                 color: new THREE.Color(0xffffff),
-                distance: spotlight1.distance,
-                decay: spotlight1.decay,
-                coneCos: Math.cos(spotlight1.angle),
-                penumbraCos: Math.cos(spotlight1.angle + spotlight1.penumbra),
-                intensity: spotlight1.intensity,
-                visible: spotlight1.visible
+                distance: spotlights[index].distance,
+                decay: spotlights[index].decay,
+                coneCos: Math.cos(spotlights[index].angle),
+                penumbraCos: Math.cos(spotlights[index].angle + spotlights[index].penumbra),
+                intensity: spotlights[index].intensity,
+                visible: spotlights[index].visible
             };
-            // Update second spotlight properties
-            material.uniforms.spotLights.value[1] = {
-                position: spotlight2.position,
-                direction: new THREE.Vector3(0, -1, 0),
-                color: new THREE.Color(0xffffff),
-                distance: spotlight2.distance,
-                decay: spotlight2.decay,
-                coneCos: Math.cos(spotlight2.angle),
-                penumbraCos: Math.cos(spotlight2.angle + spotlight2.penumbra),
-                intensity: spotlight2.intensity,
-                visible: spotlight2.visible
-            };
+
+            // Second spotlight (contribution from adjacent room if exists)
+            const nextSpotlight = spotlights[index + 1];
+            if (nextSpotlight) {
+                material.uniforms.spotLights.value[1] = {
+                    position: nextSpotlight.position,
+                    direction: new THREE.Vector3(0, -1, 0),
+                    color: new THREE.Color(0xffffff),
+                    distance: nextSpotlight.distance,
+                    decay: nextSpotlight.decay,
+                    coneCos: Math.cos(nextSpotlight.angle),
+                    penumbraCos: Math.cos(nextSpotlight.angle + nextSpotlight.penumbra),
+                    intensity: nextSpotlight.intensity * 0.5,
+                    visible: nextSpotlight.visible
+                };
+            } else {
+                // For the last room, use the previous spotlight as secondary
+                const prevSpotlight = spotlights[index - 1];
+                if (prevSpotlight) {
+                    material.uniforms.spotLights.value[1] = {
+                        position: prevSpotlight.position,
+                        direction: new THREE.Vector3(0, -1, 0),
+                        color: new THREE.Color(0xffffff),
+                        distance: prevSpotlight.distance,
+                        decay: prevSpotlight.decay,
+                        coneCos: Math.cos(prevSpotlight.angle),
+                        penumbraCos: Math.cos(prevSpotlight.angle + prevSpotlight.penumbra),
+                        intensity: prevSpotlight.intensity * 0.5,
+                        visible: prevSpotlight.visible
+                    };
+                }
+            }
         }
     });
 
@@ -330,4 +399,24 @@ function formatTime(seconds) {
 
 function pad(num) {
     return num.toString().padStart(2, '0');
+}
+
+// Helper function to setup spotlight properties
+function setupSpotlight(spotlight) {
+    scene.add(spotlight.target);
+    
+    spotlight.angle = Math.PI / 2.5;
+    spotlight.penumbra = 0.1;
+    spotlight.decay = 0.2;
+    spotlight.distance = 200;
+    
+    spotlight.castShadow = true;
+    spotlight.shadow.mapSize.width = 2048;
+    spotlight.shadow.mapSize.height = 2048;
+    spotlight.shadow.camera.near = 1;
+    spotlight.shadow.camera.far = 200;
+    spotlight.shadow.camera.fov = 90;
+    spotlight.shadow.bias = -0.001;
+    
+    scene.add(spotlight);
 }
