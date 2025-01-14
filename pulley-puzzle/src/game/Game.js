@@ -14,7 +14,6 @@ import { NightVisionShader } from '../shaders/NightVisionShader.js';
 import { PixelationShader } from '../shaders/PixelationShader.js';
 
 import { PhysicsWorld } from '../objects/PhysicsWorld.js';
-//import InventoryUI from '../ui/InventoryUI.js';
 import SoundManager from './SoundManager.js';
 import HelpMenu from '../ui/HelpMenu.js';
 import SettingsMenu from "../ui/SettingsMenu.js";
@@ -312,7 +311,7 @@ function animate() {
     interectionSystem.update();
     cameraControls.update(delta);
 
-    if (cameraControls.levelPassed === 3) {
+    if (cameraControls.levelPassed === 4) {
         stopwatchActive = false;
     }
 

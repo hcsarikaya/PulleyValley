@@ -109,6 +109,7 @@ export class CameraControls {
         // Current room index, but now we consider rooms extending in negative Z
         this.currentRoom = 0;
         this.levelPassed = 0;
+        this.isWon = false;
 
         // Door region (for crossing between rooms)
         this.doorXMin = -5;
@@ -663,37 +664,44 @@ export class CameraControls {
             this.levelPassed += 1;
         }
 
-        if (this.levelPassed === 3) {
-            // Wait for 5 seconds (5000 milliseconds)
+        if (this.levelPassed === 4 && !this.isWon) {
+            this.isWon = true;
+            const winMessage = document.createElement('div');
+            winMessage.textContent = 'YOU WON';
+
+            Object.assign(winMessage.style, {
+                position: 'fixed',
+                top: '40%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                padding: '20px',
+                backgroundColor: 'rgba(0, 128, 0, 0)',
+                color: '#fff',
+                fontSize: '8em',
+                borderRadius: '10px',
+                textAlign: 'center',
+                zIndex: '1000',
+                opacity: '1',
+                transition: 'all 1s ease', // Changed to 'all' for better browser support
+                pointerEvents: 'none',
+            });
+
+            // Force a reflow before adding the element
+            document.body.appendChild(winMessage);
+            winMessage.offsetHeight; // Force a reflow
+
             setTimeout(() => {
-                // Create a new div element for the "YOU WON" message
-                const winMessage = document.createElement('div');
+                winMessage.style.opacity = '0';
+                console.log('Fading started'); // Debug log
+            }, 3000);
 
-                // Set the text content
-                winMessage.textContent = 'YOU WON';
-
-                // Style the message (you can adjust the styles as needed)
-                winMessage.style.position = 'fixed';
-                winMessage.style.top = '40%';
-                winMessage.style.left = '50%';
-                winMessage.style.transform = 'translate(-50%, -50%)';
-                winMessage.style.padding = '20px';
-                winMessage.style.backgroundColor = 'rgba(0, 128, 0, 0)'; // Semi-transparent green background
-                winMessage.style.color = '#fff';
-                winMessage.style.fontSize = '10em';
-                winMessage.style.borderRadius = '8px';
-                winMessage.style.textAlign = 'center';
-                winMessage.style.zIndex = '1000'; // Ensure it's on top of other elements
-
-                // Append the message to the body
-                document.body.appendChild(winMessage);
-
-                // After displaying the message, wait another 3 seconds before removing it
-                setTimeout(() => {
-                    winMessage.remove();
-                }, 3000); // Message will disappear after 3 seconds
-            }, 5000); // Initial delay of 5 seconds before showing the message
+            winMessage.addEventListener('transitionend', (e) => {
+                console.log('Transition ended:', e.propertyName); // Debug log
+                winMessage.remove();
+            });
         }
+
+
 
     }
 }

@@ -1,12 +1,8 @@
-// src/ui/HelpMenu.js
-
 export default class HelpMenu {
     constructor() {
-        // Create a container element for the help text
         this.container = document.createElement('div');
         this.container.id = 'helpMenu';
 
-        // You can fill this with whatever help text or instructions you like.
         this.container.innerHTML = `
           <h2>Help</h2>
           <p>Controls:</p>
@@ -26,11 +22,9 @@ export default class HelpMenu {
         `;
 
 
-        // Initially hidden
         this.isVisible = false;
         this.hide();
 
-        // Add to document body
         document.body.appendChild(this.container);
     }
 

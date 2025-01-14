@@ -1,10 +1,4 @@
-// SettingsMenu.js
-
 export default class SettingsMenu {
-    /**
-     * @param {SoundManager} soundManager - Instance of the SoundManager.
-     * @param {Function} onMouseSensitivityChange - Callback to handle mouse sensitivity changes.
-     */
     constructor(soundManager, onMouseSensitivityChange) {
         this.soundManager = soundManager;
         this.onMouseSensitivityChange = onMouseSensitivityChange; // Callback function
@@ -14,7 +8,6 @@ export default class SettingsMenu {
     }
 
     #createDOM() {
-        // Create a container for the settings menu
         this.container = document.createElement('div');
         this.container.style.position = 'absolute';
         this.container.style.top = '50%';
@@ -30,14 +23,12 @@ export default class SettingsMenu {
         this.container.style.borderRadius = '8px';
         this.container.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
 
-        // Title
         const title = document.createElement('h2');
         title.textContent = 'Settings';
         title.style.marginTop = '0';
         title.style.textAlign = 'center';
         this.container.appendChild(title);
 
-        // --- Music Volume Slider ---
         const musicContainer = document.createElement('div');
         musicContainer.style.margin = '10px 0';
         musicContainer.style.display = 'flex';
@@ -57,14 +48,12 @@ export default class SettingsMenu {
         musicVolume.value = this.soundManager.music.volume;
         musicVolume.style.flex = '2';
         musicVolume.addEventListener('input', (e) => {
-            // Adjust background music volume
             const newVolume = parseFloat(e.target.value);
             this.soundManager.music.volume = newVolume;
         });
         musicContainer.appendChild(musicVolume);
         this.container.appendChild(musicContainer);
 
-        // --- Mouse Sensitivity Slider ---
         const sensitivityContainer = document.createElement('div');
         sensitivityContainer.style.margin = '10px 0';
         sensitivityContainer.style.display = 'flex';
@@ -92,9 +81,6 @@ export default class SettingsMenu {
         sensitivityContainer.appendChild(sensitivitySlider);
         this.container.appendChild(sensitivityContainer);
 
-        // You can add more sliders/checks for other settings here
-
-        // Append container to body
         document.body.appendChild(this.container);
     }
 

@@ -6,9 +6,7 @@ export default class SoundManager {
         this.loadSounds(); // Ensure sounds are loaded upon instantiation
     }
 
-    // Preload all your audio assets
     loadSounds() {
-        // Example using HTMLAudioElement:
         this.sounds.walk = new Audio('/src/sounds/Walking_Realistic_fo.mp3');
         this.sounds.walk.loop = true;
         this.sounds.walk.volume = 0.5;
@@ -35,14 +33,10 @@ export default class SoundManager {
 
 
 
-        // Background music
         this.music = new Audio('/src/sounds/minecraft-starting-song.mp3');
         this.music.loop = true;
         this.music.volume = 0.0;
 
-        // Load other sounds if needed:
-        // this.sounds.objectAdd = new Audio('/src/sounds/objectAdd.mp3');
-        // this.sounds.objectRemove = new Audio('/src/sounds/objectRemove.mp3');
     }
 
     // Play background music
@@ -59,7 +53,6 @@ export default class SoundManager {
         }
     }
 
-    // Play a one-time sound effect by name
     playSound(name) {
         if (!this.sounds[name]) return;
         const sound = this.sounds[name].cloneNode();
@@ -69,7 +62,6 @@ export default class SoundManager {
         sound.play();
     }
 
-    // Play a looping sound effect by name
     playLoop(name) {
         if (!this.sounds[name]) return;
         if (this.activeSounds[name]) return; // Already playing
@@ -78,7 +70,6 @@ export default class SoundManager {
         this.activeSounds[name].play();
     }
 
-    // Stop a looping sound effect by name
     stopLoop(name) {
         if (this.activeSounds[name]) {
             this.activeSounds[name].pause();
@@ -87,20 +78,16 @@ export default class SoundManager {
         }
     }
 
-    // Mute a specific sound
     muteSound(name) {
         if (this.sounds[name]) {
             this.sounds[name].muted = true;
         }
     }
 
-    // Unmute a specific sound
     unmuteSound(name) {
         if (this.sounds[name]) {
             this.sounds[name].muted = false;
         }
     }
 
-    // Additional helpers could go here...
-    // For example: fade in/out, toggling global mute, etc.
 }
