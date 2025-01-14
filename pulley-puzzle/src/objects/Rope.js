@@ -10,6 +10,7 @@ export class Rope {
         damping = 0.99,
         gravity = new THREE.Vector3(0, -9.8, 0),
     }) {
+        this.category = "rope"
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.startObject = startObject;
