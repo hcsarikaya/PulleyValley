@@ -65,7 +65,7 @@ export class Pallet {
 
     createPhysicsBody(position) {
         const size = [3 * this.scale[0], 1.5 * this.scale[1], 3 * this.scale[2]];
-        const mass = 10; // Adjust the mass as needed
+        const mass = 0; // Adjust the mass as needed
         const shape = new this.physicsWorld.AmmoLib.btBoxShape(
             new this.physicsWorld.AmmoLib.btVector3(size[0] / 2, size[1] / 2, size[2] / 2)
         );

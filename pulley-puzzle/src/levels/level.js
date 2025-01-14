@@ -65,10 +65,20 @@ export class Level{
                 this.objects.push(object);
                 break;
             case "rope":
-                const startObject = this.objects.find(o => o.name === obj.start);
-                const endObject = this.objects.find(o => o.name === obj.end);
 
-                if (startObject && endObject) {
+                //const startObject = this.objects.find(o => o.name === obj.start);
+                //const endObject = this.objects.find(o => o.name === obj.end);
+                const startPos = new THREE.Vector3(obj.start[0], obj.start[1], obj.start[2]);
+                const endPos = new THREE.Vector3(obj.end[0], obj.end[1], obj.end[2]);
+
+                if (startPos && endPos) {
+                    object = new Rope(this.scene, {
+                        startPosition: startPos,
+                        endPosition: endPos,
+                        segments: 10,
+                        ropeColor: 0xff0000,
+                    });
+                    /*
                     object = new Rope(
                         this.scene,
                         this.physicsWorld,
@@ -82,6 +92,8 @@ export class Level{
                             gravity: new THREE.Vector3(0, -9.8, 0),
                         }
                     );
+
+                     */
                     this.objects.push(object);
                 } else {
                     console.error("Invalid start or end object for rope:", obj);
