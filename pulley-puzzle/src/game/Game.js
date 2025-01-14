@@ -364,6 +364,7 @@ function animate() {
     levelManager.levels.forEach(lvl => {
         lvl.objects.forEach(obj => {
             if (obj.update) obj.update();
+
         });
     });
 
