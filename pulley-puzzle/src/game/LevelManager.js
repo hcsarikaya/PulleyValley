@@ -50,22 +50,36 @@ export class LevelManager {
 
 
     };
-    levelAnimation(level, check){
-        //console.log(this.rooms[level -1].wallOut.position.y)
-        if(check && Number(this.rooms[level -1].wallOut.position.y) < 68){
-            this.rooms[level -1].wallOut.position.y +=0.15
-            this.rooms[level].wallIn.position.y +=0.15
+    levelAnimation(level){
+        const boulder = this.levels[level].objects.find(obj => obj.category === "boulder");
+        const pallet = this.levels[level].objects.find(obj => obj.category === "pallet");
+        const rope1 = this.levels[level].objects.find(obj => obj.name === "rope1");
+        const rope2 = this.levels[level].objects.find(obj => obj.category === "rope2");
 
-        }else{
-            check = false;
-        }
+
+
+
+    }
+    checkLevelFinish(level){
+        level.objects.forEach(object => {
+
+            if(object.category === "weight"){
+                if(object.model.userData.totalMass === 10){
+                    level.levelFinished = true;
+                    return true;
+                }
+            }
+        })
+        return false;
     }
 
 
     update() {
-        if(this.checkLevel){
-            this.levelAnimation(this.currentLevel, this.checkLevel);
-        }
+        this.levels.forEach(level => {
+            if(this.checkLevelFinish(level)){
+                this.levelAnimation(level)
+            }
+        })
 
         // Add this to update trigger zones
         if (this.levels[this.currentLevel - 1]) {

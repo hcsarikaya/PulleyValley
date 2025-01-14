@@ -13,7 +13,7 @@ export class Rope {
         this.endPosition = endPosition;
         this.segments = segments;
         this.ropeColor = ropeColor;
-
+        this.name= null
         this.ropePoints = [];
         this.ropeMaterial = new THREE.LineBasicMaterial({ color: this.ropeColor });
 

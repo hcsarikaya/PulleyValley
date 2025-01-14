@@ -18,6 +18,7 @@ export class Level{
         this.pos = this.room.position;
         this.physicsWorld = physicsWorld;
         this.triggerZones = [];
+        this.levelFinished = false;
 
         /*
         if(this.pos === 0){
@@ -54,7 +55,7 @@ export class Level{
                 }
                 this.objects.push(object);
 
-                console.log(object);
+
 
                 break;
             case "weight":
@@ -78,22 +79,9 @@ export class Level{
                         segments: 10,
                         ropeColor: 0xff0000,
                     });
-                    /*
-                    object = new Rope(
-                        this.scene,
-                        this.physicsWorld,
-                        {
-                            startObject,
-                            endObject,
-                            segments: obj.segments || 20,
-                            ropeColor: obj.ropeColor || 0x333333,
-                            stiffness: obj.stiffness || 0.5,
-                            damping: obj.damping || 0.99,
-                            gravity: new THREE.Vector3(0, -9.8, 0),
-                        }
-                    );
-
-                     */
+                    if(obj.id){
+                        object.name = obj.id;
+                    }
                     this.objects.push(object);
                 } else {
                     console.error("Invalid start or end object for rope:", obj);

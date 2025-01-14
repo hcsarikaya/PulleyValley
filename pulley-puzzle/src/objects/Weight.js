@@ -65,6 +65,7 @@ export class Weight {
         if (weight.model) {
             weight.model.userData.category = 'weight';
             weight.model.userData.mass = mass;
+            weight.model.userData.totalMass = 0;
         }
 
         return weight;
@@ -176,6 +177,7 @@ export class Weight {
 
                 weights.forEach(weight => {
                     totalMass += weight.userData.mass || 0;
+                    weight.userData.totalMass += weight.userData.mass || 0;
                 });
 
                 console.log(area.message);
