@@ -172,12 +172,12 @@
     },
     {
       "objects": [
-        { "id": "pulley2", "type": "pulley", "position": [10, 2, -21.5] },
+        { "id": "pulley2", "type": "pulley", "position": [32, 2, -21.5] },
         { "type":  "weight", "position" : [ 25,  15,  -22 ],"path":  "../models/5kg.glb","mass": 5},
         { "type":  "weight", "position" : [ 26,  5,  -22 ],"path":  "../models/10kg.glb","mass": 10},
         { "type":  "weight", "position" : [ 24,  5,  -22 ],"path":  "../models/20kg.glb","mass": 20},
-        { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2],"path": "../models/kaya2.glb", "mass": 25 },
-        { "id": "boulder2", "type": "boulder", "position": [-5, 0, -22], "scale": [1.75, 1.5, 1.2],"path": "../models/KAYA.glb", "mass": 5 },
+        { "id": "boulder1", "type": "boulder", "position": [-32, 0, -22], "scale": [1.5, 1.2, 1.2],"path": "../models/kaya2.glb", "mass": 25 },
+        { "id": "boulder2", "type": "boulder", "position": [-15, 0, -22], "scale": [1.75, 1.5, 1.2],"path": "../models/KAYA.glb", "mass": 15 },
         { "id": "pallet1", "type": "pallet", "position": [5, 0, -21], "scale": [2, 2, 2],"path" : "../models/palett.glb" }
 
       ]
