@@ -26,8 +26,17 @@ export class Pulley {
                 (gltf) => {
                     this.model = gltf.scene;
                     
-                    this.model.position.set(this.position[0], this.position[1], this.position[2]);
+                    // Adjust position to be closer to wall
+                    const wallOffset = 1.0; // Distance from wall
+                    const adjustedPosition = [
+                        this.position[0],
+                        this.position[1],
+                        this.position[2] + wallOffset // Move towards wall
+                    ];
+                    this.model.position.set(adjustedPosition[0], adjustedPosition[1], adjustedPosition[2]);
                     this.model.scale.set(this.scale, this.scale, this.scale);
+                    
+                    // Set rotation to be parallel with wall - 90 degrees around Y-axis
                     this.model.rotation.y = Math.PI / 2;
                     
                     this.model.traverse((child) => {
@@ -68,12 +77,25 @@ export class Pulley {
             new this.physicsWorld.AmmoLib.btVector3(radius, height / 2, radius)
         );
 
-        // Set the initial transform
+        // Adjust position to be closer to wall
+        const wallOffset = 1.0; // Distance from wall
+        const adjustedPosition = [
+            position[0],
+            position[1],
+            position[2] + wallOffset // Move towards wall
+        ];
+
+        // Set the initial transform with rotation
         const transform = new this.physicsWorld.AmmoLib.btTransform();
         transform.setIdentity();
         transform.setOrigin(
-            new this.physicsWorld.AmmoLib.btVector3(position[0], position[1], position[2])
+            new this.physicsWorld.AmmoLib.btVector3(adjustedPosition[0], adjustedPosition[1], adjustedPosition[2])
         );
+
+        // Set rotation to be parallel with wall - 90 degrees around Y-axis
+        const rotation = new this.physicsWorld.AmmoLib.btQuaternion();
+        rotation.setEulerZYX(0, Math.PI / 2, 0);
+        transform.setRotation(rotation);
 
         const motionState = new this.physicsWorld.AmmoLib.btDefaultMotionState(transform);
 
