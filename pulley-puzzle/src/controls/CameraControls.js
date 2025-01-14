@@ -1,5 +1,4 @@
 // CameraControls.js
-
 import * as THREE from 'three';
 import SoundManager from "../game/SoundManager.js";
 
@@ -28,6 +27,10 @@ export class CameraControls {
         this.mouseSensitivity = options.mouseSensitivity || 0.002;
         this.eyeHeight        = options.eyeHeight        || 7;
 
+        // Path movement speeds (for rotating & moving along the special route)
+        this.pathMovementSpeed = options.pathMovementSpeed || 80;
+        this.pathRotationSpeed = options.pathRotationSpeed || 5;
+
         // -------------------------------------------
         // CAMERA STATE
         // -------------------------------------------
@@ -49,16 +52,18 @@ export class CameraControls {
         this.isFreeFly = false; // Toggled by pressing F
 
         // -------------------------------------------
-        // PATH MOVEMENT STATE
+        // PATH MOVEMENT
         // -------------------------------------------
-        this.isInPathMovement   = false;
-        this.pathStage          = 0; // 0: not started
-        this.pathTarget         = new THREE.Vector3();
-        this.pathStartPosition  = new THREE.Vector3();
-        this.pathStartRotation  = new THREE.Euler();
-        this.pathMovementSpeed  = options.pathMovementSpeed || 80;
-        this.pathRotationSpeed  = options.pathRotationSpeed || 5;
-        this.targetYaw          = 0; // For staged path rotation
+        this.pathActive = false;     // Are we currently doing the scripted path?
+        this.pathIndex  = 0;         // Current step in the path
+        this.pathSteps  = [];        // Array of steps (rotate or move)
+        this.isAtFinal  = false;     // True if we've completed the forward route
+        this.disableMovement = false;// If true, user cannot move (but can still rotate)
+
+        // We'll store the initial camera pos/orientation when P is first pressed:
+        this.initialPosition = new THREE.Vector3();
+        this.initialPitch    = 0;
+        this.initialYaw      = 0;
 
         // -------------------------------------------
         // KEYBOARD KEYS
@@ -96,7 +101,9 @@ export class CameraControls {
         // -------------------------------------------
         // ROOM / DOOR PARAMETERS
         // -------------------------------------------
-        this.roomSize    = [roomSize[0], roomSize[2], roomSize[1]]; // [width, height, depth]
+        // Note that the second element in roomSize is "height" but used as y,
+        // so we reorder it in [width, height, depth] format
+        this.roomSize    = [roomSize[0], roomSize[2], roomSize[1]];
         this.roomCenter  = roomCenter;   // [cx, cy, cz]
 
         // Current room index, but now we consider rooms extending in negative Z
@@ -117,7 +124,7 @@ export class CameraControls {
         const key = event.key.toLowerCase();
 
         // Handle P key for path movement
-        if (key === 'p' && !this.isInPathMovement) {
+        if (key === 'p') {
             this.startPathMovement();
             return;
         }
@@ -130,7 +137,7 @@ export class CameraControls {
                 this.keys[key] = true;
 
                 // If not free-fly, handle walking/running sounds
-                if (!this.isFreeFly) {
+                if (!this.isFreeFly && !this.disableMovement) {
                     if (!this.keys.shift) {
                         // Play walk if not already walking
                         this.soundManager.playLoop('walk');
@@ -141,8 +148,8 @@ export class CameraControls {
             case 'shift':
                 this.keys.shift = true;
 
-                // If not free-fly, handle running sounds
-                if (!this.isFreeFly) {
+                // If not free-fly and not disabled, handle running sounds
+                if (!this.isFreeFly && !this.disableMovement) {
                     // Stop walk sound
                     this.soundManager.stopLoop('walk');
                     // Start run sound
@@ -154,16 +161,16 @@ export class CameraControls {
             case 'control':
                 this.keys.ctrl = true;
 
-                // Only initiate dash if not free-fly
-                if (!this.isFreeFly) {
+                // Only initiate dash if not free-fly and not disabled
+                if (!this.isFreeFly && !this.disableMovement) {
                     this.initiateDash();
                 }
                 break;
 
             case ' ':
                 this.keys.space = true;
-                // Jump (only in normal mode)
-                if (!this.isFreeFly) {
+                // Jump (only in normal mode and not disabled)
+                if (!this.isFreeFly && !this.disableMovement) {
                     // Jump only if not already in the air
                     if (!this.isJumping) {
                         this.isJumping = true;
@@ -185,7 +192,7 @@ export class CameraControls {
                     this.isDashing = false;
                 } else {
                     // If toggling back to normal mode, ensure correct sounds if moving
-                    if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
+                    if ((this.keys.w || this.keys.a || this.keys.s || this.keys.d) && !this.disableMovement) {
                         if (this.keys.shift) {
                             this.soundManager.playLoop('run');
                         } else {
@@ -212,7 +219,7 @@ export class CameraControls {
             case 'd':
                 this.keys[key] = false;
                 // In normal mode, check if we need to stop walking sound
-                if (!this.isFreeFly) {
+                if (!this.isFreeFly && !this.disableMovement) {
                     this.checkStopWalking();
                 }
                 break;
@@ -220,7 +227,7 @@ export class CameraControls {
             case 'shift':
                 this.keys.shift = false;
                 // In normal mode, stop run sound; possibly resume walk
-                if (!this.isFreeFly) {
+                if (!this.isFreeFly && !this.disableMovement) {
                     this.soundManager.stopLoop('run');
                     if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
                         this.soundManager.playLoop('walk');
@@ -256,6 +263,7 @@ export class CameraControls {
     // MOUSE MOVE
     // ----------------------------------------------------------------
     onMouseMove(event) {
+        // Mouse rotation is always allowed (even if disableMovement is true)
         // Only rotate if pointer is locked on the renderer
         if (document.pointerLockElement !== this.renderer.domElement) return;
 
@@ -296,126 +304,174 @@ export class CameraControls {
     // START THE PATH MOVEMENT (CALLED WHEN PRESSING 'P')
     // ----------------------------------------------------------------
     startPathMovement() {
-        this.isInPathMovement = true;
-        this.pathStage = 1;
-        this.pathStartPosition.copy(this.camera.position);
-        this.pathStartRotation.copy(this.camera.rotation);
+        // If we're already in the middle of a path, do nothing
+        if (this.pathActive) return;
 
-        // Stage 1: Set first rotation target (facing opposite of [0, y, z])
-        const firstTarget = new THREE.Vector3(0, this.camera.position.y, this.camera.position.z);
-        const firstDirection = new THREE.Vector3().subVectors(this.camera.position, firstTarget).normalize();
-        this.targetYaw = Math.atan2(firstDirection.x, firstDirection.z);
+        // Toggle between going forward vs. going back
+        // If we are NOT at final yet, do the forward route
+        // If we ARE at final, do the backward route
+        this.pathIndex = 0;
+        this.pathActive = true;
+        this.disableMovement = true; // disable WASD/dash/jump while path is active
 
-        // Disable other movement controls
-        Object.keys(this.keys).forEach(key => this.keys[key] = false);
-    }
+        if (!this.isAtFinal) {
+            // Save the current position/orientation as "initial"
+            this.initialPosition.copy(this.camera.position);
+            this.initialPitch = this.pitch;
+            this.initialYaw   = this.yaw;
 
-    // ----------------------------------------------------------------
-    // UPDATE PATH MOVEMENT (CALL THIS EACH FRAME IN UPDATE)
-    // ----------------------------------------------------------------
-    updatePathMovement(deltaTime) {
-        if (!this.isInPathMovement) return;
+            const y = this.camera.position.y;
+            const z = this.camera.position.z;
 
-        const moveStep     = this.pathMovementSpeed * deltaTime;
-        const rotationStep = this.pathRotationSpeed * deltaTime;
+            // Forward steps:
+            // 1) rotate to [0, y, z]
+            // 2) move   to [0, y, z]
+            // 3) rotate to [0, y, 50]
+            // 4) move   to [0, y, 50]
+            // 5) rotate to [0, 0, 50]
+            // 6) move   to [0, 20, 50]
+            this.pathSteps = [
+                { type: 'rotate', position: new THREE.Vector3(0, y, z) },
+                { type: 'move',   position: new THREE.Vector3(0, y, z) },
+                { type: 'rotate', position: new THREE.Vector3(0, y, 50) },
+                { type: 'move',   position: new THREE.Vector3(0, y, 50) },
+                { type: 'rotate', position: new THREE.Vector3(0, 0, 50) },
+                { type: 'move',   position: new THREE.Vector3(0, 40, 50) },
+            ];
 
-        switch (this.pathStage) {
-            case 1: // First rotation
-            {
-                const yawDiff1 = this.targetYaw - this.yaw;
-                if (Math.abs(yawDiff1) < rotationStep) {
-                    this.yaw = this.targetYaw;
-                    this.updateCameraRotation();
-                    this.pathStage = 2;
-                    // Set target for first movement
-                    this.pathTarget.set(0, this.camera.position.y, this.camera.position.z);
-                } else {
-                    this.yaw += Math.sign(yawDiff1) * rotationStep;
-                    this.updateCameraRotation();
-                }
-            }
-                break;
+        } else {
+            // We are at the final location => go back to the initial location
+            // by reversing the route
+            const initY = this.initialPosition.y;
+            const initZ = this.initialPosition.z;
 
-            case 2: // First movement (to [0, y, z])
-            {
-                if (this.moveTowardsTarget(moveStep)) {
-                    this.pathStage = 3;
-                    // Calculate second rotation target (facing opposite of [0, y, 0])
-                    const secondTarget = new THREE.Vector3(0, this.camera.position.y, 0);
-                    const secondDirection = new THREE.Vector3().subVectors(this.camera.position, secondTarget).normalize();
-                    this.targetYaw = Math.atan2(secondDirection.x, secondDirection.z);
-                }
-            }
-                break;
-
-            case 3: // Second rotation (facing opposite of [0, y, 0])
-            {
-                const yawDiff2 = this.targetYaw - this.yaw;
-                if (Math.abs(yawDiff2) < rotationStep) {
-                    this.yaw = this.targetYaw;
-                    this.updateCameraRotation();
-                    this.pathStage = 4;
-                    // Set target for final movement
-                    this.pathTarget.set(0, this.camera.position.y, 0);
-                } else {
-                    this.yaw += Math.sign(yawDiff2) * rotationStep;
-                    this.updateCameraRotation();
-                }
-            }
-                break;
-
-            case 4: // Final movement (to [0, y, 0])
-            {
-                if (this.moveTowardsTarget(moveStep)) {
-                    this.isInPathMovement = false;
-                }
-            }
-                break;
+            // Backward route (reverse):
+            // 1) rotate to [0, 0, 50]
+            // 2) move   to [0, 0, 50]
+            // 3) rotate to [0, initY, 50]
+            // 4) move   to [0, initY, 50]
+            // 5) rotate to [0, initY, initZ]
+            // 6) move   to [0, initY, initZ]
+            // 7) rotate to initialPosition
+            // 8) move   to initialPosition
+            this.pathSteps = [
+                { type: 'rotate', position: new THREE.Vector3(0, 0, 50) },
+                { type: 'move',   position: new THREE.Vector3(0, 0, 50) },
+                { type: 'rotate', position: new THREE.Vector3(0, initY, 50) },
+                { type: 'move',   position: new THREE.Vector3(0, initY, 50) },
+                { type: 'rotate', position: new THREE.Vector3(0, initY, initZ) },
+                { type: 'move',   position: new THREE.Vector3(0, initY, initZ) },
+                // Final rotation & move to restore original location
+                { type: 'rotate', position: this.initialPosition.clone() },
+                { type: 'move',   position: this.initialPosition.clone() },
+            ];
         }
     }
 
     // ----------------------------------------------------------------
-    // ROTATE TOWARDS TARGET (yaw only; ignoring pitch)
+    // UPDATE PATH MOVEMENT
     // ----------------------------------------------------------------
-    rotateTowardsTarget(targetPos, rotationStep) {
+    updatePathMovement(deltaTime) {
+        if (!this.pathActive) return;
+        if (this.pathIndex >= this.pathSteps.length) {
+            // Finished all steps
+            this.pathActive = false;
+
+            // If we just did the forward route, we're now "at final"
+            // => remain locked in place, but can still rotate
+            if (!this.isAtFinal) {
+                this.isAtFinal = true;
+                // remain disableMovement = true
+
+                // ──────────────────────────────────────────────────
+                //  TILT THE CAMERA DOWN TO LOOK AT THE GROUND
+                // ──────────────────────────────────────────────────
+                this.pitch = -Math.PI / 2.5;  // ~ -72 degrees downward
+                this.yaw = 0;                 // Reset yaw to look straight ahead
+                this.updateCameraRotation();
+            }
+            // If we just did the backward route, we can move again
+            else {
+                this.isAtFinal = false;
+                this.disableMovement = false;
+            }
+            return;
+        }
+
+        const step = this.pathSteps[this.pathIndex];
+
+        if (step.type === 'rotate') {
+            // Rotate until facing step.position
+            const done = this.rotateToPosition(step.position, deltaTime);
+            if (done) {
+                this.pathIndex++;
+            }
+        }
+        else if (step.type === 'move') {
+            // Move until we reach step.position
+            const done = this.moveToPosition(step.position, deltaTime);
+            if (done) {
+                this.pathIndex++;
+            }
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // Rotate (yaw only) until facing the target position
+    // Returns true when rotation is complete
+    // ----------------------------------------------------------------
+    rotateToPosition(targetPos, deltaTime) {
         // Direction on the horizontal plane
         const direction = new THREE.Vector3().subVectors(targetPos, this.camera.position);
         direction.y = 0; // ignore vertical for yaw
+        const distSq = direction.lengthSq();
+
+        // If the target is basically the same spot, call it done
+        if (distSq < 1e-6) return true;
+
         direction.normalize();
 
-        if (direction.lengthSq() < 1e-6) {
-            return true;
-        }
-
-        // Because default camera forward is -Z, use atan2(x, z)
-        const targetYaw = Math.atan2(direction.x, direction.z);
+        // Because the camera's forward is -Z in default orientation, we negate
+        // the X and Z components so that yaw=0 means "looking forward"
+        const targetYaw = Math.atan2(-direction.x, -direction.z);
 
         // Current difference in yaw
         let yawDiff = targetYaw - this.yaw;
-        yawDiff = ((yawDiff + Math.PI) % (2 * Math.PI)) - Math.PI; // Normalize to [-π, π]
+        // Normalize yawDiff to [-π, π]
+        yawDiff = ((yawDiff + Math.PI) % (2 * Math.PI)) - Math.PI;
 
-        if (Math.abs(yawDiff) < rotationStep) {
+        // Determine how much we can rotate this frame
+        const rotateStep = this.pathRotationSpeed * deltaTime;
+
+        if (Math.abs(yawDiff) < rotateStep) {
+            // Close enough — snap to target
             this.yaw = targetYaw;
             this.updateCameraRotation();
             return true;
         }
 
-        this.yaw += Math.sign(yawDiff) * rotationStep;
+        // Rotate in correct direction
+        this.yaw += Math.sign(yawDiff) * rotateStep;
         this.updateCameraRotation();
         return false;
     }
 
     // ----------------------------------------------------------------
-    // MOVE TOWARDS TARGET (this.pathTarget)
+    // Move in a straight line towards the target position
+    // Returns true when movement is complete
     // ----------------------------------------------------------------
-    moveTowardsTarget(step) {
-        const distance = this.camera.position.distanceTo(this.pathTarget);
+    moveToPosition(targetPos, deltaTime) {
+        const distance = this.camera.position.distanceTo(targetPos);
+        const step = this.pathMovementSpeed * deltaTime;
+
         if (distance < step) {
-            this.camera.position.copy(this.pathTarget);
+            // Close enough — snap
+            this.camera.position.copy(targetPos);
             return true;
         }
+
         const direction = new THREE.Vector3()
-            .subVectors(this.pathTarget, this.camera.position)
+            .subVectors(targetPos, this.camera.position)
             .normalize();
         this.camera.position.add(direction.multiplyScalar(step));
         return false;
@@ -430,20 +486,30 @@ export class CameraControls {
     }
 
     // ----------------------------------------------------------------
-// MAIN UPDATE LOOP (CALL THIS EVERY FRAME)
-// ----------------------------------------------------------------
+    // MAIN UPDATE LOOP (CALL THIS EVERY FRAME)
+    // ----------------------------------------------------------------
     update(deltaTime) {
-        // 1. Handle path movement if active
-        if (this.isInPathMovement) {
+        // 1) If we're in a path animation, do that first
+        if (this.pathActive) {
             this.updatePathMovement(deltaTime);
             return;
         }
 
-        // 2. Calculate direction vectors from camera orientation
-        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion).normalize();
-        const right   = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion).normalize();
+        // 2) Even if disableMovement = true, we still allow rotation in onMouseMove
+        //    But we skip WASD, dash, jump, etc., if movement is disabled.
+        if (this.disableMovement) {
+            return; // skip normal movement
+        }
 
-        // 3. FREE-FLY MODE
+        // 3) Calculate direction vectors from camera orientation
+        const forward = new THREE.Vector3(0, 0, -1)
+            .applyQuaternion(this.camera.quaternion)
+            .normalize();
+        const right = new THREE.Vector3(1, 0, 0)
+            .applyQuaternion(this.camera.quaternion)
+            .normalize();
+
+        // 4) FREE-FLY MODE
         if (this.isFreeFly) {
             let speed = this.moveSpeed;
             if (this.keys.shift) {
@@ -464,13 +530,11 @@ export class CameraControls {
             if (this.keys.ctrl) {
                 this.camera.position.y -= velocity;
             }
+            // No return; we still apply room constraints below
 
-            // **Do not return here** to allow room boundary checks
-            // return; // <-- Remove or comment out this line
-        }
-
-        // 4. NORMAL MODE (not free-fly)
-        else {
+            // 5) NORMAL MODE
+        } else {
+            // Flatten forward/right so we don't move vertically
             forward.y = 0;
             right.y   = 0;
             forward.normalize();
@@ -516,7 +580,7 @@ export class CameraControls {
                     this.isJumping = false;
                     this.verticalVelocity = 0;
 
-                    // Resume walking or running sounds if moving
+                    // Resume walking or running sounds if still moving
                     if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
                         if (this.keys.shift) {
                             this.soundManager.playLoop('run');
@@ -532,10 +596,8 @@ export class CameraControls {
         }
 
         // ------------------------------------------------------------
-        // 5. CONSTRAIN CAMERA TO THE CURRENT ROOM
-        //    (Rooms now extend in the *negative* Z direction)
+        // 6) CONSTRAIN CAMERA TO THE CURRENT ROOM
         // ------------------------------------------------------------
-
         const camPos = this.camera.position;
 
         // Unpack room parameters
@@ -546,20 +608,17 @@ export class CameraControls {
         const halfWidth = roomWidth / 2;
         const halfDepth = roomDepth / 2;
 
-        // Instead of rooms at increasing Z,
-        // we place them at decreasing Z.
-        // So for room #0, we are at centerZ - halfDepth ... centerZ + halfDepth
-        // For room #1, it is centerZ - roomDepth - halfDepth ... centerZ - roomDepth + halfDepth
-        // which is effectively: centerZ - (currentRoom * roomDepth) - halfDepth, etc.
-
+        // zMin, zMax for the current room
         const zMin = centerZ - (this.currentRoom * roomDepth) - halfDepth + 2;
         const zMax = centerZ - (this.currentRoom * roomDepth) + halfDepth - 2;
 
-        // X/Y bounding box as before
+        // X boundaries
         const xMin = centerX - halfWidth + 2;
         const xMax = centerX + halfWidth - 2;
-        const yMin = 2;          // typically the floor
-        const yMax = centerY + roomHeight -2; // typically the ceiling
+
+        // Y boundaries (floor/ceiling)
+        const yMin = 2;
+        const yMax = centerY + roomHeight - 2;
 
         // Clamp X
         if (camPos.x < xMin) camPos.x = xMin;
@@ -569,45 +628,72 @@ export class CameraControls {
         if (camPos.y < yMin) camPos.y = yMin;
         if (camPos.y > yMax) camPos.y = yMax;
 
-        // Check Z boundaries for room transitions in the "opposite" direction:
-
-        // If going "forward" in Three.js default, camera.z decreases.
-        // So crossing zMin means we move to the NEXT room.
-        // Crossing zMax means we move to the PREVIOUS room.
-
-        // Going too far forward (z < zMin)?
+        // Room transitions in negative Z direction:
+        // Going "forward" => z decreases
         if (camPos.z < zMin) {
+            // Check door region
             if (
                 camPos.x >= this.doorXMin && camPos.x <= this.doorXMax &&
                 camPos.y >= this.doorYMin && camPos.y <= this.doorYMax
             ) {
                 this.currentRoom++;
             } else {
-                // Block movement at zMin
                 camPos.z = zMin;
             }
         }
-
-        // Going too far backward (z > zMax)?
+        // Going "backward" => z increases
         if (camPos.z > zMax) {
+            // Check door region
             if (
                 camPos.x >= this.doorXMin && camPos.x <= this.doorXMax &&
                 camPos.y >= this.doorYMin && camPos.y <= this.doorYMax
             ) {
                 this.currentRoom--;
-                // Optionally, play a different sound when going to the previous room
-                // this.soundManager.playSound('prevLevel');
             } else {
-                // Block movement at zMax
                 camPos.z = zMax;
             }
         }
 
-        //console.log("camera pos:" + this.camera.position.z +" current: " + this.currentRoom +   " level passed: "+ this.levelPassed);
-        if (this.camera.position.z < -1 * this.levelPassed * roomDepth - 30 && this.currentRoom === this.levelPassed + 1) {
+        // Example: if passing a certain threshold => next level
+        if (
+            this.camera.position.z < -1 * this.levelPassed * roomDepth - 30 &&
+            this.currentRoom === this.levelPassed + 1
+        ) {
             this.soundManager.playSound("nextLevel");
             this.levelPassed += 1;
         }
-    }
 
+        if (this.levelPassed === 3) {
+            // Wait for 5 seconds (5000 milliseconds)
+            setTimeout(() => {
+                // Create a new div element for the "YOU WON" message
+                const winMessage = document.createElement('div');
+
+                // Set the text content
+                winMessage.textContent = 'YOU WON';
+
+                // Style the message (you can adjust the styles as needed)
+                winMessage.style.position = 'fixed';
+                winMessage.style.top = '40%';
+                winMessage.style.left = '50%';
+                winMessage.style.transform = 'translate(-50%, -50%)';
+                winMessage.style.padding = '20px';
+                winMessage.style.backgroundColor = 'rgba(0, 128, 0, 0)'; // Semi-transparent green background
+                winMessage.style.color = '#fff';
+                winMessage.style.fontSize = '10em';
+                winMessage.style.borderRadius = '8px';
+                winMessage.style.textAlign = 'center';
+                winMessage.style.zIndex = '1000'; // Ensure it's on top of other elements
+
+                // Append the message to the body
+                document.body.appendChild(winMessage);
+
+                // After displaying the message, wait another 3 seconds before removing it
+                setTimeout(() => {
+                    winMessage.remove();
+                }, 3000); // Message will disappear after 3 seconds
+            }, 5000); // Initial delay of 5 seconds before showing the message
+        }
+
+    }
 }

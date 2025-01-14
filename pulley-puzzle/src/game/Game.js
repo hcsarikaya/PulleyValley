@@ -33,6 +33,8 @@ let spotlight1, spotlight2, spotlight3, spotlight4, spotlight5,spotlight6;
 let composer, nightVisionPass, pixelationPass;
 let nightVisionEnabled = false;
 let pixelationLevel = 0; // 0: off, 1: subtle, 2: medium, 3: strong
+let stopwatchActive = true;
+
 
 // Pixelation levels configuration
 const PIXEL_SIZES = {
@@ -310,6 +312,10 @@ function animate() {
     interectionSystem.update();
     cameraControls.update(delta);
 
+    if (cameraControls.levelPassed === 3) {
+        stopwatchActive = false;
+    }
+
     // Update Level Manager / physics
     levelManager.update();
     physicsWorld.update(delta);
@@ -393,9 +399,13 @@ function animate() {
 
 function updateStopwatch() {
     if (!stopwatchElement) return;
+    // If we've "frozen" the stopwatch, do nothing
+    if (!stopwatchActive) return;
+
     const elapsedTime = clock.getElapsedTime(); // in seconds
     stopwatchElement.textContent = formatTime(elapsedTime);
 }
+
 
 function formatTime(seconds) {
     const hrs = Math.floor(seconds / 3600);
