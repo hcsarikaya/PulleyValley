@@ -141,7 +141,7 @@ export class Weight {
 
     checkPosition(position) {
         const roomSize = 50;
-        const roomIndex = window.currentLevel || 0;
+        const roomIndex = window.currentLevel || 1;
         const roomOffset = -roomSize * roomIndex;
 
         const areas = {
