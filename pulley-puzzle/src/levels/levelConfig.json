@@ -131,8 +131,7 @@
 
         { "type":  "weight", "position" : [ 31 , 5 , -22 ],"path":  "../models/5kg.glb","mass": 5},
         { "type":  "weight", "position" : [ 29 , 5 , -22 ],"path":  "../models/5kg.glb","mass": 5},
-        { "type":  "weight", "position" : [ 30 , 10 , -22 ],"path":  "../models/5kg.glb","mass": 5},
-        { "type": "triggerZone", "position": [20, 0, 0], "size": [5, 5, 5],"triggerType": "levelComplete"}
+        { "type":  "weight", "position" : [ 30 , 10 , -22 ],"path":  "../models/5kg.glb","mass": 5}
       ]
     },
     {

@@ -62,11 +62,7 @@ export class Level{
                 position[2] += this.pos;
                 const modelPath = obj.path;
                 object = await Weight.create(this.scene, this.physicsWorld, position, modelPath, obj.mass);
-                if (this.objects.filter(o => o instanceof Weight).length === 0) {
-                    object.createAreaVisualizations(this.scene);
-                }
                 this.objects.push(object);
-
                 break;
             case "rope":
                 const startObject = this.objects.find(o => o.name === obj.start);

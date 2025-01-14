@@ -36,14 +36,14 @@ export class Weight {
 
         this.body = new physicsWorld.AmmoLib.btRigidBody(bodyInfo);
 
-        // Add these flags to ensure proper physics behavior
-        this.body.setActivationState(4); // DISABLE_DEACTIVATION
-        this.body.setCollisionFlags(0); // DYNAMIC
+    
+        this.body.setActivationState(4); 
+        this.body.setCollisionFlags(0); 
 
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
 
-        // Add visualization for storage areas
-        this.createAreaVisualizations(scene);
+        
+        //this.createAreaVisualizations(scene);
     }
 
     static async create(scene, physicsWorld, position = [5, 0.5, 5], path , mass ) {
@@ -61,6 +61,11 @@ export class Weight {
         });
 
         scene.add(weight.model);
+
+        if (weight.model) {
+            weight.model.userData.category = 'weight';
+            weight.model.userData.mass = mass;
+        }
 
         return weight;
     }
@@ -147,7 +152,8 @@ export class Weight {
                 maxY: 10,
                 minZ: -24 + roomOffset,
                 maxZ: -14 + roomOffset,
-                message: `Weight dropped in right storage area of room ${roomIndex}!`
+                message: `Weight dropped in right storage area of room ${roomIndex}!`,
+                totalMass: 0
             }
         };
 
@@ -155,7 +161,25 @@ export class Weight {
             if (position.x >= area.minX && position.x <= area.maxX &&
                 position.y >= area.minY && position.y <= area.maxY &&
                 position.z >= area.minZ && position.z <= area.maxZ) {
+                
+                // Calculate total mass in the area
+                let totalMass = 0;
+                const weights = this.scene.children.filter(obj => {
+                    if (obj.userData.category === 'weight') {
+                        const pos = obj.position;
+                        return (pos.x >= area.minX && pos.x <= area.maxX &&
+                                pos.y >= area.minY && pos.y <= area.maxY &&
+                                pos.z >= area.minZ && pos.z <= area.maxZ);
+                    }
+                    return false;
+                });
+
+                weights.forEach(weight => {
+                    totalMass += weight.userData.mass || 0;
+                });
+
                 console.log(area.message);
+                console.log(`Total mass in storage area: ${totalMass}kg`);
                 return true;
             }
         }
