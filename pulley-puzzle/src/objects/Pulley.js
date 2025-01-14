@@ -28,8 +28,8 @@ export class Pulley {
                     
                     this.model.position.set(this.position[0], this.position[1], this.position[2]);
                     this.model.scale.set(this.scale, this.scale, this.scale);
-                    this.model.rotation.y = Math.PI / 2;
-                    
+                    this.model.rotation.y = -Math.PI / 2;
+
                     this.model.traverse((child) => {
                         if (child.isMesh) {
                             child.castShadow = true;
@@ -60,7 +60,7 @@ export class Pulley {
 
     createPhysicsBody(position) {
         const mass = 0; // Set to 0 for a static object
-        const radius = 2;
+        const radius = 0.5;
         const height = 0.5;
 
         // Create the Ammo.js collision shape (cylinder)

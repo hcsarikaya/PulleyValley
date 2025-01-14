@@ -8,6 +8,7 @@ import levels from './levelConfig.json';
 import {Button} from "../objects/Button.js";
 import { Pallet } from '../objects/Pallet.js';
 import {Boulder} from "../objects/Boulder.js";
+import { TriggerZone } from '../controls/TriggerZone.js';
 
 export class Level{
     constructor(room, physicsWorld){
@@ -16,6 +17,7 @@ export class Level{
         this.objects=[];
         this.pos = this.room.position;
         this.physicsWorld = physicsWorld;
+        this.triggerZones = [];
 
         /*
         if(this.pos === 0){
@@ -51,21 +53,24 @@ export class Level{
                     object.name = obj.id;
                 }
                 this.objects.push(object);
+
+                console.log(object);
+
                 break;
             case "weight":
                 position = obj.position;
                 position[2] += this.pos;
                 const modelPath = obj.path;
-                object = await Weight.create(this.scene,this.physicsWorld ,position, modelPath , obj.mass);
-                //object = new Weight(this.scene, this.physicsWorld, position);
-
+                object = await Weight.create(this.scene, this.physicsWorld, position, modelPath, obj.mass);
+                if (this.objects.filter(o => o instanceof Weight).length === 0) {
+                    object.createAreaVisualizations(this.scene);
+                }
                 this.objects.push(object);
 
                 break;
             case "rope":
-
                 const startObject = this.objects.find(o => o.name === obj.start);
-                const endObject = this.objects.find(o => o.name === obj.start);
+                const endObject = this.objects.find(o => o.name === obj.end);
 
                 if (startObject && endObject) {
                     object = new Rope(
@@ -118,8 +123,32 @@ export class Level{
                 this.objects.push(object);
 
                 break
+            case "triggerZone":
+                position = obj.position;
+                position[2] += this.pos;
+                object = new TriggerZone(
+                    this.scene,
+                    new THREE.Vector3(position[0], position[1], position[2]),
+                    new THREE.Vector3(obj.size[0], obj.size[1], obj.size[2]),
+                    (intersectingObject) => {
+                        if (obj.triggerType === "levelComplete") {
+                            console.log("Level complete triggered by:", intersectingObject);
+                        }
+                    }
+                );
+                this.triggerZones.push(object);
+                break;
         }
     }
 
-
+    update() {
+        // Check all objects against all trigger zones
+        for (const triggerZone of this.triggerZones) {
+            for (const object of this.objects) {
+                if (object.mesh) {
+                    triggerZone.checkIntersection(object.mesh);
+                }
+            }
+        }
+    }
 }

@@ -9,10 +9,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^6.0.1"
+    "vite": "^6.0.7"
   },
   "dependencies": {
     "ammo.js": "^0.0.10",
+    "install": "^0.13.0",
     "three": "^0.172.0",
     "three-bvh-csg": "^0.0.16"
   }

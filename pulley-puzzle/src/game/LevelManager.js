@@ -1,4 +1,3 @@
-
 import {Room} from "./Room.js";
 import {Level} from "../levels/level.js";
 
@@ -65,8 +64,12 @@ export class LevelManager {
 
     update() {
         if(this.checkLevel){
-            this.levelAnimation(this.currentLevel, this.checkLevel)
+            this.levelAnimation(this.currentLevel, this.checkLevel);
         }
 
+        // Add this to update trigger zones
+        if (this.levels[this.currentLevel - 1]) {
+            this.levels[this.currentLevel - 1].update();
+        }
     }
 }

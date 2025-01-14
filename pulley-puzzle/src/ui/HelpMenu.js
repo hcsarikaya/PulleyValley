@@ -20,7 +20,11 @@ export default class HelpMenu {
             <li>P to move origin</li>
             <li>L to open the settings menu</li>
             <li>B to enable edit mode</li>
+            <li>U to set current level to 1</li>
+            <li>i to set current level to 2</li>
+            <li>O to set current level to 3</li>
             <li>H to toggle this help menu</li>
+            
             
           </ul>
         `;

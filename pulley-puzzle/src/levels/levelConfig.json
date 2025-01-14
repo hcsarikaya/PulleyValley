@@ -131,7 +131,8 @@
 
         { "type":  "weight", "position" : [ 31 , 5 , -22 ],"path":  "../models/5kg.glb","mass": 5},
         { "type":  "weight", "position" : [ 29 , 5 , -22 ],"path":  "../models/5kg.glb","mass": 5},
-        { "type":  "weight", "position" : [ 30 , 10 , -22 ],"path":  "../models/5kg.glb","mass": 5}
+        { "type":  "weight", "position" : [ 30 , 10 , -22 ],"path":  "../models/5kg.glb","mass": 5},
+        { "type": "triggerZone", "position": [20, 0, 0], "size": [5, 5, 5],"triggerType": "levelComplete"}
       ]
     },
     {
@@ -142,7 +143,7 @@
         { "type":  "weight", "position" : [ 25,  5,  -10 ],"path":  "../models/10kg.glb","mass": 10},
         { "id": "pallet1", "type": "pallet", "position": [25, 0, -20], "scale": [2, 2, 2] ,"path" : "../models/palett.glb"},
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2],"path": "../models/kaya2.glb", "mass": 15 },
-        { "id": "rope1", "type": "rope", "start": "pulley2", "end": "pallet1", "segments": 15 }
+        { "id": "rope1", "type": "rope", "start": "pulley3", "end": "boulder1", "segments": 15 }
       ]
 
     },

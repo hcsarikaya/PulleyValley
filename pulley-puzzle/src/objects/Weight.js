@@ -41,6 +41,9 @@ export class Weight {
         this.body.setCollisionFlags(0); // DYNAMIC
 
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
+
+        // Add visualization for storage areas
+        this.createAreaVisualizations(scene);
     }
 
     static async create(scene, physicsWorld, position = [5, 0.5, 5], path , mass ) {
@@ -87,6 +90,9 @@ export class Weight {
 
         const desiredPosition = camera.position.clone().add(forward);
 
+        // Check if the weight is in specific areas
+        this.checkPosition(desiredPosition);
+
         // Create and set up the transform
         const transform = new this.physicsWorld.AmmoLib.btTransform();
         const motionState = this.body.getMotionState();
@@ -126,5 +132,64 @@ export class Weight {
 
         // Force an update of the motion state
         this.update();
+    }
+
+    checkPosition(position) {
+        const roomSize = 50;
+        const roomIndex = window.currentLevel || 0;
+        const roomOffset = -roomSize * roomIndex;
+
+        const areas = {
+            rightStorage: {
+                minX: 20,
+                maxX: 35,
+                minY: 0,
+                maxY: 10,
+                minZ: -24 + roomOffset,
+                maxZ: -14 + roomOffset,
+                message: `Weight dropped in right storage area of room ${roomIndex}!`
+            }
+        };
+
+        for (const [areaName, area] of Object.entries(areas)) {
+            if (position.x >= area.minX && position.x <= area.maxX &&
+                position.y >= area.minY && position.y <= area.maxY &&
+                position.z >= area.minZ && position.z <= area.maxZ) {
+                console.log(area.message);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    createAreaVisualizations(scene) {
+        for (let i = 0; i < 6; i++) {
+            const roomOffset = -50 * i;
+            
+            const areas = [
+                {
+                    position: new THREE.Vector3(27.5, 5, -19 + roomOffset),
+                    size: new THREE.Vector3(15, 10, 10)
+                }
+            ];
+
+            areas.forEach(area => {
+                const geometry = new THREE.BoxGeometry(
+                    area.size.x,
+                    area.size.y,
+                    area.size.z
+                );
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0x00ff00,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.5
+                });
+                const box = new THREE.Mesh(geometry, material);
+                box.position.copy(area.position);
+                scene.add(box);
+            });
+        }
     }
 }

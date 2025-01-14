@@ -50,7 +50,11 @@ export class InteractionSystem {
         this.interactiveObjects.push(object);
     }
     onMouseUp(event){
-        if(this.edit && this.objToCarry){
+        if(this.edit && this.objToCarry) {
+            if(this.objToCarry.category === "weight") {
+                // Check position when dropping the weight
+                this.objToCarry.checkPosition(this.objToCarry.model.position);
+            }
             this.objToCarry = null;
         }
     }
@@ -98,25 +102,28 @@ export class InteractionSystem {
 
     onKeyPress(event) {
         if (event.key.toLowerCase() === 'e') {
-            console.log(this.interactiveObjects)
-            /*
-            this.interactiveObjects.forEach(obj => {
-                if (obj.isInRange) {
-                    obj.onInteract(obj.mesh);
-                    this.hidePrompt();
-                }
-            });
-
-             */
+            console.log(this.interactiveObjects);
         }
         if (event.key.toLowerCase() === 'v') {
-            console.log(this.interactiveObjects)
             if(this.edit){
                 this.edit = false;
                 this.hidePrompt();
             }else{
                 this.edit = true;
             }
+        }
+        // Add level change controls with U, I, O keys
+        if (event.key.toLowerCase() === 'u') {
+            window.currentLevel = 1;
+            console.log('Switched to Room 1');
+        }
+        if (event.key.toLowerCase() === 'i') {
+            window.currentLevel = 2;
+            console.log('Switched to Room 2');
+        }
+        if (event.key.toLowerCase() === 'o') {
+            window.currentLevel = 3;
+            console.log('Switched to Room 3');
         }
     }
 
