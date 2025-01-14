@@ -9,7 +9,8 @@ export class Weight {
         this.category = 'weight';
         this.model = null;
         this.body = null;
-        this.path= path
+        this.path = path;
+        this.mass = mass;
         // Ammo.js physics body setup
 
         const shape = new physicsWorld.AmmoLib.btBoxShape(
@@ -146,8 +147,7 @@ export class Weight {
                 minY: 0,
                 maxY: 10,
                 minZ: -24 + roomOffset,
-                maxZ: -14 + roomOffset,
-                message: `Weight dropped in right storage area of room ${roomIndex}!`
+                maxZ: -14 + roomOffset
             }
         };
 
@@ -155,11 +155,10 @@ export class Weight {
             if (position.x >= area.minX && position.x <= area.maxX &&
                 position.y >= area.minY && position.y <= area.maxY &&
                 position.z >= area.minZ && position.z <= area.maxZ) {
-                console.log(area.message);
+                console.log(`Weight with mass ${this.mass}kg entered the storage area`);
                 return true;
             }
         }
-        
         return false;
     }
 

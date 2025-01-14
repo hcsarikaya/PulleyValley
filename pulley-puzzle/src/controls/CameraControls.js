@@ -637,6 +637,8 @@ export class CameraControls {
                 camPos.y >= this.doorYMin && camPos.y <= this.doorYMax
             ) {
                 this.currentRoom++;
+                window.currentLevel = this.currentRoom;
+                console.log(`Entered Room ${this.currentRoom}`);
             } else {
                 camPos.z = zMin;
             }
@@ -649,6 +651,8 @@ export class CameraControls {
                 camPos.y >= this.doorYMin && camPos.y <= this.doorYMax
             ) {
                 this.currentRoom--;
+                window.currentLevel = this.currentRoom;
+                console.log(`Entered Room ${this.currentRoom}`);
             } else {
                 camPos.z = zMax;
             }
@@ -661,6 +665,7 @@ export class CameraControls {
         ) {
             this.soundManager.playSound("nextLevel");
             this.levelPassed += 1;
+            console.log(`Level ${this.levelPassed} passed!`);
         }
 
         if (this.levelPassed === 3) {
