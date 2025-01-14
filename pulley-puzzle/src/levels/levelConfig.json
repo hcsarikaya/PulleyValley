@@ -96,7 +96,7 @@
         { "type":  "weight", "position" : [ -24 , 0 , -20 ],"path":  "../models/5kg.glb","mass": 5},
 
         { "type":  "weight", "position" : [ -28 , 0 , -16 ],"path":  "../models/5kg.glb","mass": 5},
-
+        { "type":  "weight", "position" : [ -22, 0 , -16 ],"path":  "../models/5kg.glb","mass": 5},
 
         { "type":  "weight", "position" : [ -32, 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
         { "type":  "weight", "position" : [ -30 , 0 , -11 ],"path":  "../models/5kg.glb","mass": 5},
