@@ -24,13 +24,13 @@ export class Pulley {
             loader.load(
                 '../models/pulley.glb',
                 (gltf) => {
-                    this.mesh = gltf.scene;
+                    this.model = gltf.scene;
                     
-                    this.mesh.position.set(this.position[0], this.position[1], this.position[2]);
-                    this.mesh.scale.set(this.scale, this.scale, this.scale);
-                    this.mesh.rotation.y = Math.PI / 2;
+                    this.model.position.set(this.position[0], this.position[1], this.position[2]);
+                    this.model.scale.set(this.scale, this.scale, this.scale);
+                    this.model.rotation.y = Math.PI / 2;
                     
-                    this.mesh.traverse((child) => {
+                    this.model.traverse((child) => {
                         if (child.isMesh) {
                             child.castShadow = true;
                             child.receiveShadow = true;
@@ -45,8 +45,8 @@ export class Pulley {
                         }
                     });
                     
-                    this.scene.add(this.mesh);
-                    this.mesh.userData.physicsBody = this.body;
+                    this.scene.add(this.model);
+                    this.model.userData.physicsBody = this.body;
                     resolve(this);
                 },
                 undefined,

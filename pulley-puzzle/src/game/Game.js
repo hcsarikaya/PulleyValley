@@ -29,7 +29,7 @@ const spawnInterval = 1.0;
 const dustSpawnPosition = new THREE.Vector3(0, 0, 0);
 let helpMenu, settingsMenu, soundManager;
 let stopwatchElement;
-let spotlight1, spotlight2, spotlight3, spotlight4, spotlight5;
+let spotlight1, spotlight2, spotlight3, spotlight4, spotlight5,spotlight6;
 let composer, nightVisionPass, pixelationPass;
 let nightVisionEnabled = false;
 let pixelationLevel = 0; // 0: off, 1: subtle, 2: medium, 3: strong
@@ -122,6 +122,11 @@ export async function initGame(level) {
     spotlight5.position.set(0, 40, -180);
     spotlight5.target.position.set(0, 0, -180);
     setupSpotlight(spotlight5);
+    // Fifth room spotlight
+    spotlight6 = new THREE.SpotLight(0xffffff, 10.0);
+    spotlight6.position.set(0, 40, -180);
+    spotlight6.target.position.set(0, 0, -180);
+    setupSpotlight(spotlight6);
 
     // 9) LEVEL MANAGER
     let roomSize = [80, 50, 45];
@@ -140,7 +145,10 @@ export async function initGame(level) {
     // Add interactive objects based on category
     levelManager.levels.forEach(lvl => {
         lvl.objects.forEach(obj => {
-            interectionSystem.addInteractiveObject(obj)
+            if(obj.category !== "rope"){
+                interectionSystem.addInteractiveObject(obj)
+            }
+
 
         });
     });
@@ -310,7 +318,7 @@ function animate() {
     levelManager.rooms.forEach((room, index) => {
         if (room.floor && room.floor.userData.woodShaderMaterial) {
             const material = room.floor.userData.woodShaderMaterial;
-            const spotlights = [spotlight1, spotlight2, spotlight3, spotlight4, spotlight5];
+            const spotlights = [spotlight1, spotlight2, spotlight3, spotlight4, spotlight5,spotlight6];
             
             // Update spotlight properties for this room's floor
             // First spotlight (main light for this room)

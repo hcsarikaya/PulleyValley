@@ -8,6 +8,7 @@ export class Pallet {
         this.category = 'pallet';
         this.mesh = null;
         this.body = null;
+        this.model= null
         this.scale = scale;
         this.weights = [];
         this.path = path;
@@ -23,12 +24,12 @@ export class Pallet {
             loader.load(
                 this.path,
                 (glb) => {
-                    this.mesh = glb.scene;
-                    this.mesh.position.set(this.position[0], this.position[1], this.position[2]);
-                    this.mesh.scale.set(this.scale[0], this.scale[1], this.scale[2]);
-                    this.mesh.rotation.y = Math.PI / 2;
+                    this.model = glb.scene;
+                    this.model.position.set(this.position[0], this.position[1], this.position[2]);
+                    this.model.scale.set(this.scale[0], this.scale[1], this.scale[2]);
+                    this.model.rotation.y = Math.PI / 2;
 
-                    this.mesh.traverse((child) => {
+                    this.model.traverse((child) => {
                         if (child.isMesh) {
                             child.castShadow = true;
                             child.receiveShadow = true;
@@ -41,14 +42,14 @@ export class Pallet {
                         }
                     });
 
-                    this.scene.add(this.mesh);
-                    this.mesh.userData.physicsBody = this.body;
+                    this.scene.add(this.model);
+                    this.model.userData.physicsBody = this.body;
                     // Sync physics body position
                     if (this.body) {
                         const transform = new this.physicsWorld.AmmoLib.btTransform();
                         this.body.getMotionState().getWorldTransform(transform);
                         const origin = transform.getOrigin();
-                        this.mesh.position.set(origin.x(), origin.y(), origin.z());
+                        this.model.position.set(origin.x(), origin.y(), origin.z());
                     }
 
                     resolve(this);
@@ -107,7 +108,7 @@ export class Pallet {
     }
 
     update() {
-        if (!this.body || !this.mesh) return;
+        if (!this.body || !this.model) return;
 
         const transform = new this.physicsWorld.AmmoLib.btTransform();
         this.body.getMotionState().getWorldTransform(transform);
@@ -115,7 +116,7 @@ export class Pallet {
         const origin = transform.getOrigin();
         const rotation = transform.getRotation();
 
-        this.mesh.position.set(origin.x(), origin.y(), origin.z());
-        this.mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+        this.model.position.set(origin.x(), origin.y(), origin.z());
+        this.model.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
     }
 }

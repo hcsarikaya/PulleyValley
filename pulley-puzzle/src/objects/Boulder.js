@@ -26,14 +26,14 @@ export class Boulder {
             loader.load(
                 this.modelPath,
                 (gltf) => {
-                    this.mesh = gltf.scene;
-                    this.mesh.scale.set(this.scale[0], this.scale[1], this.scale[2]);
-                    this.mesh.position.set(this.position[0], this.position[1], this.position[2]);
+                    this.model = gltf.scene;
+                    this.model.scale.set(this.scale[0], this.scale[1], this.scale[2]);
+                    this.model.position.set(this.position[0], this.position[1], this.position[2]);
 
                     const textureLoader = new THREE.TextureLoader();
                     textureLoader.load(this.texturePath, (texture) => {
                         texture.colorSpace = THREE.SRGBColorSpace;
-                        this.mesh.traverse((child) => {
+                        this.model.traverse((child) => {
                             if (child.isMesh) {
                                 child.castShadow = true;
                                 child.receiveShadow = true;
@@ -48,10 +48,10 @@ export class Boulder {
                         });
                     });
 
-                    this.scene.add(this.mesh);
+                    this.scene.add(this.model);
 
                     // Store a reference to the physics body in the mesh's userData
-                    this.mesh.userData.physicsBody = this.body;
+                    this.model.userData.physicsBody = this.body;
 
                     resolve(this);
                 },
@@ -112,7 +112,7 @@ export class Boulder {
         const origin = transform.getOrigin();
         const rotation = transform.getRotation();
 
-        this.mesh.position.set(origin.x(), origin.y(), origin.z());
-        this.mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+        this.model.position.set(origin.x(), origin.y(), origin.z());
+        this.model.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
     }
 }
