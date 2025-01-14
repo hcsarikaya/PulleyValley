@@ -68,27 +68,19 @@ export class InteractionSystem {
             this.interactiveObjects.map(obj => obj.mesh || obj.model), true
         );
 
-
-        //const intersects = this.raycaster.intersectObjects(this.scene.children)
-
         if (intersects.length > 0) {
             const clickedObject = this.interactiveObjects.find(
-                obj => ( obj.model === intersects[0].object ||obj.model === intersects[0].object.parent || obj.mesh === intersects[0].object)
+                obj => (obj.model === intersects[0].object || obj.model === intersects[0].object.parent || obj.mesh === intersects[0].object)
             );
             console.log(clickedObject);
             if(this.edit){
-                this.objToCarry = clickedObject;
-
-                if(this.objToCarry.category === "weight"){
-
+                // Check if the object is movable (has a moveTo function)
+                if(clickedObject && typeof clickedObject.moveTo === 'function') {
+                    this.objToCarry = clickedObject;
                     this.objToCarry.moveTo(this.camera, 3);
+                    // Play the "pull" sound
+                    this.soundManager.playSound('pull');
                 }
-
-
-
-
-                // Play the "pull" sound
-                this.soundManager.playSound('pull');
             }
 
             if (clickedObject && clickedObject.isInRange) {

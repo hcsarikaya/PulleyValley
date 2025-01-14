@@ -101,8 +101,7 @@ void main() {
     vec3 normal = normalize(vNormal);
     vec3 viewDir = normalize(vViewPosition);
     
-    // Reduced ambient light even further for darker appearance
-    float ambientStrength = 0.05;
+    float ambientStrength = 0.2;
     vec3 ambient = ambientStrength * baseColor;
     
     // Calculate lighting from both spotlights
