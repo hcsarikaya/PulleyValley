@@ -14,6 +14,8 @@ export class Pallet {
         this.path = path;
         this.position = position;
         this.name = null;
+        this.initialY = position[1];
+        this.isDropping = false;
 
         this.createPhysicsBody(position);
     }
@@ -44,6 +46,9 @@ export class Pallet {
 
                     this.scene.add(this.model);
                     this.model.userData.physicsBody = this.body;
+                    this.model.userData.category = 'pallet';
+                    this.model.userData.instance = this;
+
                     // Sync physics body position
                     if (this.body) {
                         const transform = new this.physicsWorld.AmmoLib.btTransform();
@@ -65,7 +70,11 @@ export class Pallet {
 
     createPhysicsBody(position) {
         const size = [3 * this.scale[0], 1.5 * this.scale[1], 3 * this.scale[2]];
+<<<<<<< Updated upstream
         const mass = 10; // Adjust the mass as needed
+=======
+        const mass = 0; // Initial mass is 0
+>>>>>>> Stashed changes
         const shape = new this.physicsWorld.AmmoLib.btBoxShape(
             new this.physicsWorld.AmmoLib.btVector3(size[0] / 2, size[1] / 2, size[2] / 2)
         );
@@ -88,6 +97,10 @@ export class Pallet {
         );
 
         this.body = new this.physicsWorld.AmmoLib.btRigidBody(bodyInfo);
+        
+        // Make sure the body can move and rotate
+        this.body.setActivationState(4); // DISABLE_DEACTIVATION
+        this.body.setCollisionFlags(0); // Clear all flags to ensure normal physics behavior
 
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
     }
@@ -107,17 +120,73 @@ export class Pallet {
         return this.weights.reduce((total, weight) => total + weight.body.getMass(), 0);
     }
 
+    setMass(mass) {
+        if (!this.body) return;
+        
+        // Create a new btVector3 for local inertia
+        const localInertia = new this.physicsWorld.AmmoLib.btVector3(0, 0, 0);
+        
+        // Recalculate local inertia with new mass
+        const shape = this.body.getCollisionShape();
+        shape.calculateLocalInertia(mass, localInertia);
+        
+        // Set the new mass properties
+        this.body.setMassProps(mass, localInertia);
+        this.body.updateInertiaTensor();
+        
+        // Activate the body to ensure physics updates
+        this.body.activate(true);
+    }
+
+    startDropping() {
+        this.isDropping = true;
+        this.setMass(100); // Set a heavy mass
+        
+        // Ensure the body is active and can move
+        this.body.activate(true);
+        this.body.setActivationState(1); // ACTIVE_TAG
+        
+        // Clear any velocity constraints
+        const zero = new this.physicsWorld.AmmoLib.btVector3(0, 0, 0);
+        this.body.setLinearVelocity(zero);
+        this.body.setAngularVelocity(zero);
+        
+        // Apply a small initial impulse downward to start the motion
+        const downwardImpulse = new this.physicsWorld.AmmoLib.btVector3(0, -1, 0);
+        this.body.applyCentralImpulse(downwardImpulse);
+    }
+
     update() {
         if (!this.body || !this.model) return;
 
         const transform = new this.physicsWorld.AmmoLib.btTransform();
-        this.body.getMotionState().getWorldTransform(transform);
+        const motionState = this.body.getMotionState();
+        
+        if (motionState) {
+            motionState.getWorldTransform(transform);
+            const origin = transform.getOrigin();
+            const rotation = transform.getRotation();
 
-        const origin = transform.getOrigin();
-        const rotation = transform.getRotation();
+            this.model.position.set(origin.x(), origin.y(), origin.z());
+            this.model.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
 
-        this.model.position.set(origin.x(), origin.y(), origin.z());
-        this.model.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
+            // Optional: Stop dropping when reaching a certain height
+            if (this.isDropping && origin.y() <= 0.5) {
+                this.isDropping = false;
+                this.setMass(0);
+                
+                // Reset the transform to ensure it stays at the minimum height
+                transform.setOrigin(
+                    new this.physicsWorld.AmmoLib.btVector3(
+                        origin.x(),
+                        0.5,
+                        origin.z()
+                    )
+                );
+                motionState.setWorldTransform(transform);
+                this.body.setMotionState(motionState);
+            }
+        }
     }
 
     moveTo(camera, distance) {

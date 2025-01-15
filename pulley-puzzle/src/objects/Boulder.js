@@ -17,6 +17,10 @@ export class Boulder {
         this.modelPath = path;
         this.texturePath = '/src/textures/boulder.jpg';
 
+        this.initialMass = mass;
+        this.isLifting = false;
+        this.targetY = null;
+
         this.createPhysicsBody(position, scale, mass);
     }
 
@@ -50,8 +54,10 @@ export class Boulder {
 
                     this.scene.add(this.model);
 
-                    // Store a reference to the physics body in the mesh's userData
+                   
+                    this.model.userData.category = 'boulder';
                     this.model.userData.physicsBody = this.body;
+                    this.model.userData.instance = this; 
 
                     resolve(this);
                 },
@@ -102,10 +108,59 @@ export class Boulder {
         this.physicsWorld.physicsWorld.addRigidBody(this.body);
     }
 
+    setMass(mass) {
+        if (!this.body) return;
+        
+        // Create a new btVector3 for local inertia
+        const localInertia = new this.physicsWorld.AmmoLib.btVector3(0, 0, 0);
+        
+        // Recalculate local inertia with new mass
+        const shape = this.body.getCollisionShape();
+        shape.calculateLocalInertia(mass, localInertia);
+        
+        // Set the new mass properties
+        this.body.setMassProps(mass, localInertia);
+        this.body.updateInertiaTensor();
+        
+        // Activate the body to ensure physics updates
+        this.body.activate(true);
+    }
+
+    startLifting(targetHeight) {
+        this.isLifting = true;
+        this.targetY = this.model.position.y + targetHeight;
+        this.setMass(0); 
+    }
 
     update() {
-        if (!this.body) return;
+        if (!this.body || !this.model) return;
 
+        if (this.isLifting && this.model.position.y < this.targetY) {
+            // Update physics body position
+            const transform = new this.physicsWorld.AmmoLib.btTransform();
+            this.body.getMotionState().getWorldTransform(transform);
+            
+            // Get current position
+            const origin = transform.getOrigin();
+            
+            // Move up by small increment
+            const newY = Math.min(origin.y() + 0.1, this.targetY);
+            
+            // Update transform
+            transform.setOrigin(
+                new this.physicsWorld.AmmoLib.btVector3(
+                    origin.x(),
+                    newY,
+                    origin.z()
+                )
+            );
+            
+            // Apply new transform
+            this.body.getMotionState().setWorldTransform(transform);
+            this.body.setWorldTransform(transform);
+        }
+
+        // Regular position/rotation update
         const transform = new this.physicsWorld.AmmoLib.btTransform();
         this.body.getMotionState().getWorldTransform(transform);
 

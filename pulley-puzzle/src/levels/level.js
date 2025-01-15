@@ -65,6 +65,7 @@ export class Level{
                 this.objects.push(object);
                 break;
             case "rope":
+<<<<<<< Updated upstream
                 const startObject = this.objects.find(o => o.name === obj.start);
                 const endObject = this.objects.find(o => o.name === obj.end);
 
@@ -82,9 +83,23 @@ export class Level{
                             gravity: new THREE.Vector3(0, -9.8, 0),
                         }
                     );
+=======
+                const startPos = new THREE.Vector3(obj.start[0], obj.start[1], obj.start[2]);
+                const endPos = new THREE.Vector3(obj.end[0], obj.end[1], obj.end[2]);
+
+                if (startPos && endPos) {
+                    object = new Rope(this.scene, {
+                        startPosition: startPos,
+                        endPosition: endPos,
+                        segments: obj.segments || 10,
+                        ropeColor: 0xff0000,
+                        type: obj.ropeType || 'static'
+                    });
+                    if(obj.id) {
+                        object.name = obj.id;
+                    }
+>>>>>>> Stashed changes
                     this.objects.push(object);
-                } else {
-                    console.error("Invalid start or end object for rope:", obj);
                 }
 
 
@@ -137,6 +152,7 @@ export class Level{
         }
     }
 
+<<<<<<< Updated upstream
     update() {
         // Check all objects against all trigger zones
         for (const triggerZone of this.triggerZones) {
@@ -148,3 +164,7 @@ export class Level{
         }
     }
 }
+=======
+    
+}
+>>>>>>> Stashed changes
