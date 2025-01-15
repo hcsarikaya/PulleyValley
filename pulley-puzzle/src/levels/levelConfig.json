@@ -142,9 +142,9 @@
         { "type":  "weight", "position" : [ 25,  5,  -10 ],"path":  "../models/10kg.glb","mass": 10},
         { "id": "pallet1", "type": "pallet", "position": [26, 15, -20], "scale": [2, 2, 2] ,"path" : "../models/palett.glb"},
         { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2],"path": "../models/kaya2.glb", "mass": 10 },
-        { "id": "rope1", "type": "rope", "start": [26, 29, -70.5], "end": [26, 20, -70], "segments": 10 },
-        { "id": "rope2", "type": "rope", "start": [25, 30, -70.5], "end": [0, 30, -70.5], "segments": 10 },
-        { "id": "rope3", "type": "rope", "start": [-0.5, 10, -70.5], "end": [-0.5, 29, -70.5], "segments": 10 }
+        { "id": "rope1", "type": "rope", "start": [26, 29, -70.5], "end": [26, 20, -70], "segments": 10 ,"ropeType": "dropping"},
+        { "id": "rope2", "type": "rope", "start": [25, 30, -70.5], "end": [0, 30, -70.5], "segments": 10 ,"ropeType": "static"},
+        { "id": "rope3", "type": "rope", "start": [-0.5, 29, -70.5], "end": [-0.5, 10, -70.5], "segments": 10 ,"ropeType": "lifting" }
       ]
 
     },
@@ -154,11 +154,11 @@
         { "id": "pulley5", "type": "pulley", "position": [0, 25, -21.5] },
         { "type":"weight", "position" : [ 5,  10,  0 ],"path":  "../models/5kg.glb","mass": 5},
         { "type":"weight", "position" : [ 15,  5,  0 ],"path":  "../models/10kg.glb","mass": 10},
-        { "id": "boulder1", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2],"path": "../models/kaya2.glb", "mass": 10 },
-        { "id": "pallet1", "type": "pallet", "position": [26, 15, -20], "scale": [2, 2, 2] , "path" : "../models/palett.glb"},
-        { "id": "rope1", "type": "rope", "start": [26, 29, -120.5], "end": [26, 20, -120], "segments": 10 },
-        { "id": "rope2", "type": "rope", "start": [25, 30, -120.5], "end": [0, 30, -120.5], "segments": 10 },
-        { "id": "rope3", "type": "rope", "start": [-0.5, 10, -120.5], "end": [-0.5, 29, -120.5], "segments": 10 }
+        { "id": "boulder2", "type": "boulder", "position": [-2.5, 0, -22], "scale": [1.5, 1.2, 1.2],"path": "../models/kaya2.glb", "mass": 10 },
+        { "id": "pallet2", "type": "pallet", "position": [26, 15, -20], "scale": [2, 2, 2] , "path" : "../models/palett.glb"},
+        { "id": "rope1", "type": "rope", "start": [26, 29, -120.5], "end": [26, 20, -120], "segments": 10 ,"ropeType": "dropping"},
+        { "id": "rope2", "type": "rope", "start": [25, 30, -120.5], "end": [0, 30, -120.5], "segments": 10 ,"ropeType": "static"},
+        { "id": "rope3", "type": "rope", "start": [-0.5, 29, -120.5], "end": [-0.5, 10, -120.5], "segments": 10 ,"ropeType": "lifting" }
 
       ]
     },

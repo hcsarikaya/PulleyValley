@@ -65,7 +65,6 @@ export class Weight {
         if (weight.model) {
             weight.model.userData.category = 'weight';
             weight.model.userData.mass = mass;
-            weight.model.userData.totalMass = 0;
         }
 
         return weight;
@@ -154,6 +153,7 @@ export class Weight {
                 minZ: -24 + roomOffset,
                 maxZ: -14 + roomOffset,
                 message: `Weight dropped in right storage area of room ${roomIndex}!`,
+                requiredMass: 10,
                 totalMass: 0
             }
         };
@@ -177,11 +177,36 @@ export class Weight {
 
                 weights.forEach(weight => {
                     totalMass += weight.userData.mass || 0;
-                    weight.userData.totalMass += weight.userData.mass || 0;
+                    weight.userData.totalMass = totalMass;
                 });
 
                 console.log(area.message);
                 console.log(`Total mass in storage area: ${totalMass}kg`);
+
+
+                if (totalMass >= area.requiredMass) {
+                    const boulderObj = this.scene.children.find(obj =>
+                        obj.userData.category === 'boulder' &&
+                        Math.abs(obj.position.z - (roomOffset - 25)) < 10
+                    );
+
+                    const palletObj = this.scene.children.find(obj =>
+                        obj.userData.category === 'pallet' &&
+                        Math.abs(obj.position.z - (roomOffset - 25)) < 10
+                    );
+
+                    const boulder = boulderObj?.userData.instance;
+                    const pallet = palletObj?.userData.instance;
+
+                    if (boulder) {
+                        boulder.startLifting(10);
+                    }
+
+                    if (pallet) {
+                        pallet.startDropping();
+                    }
+                }
+
                 return true;
             }
         }

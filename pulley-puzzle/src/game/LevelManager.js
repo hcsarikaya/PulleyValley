@@ -1,6 +1,7 @@
 import {Room} from "./Room.js";
 import {Level} from "../levels/level.js";
-
+import { Pallet } from "../objects/Pallet.js";
+import { Boulder } from "../objects/Boulder.js";
 
 export class LevelManager {
     constructor(scene, physicsWorld) {
@@ -81,9 +82,24 @@ export class LevelManager {
             }
         })
 
-        // Add this to update trigger zones
-        if (this.levels[this.currentLevel - 1]) {
-            this.levels[this.currentLevel - 1].update();
-        }
+       
+        
+
+       
+        
+
+        this.levels.forEach(level => {
+            level.objects.forEach(obj => {
+                if(obj.category === 'weight' && obj.model.userData.totalMass >= 10){
+                    level.objects.forEach(obj2 => {
+                        if (obj2.category === 'rope') {   
+                        obj2.update(3.75,20);
+                        }
+                    });
+                }
+            });
+        });
+    
+
     }
 }

@@ -18,7 +18,6 @@ export class Level{
         this.pos = this.room.position;
         this.physicsWorld = physicsWorld;
         this.triggerZones = [];
-        this.levelFinished = false;
 
         /*
         if(this.pos === 0){
@@ -55,7 +54,7 @@ export class Level{
                 }
                 this.objects.push(object);
 
-
+                console.log(object);
 
                 break;
             case "weight":
@@ -66,9 +65,6 @@ export class Level{
                 this.objects.push(object);
                 break;
             case "rope":
-
-                //const startObject = this.objects.find(o => o.name === obj.start);
-                //const endObject = this.objects.find(o => o.name === obj.end);
                 const startPos = new THREE.Vector3(obj.start[0], obj.start[1], obj.start[2]);
                 const endPos = new THREE.Vector3(obj.end[0], obj.end[1], obj.end[2]);
 
@@ -76,15 +72,14 @@ export class Level{
                     object = new Rope(this.scene, {
                         startPosition: startPos,
                         endPosition: endPos,
-                        segments: 10,
+                        segments: obj.segments || 10,
                         ropeColor: 0xff0000,
+                        type: obj.ropeType || 'static'
                     });
-                    if(obj.id){
+                    if(obj.id) {
                         object.name = obj.id;
                     }
                     this.objects.push(object);
-                } else {
-                    console.error("Invalid start or end object for rope:", obj);
                 }
 
 
@@ -137,14 +132,5 @@ export class Level{
         }
     }
 
-    update() {
-        // Check all objects against all trigger zones
-        for (const triggerZone of this.triggerZones) {
-            for (const object of this.objects) {
-                if (object.mesh) {
-                    triggerZone.checkIntersection(object.mesh);
-                }
-            }
-        }
-    }
+
 }
