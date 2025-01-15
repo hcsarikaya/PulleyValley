@@ -36,9 +36,9 @@ export default class SoundManager {
 
 
         // Background music
-        this.music = new Audio('/src/sounds/minecraft-starting-song.mp3');
+        this.music = new Audio('/src/sounds/oblivion.mp3');
         this.music.loop = true;
-        this.music.volume = 0.0;
+        this.music.volume = 0.15;
 
         // Load other sounds if needed:
         // this.sounds.objectAdd = new Audio('/src/sounds/objectAdd.mp3');
