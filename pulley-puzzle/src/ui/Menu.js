@@ -25,5 +25,5 @@ export function initMenu(startGameCallback) {
 
 
 
-    
+
 }
