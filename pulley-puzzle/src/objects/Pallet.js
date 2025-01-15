@@ -70,11 +70,7 @@ export class Pallet {
 
     createPhysicsBody(position) {
         const size = [3 * this.scale[0], 1.5 * this.scale[1], 3 * this.scale[2]];
-<<<<<<< Updated upstream
-        const mass = 10; // Adjust the mass as needed
-=======
         const mass = 0; // Initial mass is 0
->>>>>>> Stashed changes
         const shape = new this.physicsWorld.AmmoLib.btBoxShape(
             new this.physicsWorld.AmmoLib.btVector3(size[0] / 2, size[1] / 2, size[2] / 2)
         );
@@ -174,7 +170,7 @@ export class Pallet {
             if (this.isDropping && origin.y() <= 0.5) {
                 this.isDropping = false;
                 this.setMass(0);
-                
+
                 // Reset the transform to ensure it stays at the minimum height
                 transform.setOrigin(
                     new this.physicsWorld.AmmoLib.btVector3(

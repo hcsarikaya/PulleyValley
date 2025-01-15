@@ -65,25 +65,6 @@ export class Level{
                 this.objects.push(object);
                 break;
             case "rope":
-<<<<<<< Updated upstream
-                const startObject = this.objects.find(o => o.name === obj.start);
-                const endObject = this.objects.find(o => o.name === obj.end);
-
-                if (startObject && endObject) {
-                    object = new Rope(
-                        this.scene,
-                        this.physicsWorld,
-                        {
-                            startObject,
-                            endObject,
-                            segments: obj.segments || 20,
-                            ropeColor: obj.ropeColor || 0x333333,
-                            stiffness: obj.stiffness || 0.5,
-                            damping: obj.damping || 0.99,
-                            gravity: new THREE.Vector3(0, -9.8, 0),
-                        }
-                    );
-=======
                 const startPos = new THREE.Vector3(obj.start[0], obj.start[1], obj.start[2]);
                 const endPos = new THREE.Vector3(obj.end[0], obj.end[1], obj.end[2]);
 
@@ -98,7 +79,6 @@ export class Level{
                     if(obj.id) {
                         object.name = obj.id;
                     }
->>>>>>> Stashed changes
                     this.objects.push(object);
                 }
 
@@ -152,19 +132,5 @@ export class Level{
         }
     }
 
-<<<<<<< Updated upstream
-    update() {
-        // Check all objects against all trigger zones
-        for (const triggerZone of this.triggerZones) {
-            for (const object of this.objects) {
-                if (object.mesh) {
-                    triggerZone.checkIntersection(object.mesh);
-                }
-            }
-        }
-    }
-}
-=======
     
 }
->>>>>>> Stashed changes

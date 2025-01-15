@@ -141,7 +141,7 @@ export class Weight {
 
     checkPosition(position) {
         const roomSize = 50;
-        const roomIndex = window.currentLevel || 1;
+        const roomIndex = window.currentLevel || 0;
         const roomOffset = -roomSize * roomIndex;
 
         const areas = {
@@ -149,7 +149,7 @@ export class Weight {
                 minX: 20,
                 maxX: 35,
                 minY: 0,
-                maxY: 10,
+                maxY: 25,
                 minZ: -24 + roomOffset,
                 maxZ: -14 + roomOffset,
                 message: `Weight dropped in right storage area of room ${roomIndex}!`,
