@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { Door } from '../objects/Door.js';
+
 import { Pulley } from '../objects/Pulley.js';
 import { Rope } from '../objects/Rope.js';
 import { Weight } from '../objects/Weight.js';
@@ -8,7 +8,7 @@ import levels from './levelConfig.json';
 import {Button} from "../objects/Button.js";
 import { Pallet } from '../objects/Pallet.js';
 import {Boulder} from "../objects/Boulder.js";
-import { TriggerZone } from '../controls/TriggerZone.js';
+
 
 export class Level{
     constructor(room, physicsWorld){
@@ -17,15 +17,7 @@ export class Level{
         this.objects=[];
         this.pos = this.room.position;
         this.physicsWorld = physicsWorld;
-        this.triggerZones = [];
 
-        /*
-        if(this.pos === 0){
-            this.doorIn = new Door(this.scene,this.physicsWorld, [0, 15, +25+this.pos ]);
-
-        }
-        this.doorOut = new Door(this.scene,this.physicsWorld, [0, 15, -25+this.pos ]);
-        */
     }
 
     async addObject(level){
@@ -114,21 +106,7 @@ export class Level{
                 this.objects.push(object);
 
                 break
-            case "triggerZone":
-                position = obj.position;
-                position[2] += this.pos;
-                object = new TriggerZone(
-                    this.scene,
-                    new THREE.Vector3(position[0], position[1], position[2]),
-                    new THREE.Vector3(obj.size[0], obj.size[1], obj.size[2]),
-                    (intersectingObject) => {
-                        if (obj.triggerType === "levelComplete") {
-                            console.log("Level complete triggered by:", intersectingObject);
-                        }
-                    }
-                );
-                this.triggerZones.push(object);
-                break;
+
         }
     }
 

@@ -1,7 +1,6 @@
 import {Room} from "./Room.js";
 import {Level} from "../levels/level.js";
-import { Pallet } from "../objects/Pallet.js";
-import { Boulder } from "../objects/Boulder.js";
+
 
 export class LevelManager {
     constructor(scene, physicsWorld) {
@@ -11,8 +10,7 @@ export class LevelManager {
         this.levels = []
         this.roomSize = [80,50,45]
         this.rooms = []
-        this.checkLevel = false
-        this.currentLevel = 1;
+
     }
 
     async loadLevel() {

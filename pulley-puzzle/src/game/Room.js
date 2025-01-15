@@ -1,5 +1,3 @@
-// Room.js
-
 import * as THREE from 'three';
 import { SUBTRACTION, Brush, Evaluator } from 'three-bvh-csg';
 import { woodVertexShader, woodFragmentShader } from '../shaders/WoodShader.js';

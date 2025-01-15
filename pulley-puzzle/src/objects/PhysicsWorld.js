@@ -1,6 +1,4 @@
-// src/PhysicsWorld.js
 
-// 1. Import the default export from your patched ammo.wasm.js
 import AmmoModule from '../../builds/ammo.wasm.js';
 
 export class PhysicsWorld {

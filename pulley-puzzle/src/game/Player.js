@@ -17,18 +17,7 @@ export class Player {
 
         scene.add(this.mesh);
         this.createPhysicsBody([this.camera.position.x,this.camera.position.y-3, this.camera.position.z]);
-        // Movement state
-        /*
-        this.moveForward = false;
-        this.moveBackward = false;
-        this.moveLeft = false;
-        this.moveRight = false;
 
-
-
-        // Add keyboard listeners
-        this.addKeyboardControls();
-        */
     }
 
     addKeyboardControls() {
@@ -114,14 +103,7 @@ export class Player {
     }
 
     update() {
-        /*
-        const velocity = new THREE.Vector3();
 
-        if (this.moveForward) velocity.z -= this.speed;
-        if (this.moveBackward) velocity.z += this.speed;
-        if (this.moveLeft) velocity.x -= this.speed;
-        if (this.moveRight) velocity.x += this.speed;
-        */
         this.mesh.position.set(this.camera.position.x,this.camera.position.y-3,this.camera.position.z);
         if (!this.body) return;
 
