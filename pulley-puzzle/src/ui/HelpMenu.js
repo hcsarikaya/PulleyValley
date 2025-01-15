@@ -23,6 +23,9 @@ export default class HelpMenu {
             <li>U to set current level to 1</li>
             <li>i to set current level to 2</li>
             <li>O to set current level to 3</li>
+            <li>K to toggle light</li>
+            <li>1 to night vision</li>
+            <li>2 to lose sanity</li>
             <li>H to toggle this help menu</li>
             
             
